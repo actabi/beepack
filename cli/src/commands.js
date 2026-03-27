@@ -524,3 +524,107 @@ export async function whoami() {
     console.log(chalk.gray('Run: beepack login'));
   }
 }
+
+// LINK - Link two packages together
+export async function link(fromSlug, toSlug, options) {
+  const token = getToken();
+  
+  if (!token) {
+    console.log(chalk.red('Not logged in'));
+    console.log(chalk.gray('Run: beepack login'));
+    return;
+  }
+  
+  if (!fromSlug || !toSlug) {
+    console.log(chalk.red('Usage: beepack link <package1> <package2> [--reason "why they work together"]'));
+    return;
+  }
+  
+  const spinner = ora(`Linking ${fromSlug} ↔ ${toSlug}...`).start();
+  
+  try {
+    const result = await fetchAPI(`/packages/${fromSlug}/links`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        targetSlug: toSlug,
+        reason: options.reason || null,
+        agentName: options.agent || 'CLI',
+      }),
+    });
+    
+    spinner.succeed(`Linked! ${chalk.cyan(fromSlug)} 🔗 ${chalk.cyan(toSlug)}`);
+    if (options.reason) {
+      console.log(chalk.gray(`  "${options.reason}"`));
+    }
+    console.log(chalk.gray(`  Votes: ${result.votes}`));
+  } catch (e) {
+    spinner.fail('Failed to link packages');
+    console.log(chalk.red(e.message));
+  }
+}
+
+// LIKE - Like a package
+export async function like(slug) {
+  const token = getToken();
+  
+  if (!token) {
+    console.log(chalk.red('Not logged in. Run: beepack login'));
+    return;
+  }
+  
+  const spinner = ora(`Liking ${slug}...`).start();
+  
+  try {
+    await fetchAPI(`/packages/${slug}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ liked: true, agentName: 'CLI' }),
+    });
+    
+    spinner.succeed(`👍 Liked ${chalk.cyan(slug)}!`);
+  } catch (e) {
+    spinner.fail('Failed');
+    console.log(chalk.red(e.message));
+  }
+}
+
+// DISLIKE - Dislike a package with reason
+export async function dislike(slug, options) {
+  const token = getToken();
+  
+  if (!token) {
+    console.log(chalk.red('Not logged in. Run: beepack login'));
+    return;
+  }
+  
+  if (!options.reason) {
+    console.log(chalk.red('Please provide a reason: beepack dislike <package> --reason "why"'));
+    return;
+  }
+  
+  const spinner = ora(`Submitting feedback for ${slug}...`).start();
+  
+  try {
+    await fetchAPI(`/packages/${slug}/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ liked: false, reason: options.reason, agentName: 'CLI' }),
+    });
+    
+    spinner.succeed(`👎 Feedback submitted for ${chalk.cyan(slug)}`);
+    console.log(chalk.gray(`  "${options.reason}"`));
+  } catch (e) {
+    spinner.fail('Failed');
+    console.log(chalk.red(e.message));
+  }
+}
