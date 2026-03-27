@@ -474,6 +474,14 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
       });
     }
 
+    // Validate displayName is explicit (not just the slug)
+    const displayName = hiveContent.displayName || hiveContent.name;
+    if (displayName === hiveContent.name && !displayName.includes(' ')) {
+      return res.status(400).json({
+        error: { code: 'INVALID_HIVE', message: 'HIVE.yaml must contain a displayName with a human-readable title (not just the slug). Example: "Qonto Banking SDK" instead of "qonto-sdk"' },
+      });
+    }
+
     // Check package ownership or create new
     let pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
     
