@@ -115,9 +115,34 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE TABLE IF NOT EXISTS ratings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    user_id INTEGER REFERENCES users(id),
+    liked INTEGER NOT NULL CHECK(liked IN (0, 1)),
+    reason TEXT,
+    agent_name TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(package_id, user_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS package_links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_package_id INTEGER REFERENCES packages(id),
+    to_package_id INTEGER REFERENCES packages(id),
+    reason TEXT,
+    suggested_by INTEGER REFERENCES users(id),
+    agent_name TEXT,
+    votes INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(from_package_id, to_package_id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_packages_slug ON packages(slug);
   CREATE INDEX IF NOT EXISTS idx_packages_owner ON packages(owner_id);
   CREATE INDEX IF NOT EXISTS idx_packages_status ON packages(moderation_status);
+  CREATE INDEX IF NOT EXISTS idx_package_links_from ON package_links(from_package_id);
+  CREATE INDEX IF NOT EXISTS idx_package_links_to ON package_links(to_package_id);
 
 `);
 
@@ -324,6 +349,148 @@ app.delete('/api/v1/packages/:slug/star', authMiddleware, requireAuth, (req, res
   }
   
   res.json({ success: true, starred: false });
+});
+
+// Like/Dislike a package (AI feedback)
+app.post('/api/v1/packages/:slug/feedback', authMiddleware, requireAuth, (req, res) => {
+  const { slug } = req.params;
+  const { liked, reason, agentName } = req.body;
+  
+  // Validate
+  if (typeof liked !== 'boolean') {
+    return res.status(400).json({ 
+      error: { code: 'VALIDATION_ERROR', message: 'liked must be true or false' } 
+    });
+  }
+  
+  // Dislike requires a reason
+  if (!liked && (!reason || reason.trim().length < 5)) {
+    return res.status(400).json({ 
+      error: { code: 'VALIDATION_ERROR', message: 'Please provide a reason for disliking (min 5 chars)' } 
+    });
+  }
+  
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
+  if (!pkg) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+  }
+  
+  // Upsert feedback (one per user per package)
+  db.prepare(`
+    INSERT INTO ratings (package_id, user_id, liked, reason, agent_name)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(package_id, user_id) DO UPDATE SET
+      liked = excluded.liked,
+      reason = excluded.reason,
+      agent_name = excluded.agent_name,
+      created_at = CURRENT_TIMESTAMP
+  `).run(pkg.id, req.user.id, liked ? 1 : 0, liked ? null : reason, agentName || null);
+  
+  res.json({ success: true, liked, reason: liked ? null : reason, agentName });
+});
+
+// Get feedback for a package (public)
+app.get('/api/v1/packages/:slug/feedback', (req, res) => {
+  const { slug } = req.params;
+  
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
+  if (!pkg) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+  }
+  
+  const feedback = db.prepare(`
+    SELECT r.liked, r.reason, r.agent_name as agentName, r.created_at as createdAt,
+           u.github_handle as userHandle, u.avatar_url as userAvatar
+    FROM ratings r
+    JOIN users u ON r.user_id = u.id
+    WHERE r.package_id = ?
+    ORDER BY r.created_at DESC
+  `).all(pkg.id);
+  
+  const stats = db.prepare(`
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN liked = 1 THEN 1 ELSE 0 END) as likes,
+      SUM(CASE WHEN liked = 0 THEN 1 ELSE 0 END) as dislikes
+    FROM ratings WHERE package_id = ?
+  `).get(pkg.id);
+  
+  res.json({
+    feedback: feedback.map(f => ({ ...f, liked: !!f.liked })),
+    stats: {
+      total: stats.total,
+      likes: stats.likes,
+      dislikes: stats.dislikes,
+      likeRatio: stats.total > 0 ? Math.round((stats.likes / stats.total) * 100) : null
+    }
+  });
+});
+
+// Suggest a link between packages (AI feedback)
+app.post('/api/v1/packages/:slug/links', authMiddleware, requireAuth, (req, res) => {
+  const { slug } = req.params;
+  const { targetSlug, reason, agentName } = req.body;
+  
+  if (!targetSlug) {
+    return res.status(400).json({ 
+      error: { code: 'VALIDATION_ERROR', message: 'targetSlug is required' } 
+    });
+  }
+  
+  const fromPkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
+  const toPkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(targetSlug);
+  
+  if (!fromPkg || !toPkg) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+  }
+  
+  if (fromPkg.id === toPkg.id) {
+    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Cannot link package to itself' } });
+  }
+  
+  // Upsert link (increment votes if exists)
+  const existing = db.prepare('SELECT id, votes FROM package_links WHERE from_package_id = ? AND to_package_id = ?').get(fromPkg.id, toPkg.id);
+  
+  if (existing) {
+    db.prepare('UPDATE package_links SET votes = votes + 1, reason = COALESCE(?, reason) WHERE id = ?').run(reason, existing.id);
+    res.json({ success: true, action: 'upvoted', votes: existing.votes + 1 });
+  } else {
+    db.prepare(`
+      INSERT INTO package_links (from_package_id, to_package_id, reason, suggested_by, agent_name)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(fromPkg.id, toPkg.id, reason || null, req.user.id, agentName || null);
+    res.json({ success: true, action: 'created', votes: 1 });
+  }
+});
+
+// Get links for a package (public)
+app.get('/api/v1/packages/:slug/links', (req, res) => {
+  const { slug } = req.params;
+  
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
+  if (!pkg) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+  }
+  
+  // Get outgoing links (this package works with...)
+  const worksWith = db.prepare(`
+    SELECT p.slug, p.display_name as displayName, p.description, l.reason, l.votes, l.agent_name as agentName
+    FROM package_links l
+    JOIN packages p ON l.to_package_id = p.id
+    WHERE l.from_package_id = ?
+    ORDER BY l.votes DESC
+  `).all(pkg.id);
+  
+  // Get incoming links (...works with this package)
+  const usedBy = db.prepare(`
+    SELECT p.slug, p.display_name as displayName, p.description, l.reason, l.votes, l.agent_name as agentName
+    FROM package_links l
+    JOIN packages p ON l.from_package_id = p.id
+    WHERE l.to_package_id = ?
+    ORDER BY l.votes DESC
+  `).all(pkg.id);
+  
+  res.json({ worksWith, usedBy });
 });
 
 // Publish a package (create or update)
@@ -607,7 +774,7 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
 });
 
 // Download package as tar.gz
-app.get('/api/v1/packages/:slug/download', authMiddleware, requireAuth, async (req, res) => {
+app.get('/api/v1/packages/:slug/download', async (req, res) => {
   try {
     const { slug } = req.params;
     const { version } = req.query;
@@ -647,7 +814,7 @@ app.get('/api/v1/packages/:slug/download', authMiddleware, requireAuth, async (r
 });
 
 // List package files
-app.get('/api/v1/packages/:slug/files', authMiddleware, requireAuth, (req, res) => {
+app.get('/api/v1/packages/:slug/files', (req, res) => {
   const { slug } = req.params;
   const { version } = req.query;
 
@@ -674,7 +841,7 @@ app.get('/api/v1/packages/:slug/files', authMiddleware, requireAuth, (req, res) 
 });
 
 // Get single file content
-app.get('/api/v1/packages/:slug/files/*', authMiddleware, requireAuth, (req, res) => {
+app.get('/api/v1/packages/:slug/files/*', (req, res) => {
   const { slug } = req.params;
   const filePath = req.params[0];
   const { version } = req.query;

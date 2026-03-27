@@ -1,0 +1,29 @@
+name: google-places-client
+version: 1.0.0
+description: Search Google Places API for business ratings, reviews, and contact info
+keywords:
+  - google-places
+  - places-api
+  - business-rating
+  - reviews
+  - geocoding
+  - poi
+  - search
+capabilities:
+  - search-places
+  - get-ratings
+  - get-review-count
+  - get-business-info
+  - weighted-average-rating
+requires:
+  env:
+    - GOOGLE_PLACES_API_KEY
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

@@ -62,10 +62,67 @@ describe('MCP Server', () => {
         description: 'Get Beepack platform statistics.',
         inputSchema: { type: 'object', properties: {} },
       },
+      {
+        name: 'like_package',
+        description: 'Give a thumbs up to a package.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: { type: 'string' },
+            agentName: { type: 'string' },
+          },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'dislike_package',
+        description: 'Give a thumbs down with reason.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: { type: 'string' },
+            reason: { type: 'string' },
+            agentName: { type: 'string' },
+          },
+          required: ['slug', 'reason'],
+        },
+      },
+      {
+        name: 'get_feedback',
+        description: 'Get likes/dislikes for a package.',
+        inputSchema: {
+          type: 'object',
+          properties: { slug: { type: 'string' } },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'suggest_link',
+        description: 'Suggest two packages work well together.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            fromSlug: { type: 'string' },
+            toSlug: { type: 'string' },
+            reason: { type: 'string' },
+            agentName: { type: 'string' },
+          },
+          required: ['fromSlug', 'toSlug'],
+        },
+      },
+      {
+        name: 'get_related',
+        description: 'Get packages that work well with a given package.',
+        inputSchema: {
+          type: 'object',
+          properties: { slug: { type: 'string' } },
+          required: ['slug'],
+        },
+      },
     ];
 
-    test('should have 5 tools defined', () => {
-      assert.strictEqual(tools.length, 5);
+    test('should have 10 tools defined', () => {
+      assert.strictEqual(tools.length, 10);
     });
 
     test('search_packages should require query parameter', () => {

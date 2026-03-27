@@ -1,0 +1,30 @@
+name: cdn-url-cleaner
+version: 1.0.0
+description: Extract original high-quality images from CDN-transformed URLs (Wix, Shopify, WordPress, Squarespace)
+
+keywords:
+  - cdn
+  - image
+  - url
+  - wix
+  - shopify
+  - wordpress
+  - squarespace
+  - optimization
+  - scraping
+  - media
+
+capabilities:
+  - Strip Wix static media transformation paths to recover original image
+  - Remove Shopify CDN size suffixes and query parameters
+  - Clean WordPress thumbnail dimension suffixes from upload URLs
+  - Strip Squarespace CDN format and width parameters
+  - Remove generic quality, blur, and dimension query params from any URL
+  - Deduplicate image URLs that resolve to the same base image
+
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf

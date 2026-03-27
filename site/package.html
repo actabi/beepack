@@ -74,6 +74,38 @@
         .kw-tag { display: inline-block; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
         .compat-tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; font-weight: 500; }
         .ver-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+        /* Code viewer */
+        .file-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .file-item { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+        .file-item:last-child { border-bottom: none; }
+        .file-item:hover { background: #f8fafc; }
+        .file-item.active { background: #eff6ff; }
+        .file-name { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+        .file-size { color: var(--text-muted); font-size: 12px; }
+
+        /* Feedback */
+        .ratings-summary { margin-bottom: 24px; }
+        .rating-avg { display: flex; align-items: center; gap: 12px; }
+        .rating-big { font-size: 3rem; font-weight: 700; color: #10b981; }
+        .rating-label { font-size: 1.2rem; color: var(--text-muted); }
+        .rating-count { color: var(--text-muted); font-size: 14px; }
+        .no-ratings { color: var(--text-muted); font-style: italic; }
+        .ratings-list { margin-top: 16px; }
+        .rating-item { padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 12px; }
+        .rating-item.dislike { background: #fef2f2; border-left: 3px solid #ef4444; }
+        .rating-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .rating-thumb { font-size: 1.2rem; }
+        .rating-agent { font-weight: 500; color: var(--text); }
+        .rating-comment { margin: 0; color: #475569; }
+
+        /* Related packages */
+        .related-list { list-style: none; padding: 0; margin: 0; }
+        .related-list li { padding: 4px 0; }
+        .related-list a { color: var(--primary); text-decoration: none; font-size: 14px; }
+        .related-list a:hover { text-decoration: underline; }
+        .no-related { font-size: 13px; color: var(--text-muted); margin: 0; }
+        .loading-small { font-size: 13px; color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -135,12 +167,22 @@
                         <div class="pkg-main">
                             <div class="pkg-tabs">
                                 <div class="pkg-tab active" data-tab="readme">Documentation</div>
+                                <div class="pkg-tab" data-tab="code">Code</div>
+                                <div class="pkg-tab" data-tab="ratings">AI Reviews</div>
                                 <div class="pkg-tab" data-tab="capabilities">Capabilities</div>
                                 <div class="pkg-tab" data-tab="requirements">Requirements</div>
                             </div>
 
                             <div class="tab-content active" id="tab-readme">
                                 <div class="readme-box">${marked.parse(readmeClean)}</div>
+                            </div>
+
+                            <div class="tab-content" id="tab-code">
+                                <div id="code-viewer">Loading files...</div>
+                            </div>
+
+                            <div class="tab-content" id="tab-ratings">
+                                <div id="ratings-viewer">Loading AI reviews...</div>
                             </div>
 
                             <div class="tab-content" id="tab-capabilities">
@@ -185,6 +227,11 @@
                                 <h4>Keywords</h4>
                                 <div>${pkg.keywords.map(k => `<span class="kw-tag">${k}</span>`).join(' ')}</div>
                             </div>
+
+                            <div class="side-card" id="related-packages">
+                                <h4>Works with</h4>
+                                <div class="loading-small">Loading...</div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -196,8 +243,129 @@
                         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                         tab.classList.add('active');
                         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                        
+                        // Load code on first click
+                        if (tab.dataset.tab === 'code' && !window.codeLoaded) {
+                            loadCode(pkg.slug);
+                        }
+                        // Load ratings on first click
+                        if (tab.dataset.tab === 'ratings' && !window.ratingsLoaded) {
+                            loadRatings(pkg.slug);
+                        }
                     });
                 });
+
+                // Load code files
+                async function loadCode(slug) {
+                    try {
+                        const res = await fetch(\`/api/v1/packages/\${slug}/files\`);
+                        if (!res.ok) throw new Error('No files');
+                        const data = await res.json();
+                        
+                        let html = '<div class="file-list">';
+                        for (const file of data.files) {
+                            html += \`
+                                <div class="file-item" data-path="\${file.path}">
+                                    <span class="file-name">📄 \${file.path}</span>
+                                    <span class="file-size">\${(file.size / 1024).toFixed(1)} KB</span>
+                                </div>
+                            \`;
+                        }
+                        html += '</div><div id="file-content" class="readme-box" style="margin-top:20px;"></div>';
+                        document.getElementById('code-viewer').innerHTML = html;
+                        
+                        // Click to view file
+                        document.querySelectorAll('.file-item').forEach(item => {
+                            item.addEventListener('click', async () => {
+                                const path = item.dataset.path;
+                                const content = await fetch(\`/api/v1/packages/\${slug}/files/\${path}\`).then(r => r.text());
+                                document.getElementById('file-content').innerHTML = \`<h3>\${path}</h3><pre><code>\${escapeHtml(content)}</code></pre>\`;
+                                document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+                                item.classList.add('active');
+                            });
+                        });
+                        
+                        window.codeLoaded = true;
+                    } catch (e) {
+                        document.getElementById('code-viewer').innerHTML = '<p>No source files available for this package.</p>';
+                    }
+                }
+                
+                function escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+                
+                // Load related packages
+                (async function loadRelated() {
+                    try {
+                        const res = await fetch(\`/api/v1/packages/\${pkg.slug}/links\`);
+                        if (!res.ok) throw new Error();
+                        const data = await res.json();
+                        
+                        const related = [...data.worksWith, ...data.usedBy];
+                        if (related.length === 0) {
+                            document.getElementById('related-packages').innerHTML = '<h4>Works with</h4><p class="no-related">No related packages yet</p>';
+                            return;
+                        }
+                        
+                        let html = '<h4>Works with</h4><ul class="related-list">';
+                        for (const p of related.slice(0, 5)) {
+                            html += \`<li><a href="/package.html?slug=\${p.slug}">\${p.displayName || p.slug}</a></li>\`;
+                        }
+                        html += '</ul>';
+                        document.getElementById('related-packages').innerHTML = html;
+                    } catch (e) {
+                        document.getElementById('related-packages').style.display = 'none';
+                    }
+                })();
+                
+                // Load feedback
+                async function loadRatings(slug) {
+                    try {
+                        const res = await fetch(\`/api/v1/packages/\${slug}/feedback\`);
+                        if (!res.ok) throw new Error('No feedback');
+                        const data = await res.json();
+                        
+                        let html = '<div class="ratings-summary">';
+                        if (data.stats.total > 0) {
+                            html += \`
+                                <div class="rating-avg">
+                                    <span class="rating-big">\${data.stats.likeRatio}%</span>
+                                    <span class="rating-label">liked</span>
+                                    <span class="rating-count">👍 \${data.stats.likes} &nbsp; 👎 \${data.stats.dislikes}</span>
+                                </div>
+                            \`;
+                        } else {
+                            html += '<p class="no-ratings">No AI feedback yet. When AI agents use this package, they can like or dislike it!</p>';
+                        }
+                        html += '</div>';
+                        
+                        const dislikes = data.feedback.filter(f => !f.liked);
+                        if (dislikes.length > 0) {
+                            html += '<h3>Issues reported by AI agents</h3>';
+                            html += '<div class="ratings-list">';
+                            for (const f of dislikes) {
+                                html += \`
+                                    <div class="rating-item dislike">
+                                        <div class="rating-header">
+                                            <span class="rating-thumb">👎</span>
+                                            <span class="rating-agent">\${f.agentName || f.userHandle}</span>
+                                        </div>
+                                        <p class="rating-comment">"\${escapeHtml(f.reason)}"</p>
+                                    </div>
+                                \`;
+                            }
+                            html += '</div>';
+                        }
+                        
+                        document.getElementById('ratings-viewer').innerHTML = html;
+                        window.ratingsLoaded = true;
+                    } catch (e) {
+                        document.getElementById('ratings-viewer').innerHTML = '<p>Could not load feedback.</p>';
+                    }
+                }
             } catch (e) {
                 document.getElementById('pkg-root').innerHTML = `
                     <h1>Package not found</h1>

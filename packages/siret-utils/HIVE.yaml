@@ -1,0 +1,25 @@
+name: siret-utils
+version: 1.0.0
+description: Validate and format French business IDs (SIRET/SIREN) with Luhn algorithm
+keywords:
+  - siret
+  - siren
+  - luhn
+  - france
+  - business-id
+  - validation
+  - formatting
+capabilities:
+  - validate-siret
+  - format-siret
+  - format-siren
+  - strip-formatting
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

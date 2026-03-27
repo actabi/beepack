@@ -129,6 +129,100 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {},
         },
       },
+      {
+        name: 'like_package',
+        description: 'Give a thumbs up 👍 to a package you found useful.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug to like',
+            },
+            agentName: {
+              type: 'string',
+              description: 'Your agent name (e.g., "Cursor", "Claude Code", "Windsurf")',
+            },
+          },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'dislike_package',
+        description: 'Give a thumbs down 👎 to a package. You must explain why (bugs, bad docs, etc).',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug to dislike',
+            },
+            reason: {
+              type: 'string',
+              description: 'Why you disliked it (e.g., "Documentation outdated", "API changed", "Missing error handling")',
+            },
+            agentName: {
+              type: 'string',
+              description: 'Your agent name (e.g., "Cursor", "Claude Code", "Windsurf")',
+            },
+          },
+          required: ['slug', 'reason'],
+        },
+      },
+      {
+        name: 'get_feedback',
+        description: 'Get likes/dislikes and feedback for a package from other AI agents.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug',
+            },
+          },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'suggest_link',
+        description: 'Suggest that two packages work well together. Call this when you successfully use multiple packages in combination.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            fromSlug: {
+              type: 'string',
+              description: 'First package slug',
+            },
+            toSlug: {
+              type: 'string',
+              description: 'Second package slug that works well with the first',
+            },
+            reason: {
+              type: 'string',
+              description: 'Why they work well together (e.g., "Sync Notion and notify on Slack")',
+            },
+            agentName: {
+              type: 'string',
+              description: 'Your agent name',
+            },
+          },
+          required: ['fromSlug', 'toSlug'],
+        },
+      },
+      {
+        name: 'get_related',
+        description: 'Get packages that work well with a given package.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug',
+            },
+          },
+          required: ['slug'],
+        },
+      },
     ],
   };
 });
@@ -308,6 +402,180 @@ Beepack is the API registry for vibe-coders. Search for packages or browse the c
             },
           ],
         };
+      }
+
+      case 'like_package': {
+        const token = process.env.BEEPACK_TOKEN;
+        if (!token) {
+          return {
+            content: [{ type: 'text', text: 'Error: BEEPACK_TOKEN required. Run `beepack login` first.' }],
+            isError: true,
+          };
+        }
+        
+        const response = await fetch(`${API_BASE}/packages/${args.slug}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            liked: true,
+            agentName: args.agentName,
+          }),
+        });
+        
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || 'Failed to submit feedback');
+        }
+        
+        return {
+          content: [{
+            type: 'text',
+            text: `# 👍 Liked!
+
+Package: **${args.slug}**
+${args.agentName ? `Agent: ${args.agentName}` : ''}
+
+Thanks for the feedback!`,
+          }],
+        };
+      }
+
+      case 'dislike_package': {
+        const token = process.env.BEEPACK_TOKEN;
+        if (!token) {
+          return {
+            content: [{ type: 'text', text: 'Error: BEEPACK_TOKEN required. Run `beepack login` first.' }],
+            isError: true,
+          };
+        }
+        
+        const response = await fetch(`${API_BASE}/packages/${args.slug}/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            liked: false,
+            reason: args.reason,
+            agentName: args.agentName,
+          }),
+        });
+        
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || 'Failed to submit feedback');
+        }
+        
+        return {
+          content: [{
+            type: 'text',
+            text: `# 👎 Disliked
+
+Package: **${args.slug}**
+Reason: "${args.reason}"
+${args.agentName ? `Agent: ${args.agentName}` : ''}
+
+Your feedback helps improve the ecosystem!`,
+          }],
+        };
+      }
+
+      case 'get_feedback': {
+        const data = await fetchAPI(`/packages/${args.slug}/feedback`);
+        
+        if (data.feedback.length === 0) {
+          return {
+            content: [{ type: 'text', text: `No feedback yet for **${args.slug}**. Be the first!` }],
+          };
+        }
+        
+        let text = `# Feedback for ${args.slug}\n\n`;
+        text += `**${data.stats.likeRatio}% liked** (👍 ${data.stats.likes} / 👎 ${data.stats.dislikes})\n\n`;
+        
+        const dislikes = data.feedback.filter(f => !f.liked);
+        if (dislikes.length > 0) {
+          text += `## Issues reported\n\n`;
+          for (const f of dislikes.slice(0, 5)) {
+            text += `- **${f.agentName || f.userHandle}:** ${f.reason}\n`;
+          }
+        }
+        
+        return { content: [{ type: 'text', text }] };
+      }
+
+      case 'suggest_link': {
+        const token = process.env.BEEPACK_TOKEN;
+        if (!token) {
+          return {
+            content: [{ type: 'text', text: 'Error: BEEPACK_TOKEN required. Run `beepack login` first.' }],
+            isError: true,
+          };
+        }
+        
+        const response = await fetch(`${API_BASE}/packages/${args.fromSlug}/links`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            targetSlug: args.toSlug,
+            reason: args.reason,
+            agentName: args.agentName,
+          }),
+        });
+        
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || 'Failed to suggest link');
+        }
+        
+        const result = await response.json();
+        return {
+          content: [{
+            type: 'text',
+            text: `# 🔗 Link ${result.action}!
+
+**${args.fromSlug}** works with **${args.toSlug}**
+${args.reason ? `Reason: "${args.reason}"` : ''}
+Votes: ${result.votes}
+
+Thanks for helping others discover great combinations!`,
+          }],
+        };
+      }
+
+      case 'get_related': {
+        const data = await fetchAPI(`/packages/${args.slug}/links`);
+        
+        if (data.worksWith.length === 0 && data.usedBy.length === 0) {
+          return {
+            content: [{ type: 'text', text: `No related packages found for **${args.slug}** yet.` }],
+          };
+        }
+        
+        let text = `# Related packages for ${args.slug}\n\n`;
+        
+        if (data.worksWith.length > 0) {
+          text += `## Works well with\n`;
+          for (const p of data.worksWith) {
+            text += `- **${p.slug}** (${p.votes} votes)${p.reason ? ` - ${p.reason}` : ''}\n`;
+          }
+          text += '\n';
+        }
+        
+        if (data.usedBy.length > 0) {
+          text += `## Used together with\n`;
+          for (const p of data.usedBy) {
+            text += `- **${p.slug}** (${p.votes} votes)${p.reason ? ` - ${p.reason}` : ''}\n`;
+          }
+        }
+        
+        return { content: [{ type: 'text', text }] };
       }
 
       default:

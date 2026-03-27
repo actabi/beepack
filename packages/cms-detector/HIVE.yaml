@@ -1,0 +1,30 @@
+name: cms-detector
+version: 1.0.0
+description: Detect CMS platforms, JS frameworks, analytics tools, and server technology from any website URL
+keywords:
+  - cms
+  - detection
+  - wordpress
+  - shopify
+  - wix
+  - framework
+  - analytics
+  - web-scraping
+capabilities:
+  - detect-cms
+  - detect-frameworks
+  - detect-analytics
+  - detect-server
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies:
+  - cheerio

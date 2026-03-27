@@ -1,0 +1,32 @@
+name: listmonk-client
+version: 1.0.0
+description: REST API client for Listmonk email marketing platform - subscribers, campaigns, transactional emails
+keywords:
+  - listmonk
+  - email
+  - newsletter
+  - marketing
+  - subscribers
+  - campaigns
+  - transactional-email
+  - rest-api
+capabilities:
+  - Manage subscribers (create, list, search, add to lists)
+  - Create and manage email campaigns (create, update status, list, get)
+  - Send transactional emails with raw HTML
+  - Manage mailing lists (create, list)
+  - Retrieve templates
+  - Health check
+requires:
+  env:
+    - LISTMONK_URL
+    - LISTMONK_USER
+    - LISTMONK_PASSWORD
+  runtime: node >= 18
+  dependencies: none
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
