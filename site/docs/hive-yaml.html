@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIVE.yaml Format - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="./">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="getting-started.html">Quick Start</a></li>
+                </ul>
+                
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html" class="active">HIVE.yaml Format</a></li>
+                    <li><a href="versioning.html">Versioning</a></li>
+                </ul>
+                
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html">MCP Integration</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>📝 HIVE.yaml Format</h1>
+            
+            <p>The <code>HIVE.yaml</code> file is the heart of every Beepack package. It describes your API and enables AIs to discover it.</p>
+
+            <h2>Complete Example</h2>
+            <pre><code>name: notion-sync
+version: 1.2.0
+description: Bidirectional sync with Notion API
+author: guillaume
+license: MIT
+
+# For discovery
+keywords:
+  - notion
+  - sync
+  - database
+  - productivity
+
+# What the API does (for AIs)
+capabilities:
+  - read_database
+  - write_pages
+  - search_content
+  - sync_bidirectional
+
+# Required dependencies
+requires:
+  env:
+    - NOTION_API_KEY
+  deps:
+    - node >= 18
+
+# Compatible runtimes
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+
+# Optional metadata
+homepage: https://github.com/guillaume/notion-sync
+repository: https://github.com/guillaume/notion-sync
+bugs: https://github.com/guillaume/notion-sync/issues
+
+# Test configuration
+tests:
+  command: npm test
+  coverage_min: 70</code></pre>
+
+            <h2>Field Reference</h2>
+            
+            <h3>Required Fields</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>name</code></td>
+                        <td>string</td>
+                        <td>Unique package name (lowercase, hyphens allowed)</td>
+                    </tr>
+                    <tr>
+                        <td><code>version</code></td>
+                        <td>string</td>
+                        <td>Semver version (e.g., 1.0.0)</td>
+                    </tr>
+                    <tr>
+                        <td><code>description</code></td>
+                        <td>string</td>
+                        <td>Short description (max 200 characters)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Discovery Fields</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>keywords</code></td>
+                        <td>string[]</td>
+                        <td>Keywords for search</td>
+                    </tr>
+                    <tr>
+                        <td><code>capabilities</code></td>
+                        <td>string[]</td>
+                        <td>What the API can do (crucial for AIs)</td>
+                    </tr>
+                    <tr>
+                        <td><code>compatible</code></td>
+                        <td>string[]</td>
+                        <td>Supported runtimes (cursor, copilot, claude, etc.)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Dependency Fields</h3>
+            <pre><code>requires:
+  # Required environment variables
+  env:
+    - API_KEY
+    - SECRET_TOKEN
+  
+  # System dependencies
+  deps:
+    - node >= 18
+    - python >= 3.10
+  
+  # Required binaries
+  bins:
+    - curl
+    - jq</code></pre>
+
+            <h3>Metadata Fields</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>author</code></td>
+                        <td>string</td>
+                        <td>Author (GitHub username)</td>
+                    </tr>
+                    <tr>
+                        <td><code>license</code></td>
+                        <td>string</td>
+                        <td>License (MIT, Apache-2.0, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td><code>homepage</code></td>
+                        <td>string</td>
+                        <td>Homepage URL</td>
+                    </tr>
+                    <tr>
+                        <td><code>repository</code></td>
+                        <td>string</td>
+                        <td>Source repo URL</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Best Practices</h2>
+            
+            <h3>✅ Do</h3>
+            <ul>
+                <li>Use descriptive, actionable <code>capabilities</code></li>
+                <li>Document ALL required environment variables</li>
+                <li>Include a detailed README.md</li>
+                <li>Add usage examples</li>
+            </ul>
+
+            <h3>❌ Don't</h3>
+            <ul>
+                <li>Generic names (<code>api</code>, <code>helper</code>)</li>
+                <li>Vague capabilities (<code>do_stuff</code>)</li>
+                <li>Forget to declare dependencies</li>
+                <li>Hardcode secrets (use <code>requires.env</code>)</li>
+            </ul>
+
+            <div class="next-steps">
+                <h3>📖 See Also</h3>
+                <div class="cards">
+                    <a href="publishing.html" class="card">
+                        <span class="card-icon">📦</span>
+                        <h4>Publishing Guide</h4>
+                        <p>Complete workflow</p>
+                    </a>
+                    <a href="mcp-integration.html" class="card">
+                        <span class="card-icon">🤖</span>
+                        <h4>MCP Integration</h4>
+                        <p>For AIs</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="./">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="getting-started.html" class="active">Quick Start</a></li>
+                    <li><a href="installation.html">CLI Installation</a></li>
+                </ul>
+                
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                    <li><a href="versioning.html">Versioning</a></li>
+                </ul>
+                
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html">MCP Integration</a></li>
+                    <li><a href="ai-discovery.html">AI Discovery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>🚀 Quick Start</h1>
+            
+            <p>This guide will help you publish your first Beepack package in less than 10 minutes.</p>
+
+            <h2>Prerequisites</h2>
+            <ul>
+                <li>Node.js 18+ installed</li>
+                <li>A GitHub account</li>
+                <li>An API/integration you want to share</li>
+            </ul>
+
+            <h2>Step 1: Install the CLI</h2>
+            <pre><code>npm install -g beepack</code></pre>
+            
+            <p>Verify the installation:</p>
+            <pre><code>beepack --version
+# beepack v1.0.0</code></pre>
+
+            <h2>Step 2: Login</h2>
+            <pre><code>beepack login</code></pre>
+            
+            <p>This will open your browser for GitHub authentication. Your GitHub username becomes your namespace.</p>
+
+            <h2>Step 3: Create a Package</h2>
+            
+            <p>Create a folder for your package:</p>
+            <pre><code>mkdir my-api
+cd my-api
+beepack init</code></pre>
+
+            <p>This generates a <code>HIVE.yaml</code> file:</p>
+            <pre><code>name: my-api
+version: 1.0.0
+description: My API description
+author: your-username
+
+keywords:
+  - keyword1
+  - keyword2
+
+capabilities:
+  - what_api_does
+
+requires:
+  env:
+    - API_KEY_REQUIRED
+
+compatible:
+  - cursor
+  - copilot
+  - claude</code></pre>
+
+            <h2>Step 4: Add Your Code</h2>
+            
+            <p>Add your source files. Recommended structure:</p>
+            <pre><code>my-api/
+├── HIVE.yaml          # Configuration (required)
+├── README.md          # Documentation (highly recommended)
+├── src/
+│   └── index.ts       # Entry point
+├── tests/
+│   └── index.test.ts  # Tests
+└── examples/
+    └── basic.ts       # Usage examples</code></pre>
+
+            <h2>Step 5: Publish</h2>
+            <pre><code>beepack publish</code></pre>
+
+            <p>Your package is now available on Beepack! 🎉</p>
+            <pre><code># Others can now install it:
+beepack install your-username/my-api</code></pre>
+
+            <h2>Step 6: Update</h2>
+            
+            <p>To publish a new version:</p>
+            <pre><code># Edit version in HIVE.yaml
+# then:
+beepack publish</code></pre>
+
+            <div class="next-steps">
+                <h3>📖 Next Steps</h3>
+                <div class="cards">
+                    <a href="hive-yaml.html" class="card">
+                        <span class="card-icon">📝</span>
+                        <h4>HIVE.yaml Format</h4>
+                        <p>All options</p>
+                    </a>
+                    <a href="publishing.html" class="card">
+                        <span class="card-icon">📦</span>
+                        <h4>Publishing Guide</h4>
+                        <p>Best practices</p>
+                    </a>
+                    <a href="mcp-integration.html" class="card">
+                        <span class="card-icon">🤖</span>
+                        <h4>MCP Integration</h4>
+                        <p>Make API discoverable</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

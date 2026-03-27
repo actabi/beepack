@@ -1,0 +1,16 @@
+node_modules/
+cli/node_modules/
+data/
+storage/
+.env
+.env.*
+*.db
+*.log
+.DS_Store
+*.pem
+_bmad/
+_bmad-output/
+.claude/
+.next/
+*.tsbuildinfo
+next-env.d.ts

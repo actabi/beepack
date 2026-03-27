@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Integration - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="./">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="getting-started.html">Quick Start</a></li>
+                </ul>
+                
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                </ul>
+                
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html" class="active">MCP Integration</a></li>
+                    <li><a href="ai-discovery.html">AI Discovery</a></li>
+                    <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>🤖 MCP Integration</h1>
+            
+            <div class="intro-box">
+                <p>Beepack exposes an MCP (Model Context Protocol) server allowing AIs to discover and install packages directly.</p>
+            </div>
+
+            <h2>What is MCP?</h2>
+            <p>The <strong>Model Context Protocol</strong> is an open standard allowing LLMs to interact with external tools. Beepack implements this protocol to enable AIs to:</p>
+            <ul>
+                <li>🔍 Search for APIs by natural language description</li>
+                <li>📦 Install packages automatically</li>
+                <li>📖 Read package documentation</li>
+                <li>✅ Check compatibility with the current project</li>
+            </ul>
+
+            <h2>MCP Configuration</h2>
+            
+            <h3>For Claude Desktop / OpenClaw</h3>
+            <p>Add to your MCP configuration:</p>
+            <pre><code>{
+  "mcpServers": {
+    "beepack": {
+      "command": "beepack",
+      "args": ["mcp-server"],
+      "env": {
+        "PACKBEE_TOKEN": "your-optional-token"
+      }
+    }
+  }
+}</code></pre>
+
+            <h3>For Cursor</h3>
+            <p>In Cursor settings, add the Beepack MCP server:</p>
+            <pre><code>// .cursor/mcp.json
+{
+  "servers": {
+    "beepack": {
+      "command": "beepack mcp-server"
+    }
+  }
+}</code></pre>
+
+            <h2>Available Tools</h2>
+            
+            <h3>search_packages</h3>
+            <p>Search for packages by natural language description.</p>
+            <pre><code>{
+  "name": "search_packages",
+  "description": "Search Beepack for reusable APIs matching a description",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Natural language description of what you need"
+      },
+      "capabilities": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Specific capabilities required"
+      },
+      "compatible": {
+        "type": "string",
+        "description": "Runtime compatibility (cursor, copilot, claude)"
+      }
+    },
+    "required": ["query"]
+  }
+}</code></pre>
+
+            <p><strong>Example AI usage:</strong></p>
+            <pre><code>// User asks: "Connect me to Notion"
+// AI calls:
+{
+  "tool": "search_packages",
+  "arguments": {
+    "query": "sync with Notion database",
+    "capabilities": ["read_database", "write_pages"]
+  }
+}
+
+// Response:
+{
+  "packages": [
+    {
+      "slug": "notion-sync",
+      "description": "Bidirectional sync with Notion",
+      "stars": 45,
+      "downloads": 1200,
+      "score": 0.94
+    }
+  ]
+}</code></pre>
+
+            <h3>install_package</h3>
+            <p>Install a package in the current project.</p>
+            <pre><code>{
+  "name": "install_package",
+  "description": "Install a Beepack package",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "slug": {
+        "type": "string",
+        "description": "Package slug (e.g., 'notion-sync')"
+      },
+      "version": {
+        "type": "string",
+        "description": "Specific version (optional, defaults to latest)"
+      }
+    },
+    "required": ["slug"]
+  }
+}</code></pre>
+
+            <h3>get_package_info</h3>
+            <p>Get package details.</p>
+            <pre><code>{
+  "name": "get_package_info",
+  "description": "Get detailed information about a package",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "slug": {
+        "type": "string",
+        "description": "Package slug"
+      }
+    },
+    "required": ["slug"]
+  }
+}</code></pre>
+
+            <h2>Example AI Workflow</h2>
+            
+            <pre><code>// Scenario: User asks "Add Notion sync to my project"
+
+// 1. AI searches first
+const results = await mcp.call("search_packages", {
+  query: "sync with Notion database"
+});
+
+// 2. Shows options to user
+// "I found 'notion-sync' with 45 stars. Should I install it?"
+
+// 3. On confirmation, installs
+await mcp.call("install_package", {
+  slug: "notion-sync"
+});
+
+// 4. Gets docs to guide user
+const info = await mcp.call("get_package_info", {
+  slug: "notion-sync"
+});
+
+// 5. Guides user
+// "Package installed! You need to configure NOTION_API_KEY.
+//  Here's how to use it: ..."</code></pre>
+
+            <h2>Benefits for AIs</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Without Beepack</th>
+                        <th>With Beepack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AI generates integration code from scratch</td>
+                        <td>AI installs a tested API</td>
+                    </tr>
+                    <tr>
+                        <td>Risk of bugs, untested code</td>
+                        <td>Battle-tested code by the community</td>
+                    </tr>
+                    <tr>
+                        <td>Duplication between projects</td>
+                        <td>Collective reuse and improvement</td>
+                    </tr>
+                    <tr>
+                        <td>Time wasted reinventing</td>
+                        <td>Installation in seconds</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="next-steps">
+                <h3>📖 See Also</h3>
+                <div class="cards">
+                    <a href="../api-docs/" class="card">
+                        <span class="card-icon">🔌</span>
+                        <h4>REST API</h4>
+                        <p>Complete documentation</p>
+                    </a>
+                    <a href="semantic-search.html" class="card">
+                        <span class="card-icon">🔍</span>
+                        <h4>Semantic Search</h4>
+                        <p>How it works</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

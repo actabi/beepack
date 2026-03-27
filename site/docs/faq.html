@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../docs/">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>❓ Help</h4>
+                <ul>
+                    <li><a href="faq.html" class="active">FAQ</a></li>
+                    <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>❓ Frequently Asked Questions</h1>
+
+            <h2>General</h2>
+            
+            <h3>What is Beepack?</h3>
+            <p>Beepack is an open-source platform where developers and AIs can share, discover, and reuse APIs. Think of it as "npm for integrations, optimized for vibe coding".</p>
+
+            <h3>Why Beepack instead of npm?</h3>
+            <p>npm is great for generic packages, but Beepack is specially designed for:</p>
+            <ul>
+                <li><strong>AI discovery</strong> - Semantic search, MCP protocol</li>
+                <li><strong>Integrations/APIs</strong> - HIVE.yaml format with capabilities</li>
+                <li><strong>Collaboration</strong> - Forks, PRs, issues (coming soon)</li>
+            </ul>
+
+            <h3>Is it free?</h3>
+            <p>Yes! Beepack is open-source and free to publish and use public packages. Premium features (private packages, analytics) may be offered in the future.</p>
+
+            <h3>What's the difference with ClawHub?</h3>
+            <p>ClawHub is limited to OpenClaw skills. Beepack is designed for all vibe coders: Cursor, Copilot, Claude Code, Windsurf, etc.</p>
+
+            <h2>Publishing</h2>
+
+            <h3>How do I publish my first package?</h3>
+            <p>Follow our <a href="getting-started.html">quick start guide</a>. In summary:</p>
+            <pre><code>npm install -g beepack
+beepack login
+beepack init
+beepack publish</code></pre>
+
+            <h3>Who can publish?</h3>
+            <p>Any user with a GitHub account created more than 14 days ago can publish. This restriction prevents spam.</p>
+
+            <h3>Can I delete a package?</h3>
+            <p>Packages can be "unpublished" but not completely deleted to preserve existing dependencies. Contact us for special cases.</p>
+
+            <h3>What license should I use?</h3>
+            <p>All packages on Beepack default to MIT-0 license, allowing maximum reuse without required attribution.</p>
+
+            <h2>Security</h2>
+
+            <h3>How do you ensure package security?</h3>
+            <p>Several measures:</p>
+            <ul>
+                <li>GitHub age gate (accounts > 14 days)</li>
+                <li>Automatic scanning for malicious patterns</li>
+                <li>Community reporting system</li>
+                <li>Active moderation</li>
+                <li>Mandatory declaration of required env vars</li>
+            </ul>
+
+            <h3>Can a package steal my secrets?</h3>
+            <p>Beepack analyzes packages to detect suspicious patterns (data exfiltration). Required environment variables must be declared in HIVE.yaml. Always review code before using a package in production.</p>
+
+            <h2>For AIs</h2>
+
+            <h3>How can my AI use Beepack?</h3>
+            <p>See our <a href="mcp-integration.html">MCP integration guide</a>. In summary, configure the Beepack MCP server and the AI can search and install packages automatically.</p>
+
+            <h3>Which AIs are supported?</h3>
+            <p>Any AI supporting the MCP protocol: Claude, OpenClaw, Cursor, etc. The REST API is also available for custom integrations.</p>
+
+            <h2>Contributing</h2>
+
+            <h3>How can I contribute to Beepack?</h3>
+            <p>Beepack is open-source! Visit our <a href="https://github.com/beepack/beepack" target="_blank">GitHub</a> to contribute code, report bugs, or propose features.</p>
+
+            <h3>I have a feature idea</h3>
+            <p>Great! Open an issue on GitHub or join our Discord to discuss.</p>
+        </main>
+    </div>
+</body>
+</html>

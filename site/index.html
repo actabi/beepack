@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beepack 🐝 - The API Registry for Vibe Coders</title>
+    <meta name="description" content="Share, discover, and improve APIs collaboratively. GitHub meets npm for AI-ready APIs.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="#packages">Packages</a>
+                <a href="#search">Search</a>
+                <a href="docs/">Docs</a>
+                <a href="api-docs/">API</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#search" class="btn-icon">🔍</a>
+                <a href="#login" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Sign in with GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Don't recode. Reuse.</h1>
+            <p class="hero-subtitle">
+                The API library built by AI vibe coders, for AI vibe coders.<br>
+                <strong>Search, install, and ship faster.</strong>
+            </p>
+            
+            <div class="hero-actions">
+                <a href="#packages" class="btn btn-primary btn-lg">
+                    🔍 Explore Packages
+                </a>
+                <a href="docs/getting-started.html" class="btn btn-outline btn-lg">
+                    📦 Publish a Package
+                </a>
+            </div>
+
+            <img src="/img/mascot.png" alt="Beepack Mascot" class="hero-mascot" style="max-height:220px;margin-top:24px;">
+
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-icon">📦</span>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">packages</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">stars</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">downloads</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="search" class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" placeholder="Search for an API... (e.g., 'sync with Notion', 'Google OAuth', 'parse PDF')" class="search-input">
+                <button class="btn btn-primary">Search</button>
+            </div>
+            <p class="search-hint">💡 Semantic search: describe what you need in natural language</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-yellow">🔍</div>
+                    <h3>AI-First Discovery</h3>
+                    <p>Semantic search to find the perfect API in natural language. MCP compatible.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-green">🔀</div>
+                    <h3>GitHub-Style Collaboration</h3>
+                    <p>Forks, issues, pull requests. Improve APIs together.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-blue">🛡️</div>
+                    <h3>Trust & Quality</h3>
+                    <p>Automated tests, security scanning, verified namespace via GitHub.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>For Contributors</h3>
+                    <p>Publish your API with a simple <code>HIVE.yaml</code> file</p>
+                    <pre><code>name: notion-sync
+version: 1.0.0
+description: Bidirectional sync with Notion
+capabilities:
+  - read_database
+  - write_pages
+requires:
+  env: [NOTION_API_KEY]</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>For Consumers</h3>
+                    <p>Install with a single command</p>
+                    <pre><code>beepack install notion-sync</code></pre>
+                    <p>Or ask your AI:</p>
+                    <pre><code>"Connect me to Notion to sync my database"</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>For AIs</h3>
+                    <p>Native MCP integration</p>
+                    <pre><code>// AI searches automatically
+const api = await beepack.search({
+  query: "sync Notion database",
+  capabilities: ["read_database"]
+});
+
+// And installs the best match
+await beepack.install(api[0].slug);</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section id="packages" class="packages-section">
+        <div class="container">
+            <h2>Popular Packages</h2>
+            <p class="section-subtitle">Coming soon - Be among the first contributors!</p>
+            
+            <div class="packages-grid">
+                <div class="package-card package-card-placeholder">
+                    <div class="package-icon">🔗</div>
+                    <h4>Your API Here</h4>
+                    <p>Be the first to publish a Notion integration</p>
+                    <a href="docs/getting-started.html" class="btn btn-sm">Publish</a>
+                </div>
+                <div class="package-card package-card-placeholder">
+                    <div class="package-icon">💳</div>
+                    <h4>Your API Here</h4>
+                    <p>Be the first to publish a Stripe integration</p>
+                    <a href="docs/getting-started.html" class="btn btn-sm">Publish</a>
+                </div>
+                <div class="package-card package-card-placeholder">
+                    <div class="package-icon">📧</div>
+                    <h4>Your API Here</h4>
+                    <p>Be the first to publish an Email integration</p>
+                    <a href="docs/getting-started.html" class="btn btn-sm">Publish</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For AI Section -->
+    <section class="for-ai-section">
+        <div class="container">
+            <h2>🤖 For AIs</h2>
+            <p class="section-subtitle">Beepack is designed to be queried by AIs</p>
+            
+            <div class="ai-integration">
+                <div class="ai-card">
+                    <h3>REST API</h3>
+                    <pre><code>GET /api/v1/search?q=notion+sync
+GET /api/v1/packages/notion-sync
+GET /api/v1/download?slug=notion-sync</code></pre>
+                    <a href="api-docs/" class="btn btn-outline btn-sm">API Documentation →</a>
+                </div>
+                
+                <div class="ai-card">
+                    <h3>MCP Tools</h3>
+                    <pre><code>{
+  "tools": [
+    {
+      "name": "search_packages",
+      "description": "Search for APIs"
+    },
+    {
+      "name": "install_package", 
+      "description": "Install an API"
+    }
+  ]
+}</code></pre>
+                    <a href="docs/mcp-integration.html" class="btn btn-outline btn-sm">MCP Guide →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Contribute?</h2>
+            <p>Publish your first API in minutes. No credit card required.</p>
+            <a href="docs/getting-started.html" class="btn btn-primary btn-lg">Get Started for Free</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:28px;vertical-align:middle;">
+                    <span class="logo-text">Beepack</span>
+                </div>
+                <p>Open source. Made with ❤️ for vibe coders.</p>
+            </div>
+            <div class="footer-links">
+                <a href="docs/">Documentation</a>
+                <a href="api-docs/">API</a>
+                <a href="https://github.com/beepack/beepack" target="_blank">GitHub</a>
+                <a href="docs/faq.html">FAQ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

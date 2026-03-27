@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publishing a Package - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../docs/">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html" class="active">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                    <li><a href="versioning.html">Versioning</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>📦 Publishing a Package</h1>
+            
+            <p>This guide walks you through publishing a quality package on Beepack.</p>
+
+            <h2>Prerequisites</h2>
+            <ul>
+                <li>A GitHub account created more than 14 days ago</li>
+                <li>Beepack CLI installed: <code>npm install -g beepack</code></li>
+                <li>An API/integration you want to share</li>
+            </ul>
+
+            <h2>Recommended Structure</h2>
+            <pre><code>my-package/
+├── HIVE.yaml          # Configuration (REQUIRED)
+├── README.md          # Documentation (highly recommended)
+├── src/
+│   ├── index.ts       # Entry point
+│   └── utils.ts       # Utilities
+├── tests/
+│   └── index.test.ts  # Tests
+├── examples/
+│   ├── basic.ts       # Simple example
+│   └── advanced.ts    # Advanced example
+└── LICENSE            # License (optional, MIT-0 by default)</code></pre>
+
+            <h2>1. Create the HIVE.yaml</h2>
+            <p>The most important file. See the <a href="hive-yaml.html">complete format guide</a>.</p>
+            <pre><code>name: my-api
+version: 1.0.0
+description: Clear and concise description
+
+keywords:
+  - keyword-1
+  - keyword-2
+
+capabilities:
+  - main_action
+  - other_action
+
+requires:
+  env:
+    - REQUIRED_API_KEY
+
+compatible:
+  - cursor
+  - copilot
+  - claude</code></pre>
+
+            <h2>2. Write a Good README</h2>
+            <p>A quality README significantly increases adoption. Include:</p>
+            <ul>
+                <li><strong>Description</strong> - What does it do?</li>
+                <li><strong>Installation</strong> - How to install</li>
+                <li><strong>Configuration</strong> - Environment variables</li>
+                <li><strong>Examples</strong> - Working code</li>
+                <li><strong>API</strong> - Function reference</li>
+            </ul>
+
+            <h2>3. Add Tests</h2>
+            <p>Packages with tests get a "tested" badge and inspire more trust.</p>
+            <pre><code># In HIVE.yaml
+tests:
+  command: npm test
+  coverage_min: 70</code></pre>
+
+            <h2>4. Publish</h2>
+            <pre><code># Login (once)
+beepack login
+
+# Publish
+beepack publish</code></pre>
+
+            <h2>Best Practices</h2>
+            
+            <h3>✅ Do</h3>
+            <ul>
+                <li>Use descriptive names</li>
+                <li>Declare ALL required env vars</li>
+                <li>Include working examples</li>
+                <li>Write tests</li>
+                <li>Update changelog with each version</li>
+            </ul>
+
+            <h3>❌ Don't</h3>
+            <ul>
+                <li>Hardcode secrets</li>
+                <li>Forget to document</li>
+                <li>Publish untested code</li>
+                <li>Use undeclared dependencies</li>
+            </ul>
+
+            <h2>After Publishing</h2>
+            <p>Your package is immediately available:</p>
+            <pre><code># Others can install it
+beepack install your-username/my-package
+
+# And find it via search
+beepack search "your package description"</code></pre>
+        </main>
+    </div>
+</body>
+</html>

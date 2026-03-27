@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="../docs/">Docs</a>
+                <a href="./" class="active">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🔌 API Reference</h4>
+                <ul>
+                    <li><a href="./" class="active">Introduction</a></li>
+                    <li><a href="#auth">Authentication</a></li>
+                </ul>
+                
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="#list">List packages</a></li>
+                    <li><a href="#get">Get package</a></li>
+                    <li><a href="#search">Search</a></li>
+                    <li><a href="#download">Download</a></li>
+                </ul>
+                
+                <h4>✍️ Publishing</h4>
+                <ul>
+                    <li><a href="#publish">Publish package</a></li>
+                    <li><a href="#versions">Versions</a></li>
+                </ul>
+                
+                <h4>👤 Users</h4>
+                <ul>
+                    <li><a href="#user">Get user</a></li>
+                    <li><a href="#user-packages">User packages</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>🔌 API Reference</h1>
+            
+            <div class="intro-box">
+                <p><strong>Base URL:</strong> <code>https://api.beepack.dev/v1</code></p>
+            </div>
+
+            <h2 id="auth">Authentication</h2>
+            <p>Public endpoints (GET) don't require authentication. To publish, use a Bearer token:</p>
+            <pre><code>Authorization: Bearer &lt;your-token&gt;</code></pre>
+            <p>Get your token via <code>beepack login</code> or in your profile settings.</p>
+
+            <h2 id="list">List Packages</h2>
+            <div class="api-endpoint">
+                <div class="api-endpoint-header">
+                    <span class="api-method api-method-get">GET</span>
+                    <span class="api-path">/packages</span>
+                </div>
+                <div class="api-endpoint-body">
+                    <p>List all public packages.</p>
+                    
+                    <h4>Query Parameters</h4>
+                    <table class="api-params">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">page</span></td>
+                            <td><span class="param-type">integer</span></td>
+                            <td>Page number (default: 1)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">limit</span></td>
+                            <td><span class="param-type">integer</span></td>
+                            <td>Results per page (default: 20, max: 100)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">sort</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Sort by: stars, downloads, updated (default: stars)</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>Response</h4>
+                    <pre><code>{
+  "packages": [
+    {
+      "slug": "notion-sync",
+      "displayName": "Notion Sync",
+      "description": "Bidirectional sync with Notion",
+      "owner": "guillaume",
+      "version": "1.2.0",
+      "stats": {
+        "stars": 45,
+        "downloads": 1200
+      },
+      "keywords": ["notion", "sync"],
+      "updatedAt": "2026-03-26T10:00:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 150
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <h2 id="get">Get Package</h2>
+            <div class="api-endpoint">
+                <div class="api-endpoint-header">
+                    <span class="api-method api-method-get">GET</span>
+                    <span class="api-path">/packages/:slug</span>
+                </div>
+                <div class="api-endpoint-body">
+                    <p>Get package details.</p>
+                    
+                    <h4>Path Parameters</h4>
+                    <table class="api-params">
+                        <tr>
+                            <td><span class="param-name">slug</span> <span class="param-required">required</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Package slug (e.g., "notion-sync")</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>Response</h4>
+                    <pre><code>{
+  "slug": "notion-sync",
+  "displayName": "Notion Sync",
+  "description": "Bidirectional sync with Notion API",
+  "owner": {
+    "handle": "guillaume",
+    "avatarUrl": "https://..."
+  },
+  "latestVersion": "1.2.0",
+  "versions": ["1.0.0", "1.1.0", "1.2.0"],
+  "stats": {
+    "stars": 45,
+    "downloads": 1200,
+    "comments": 5
+  },
+  "keywords": ["notion", "sync", "database"],
+  "capabilities": ["read_database", "write_pages"],
+  "requires": {
+    "env": ["NOTION_API_KEY"]
+  },
+  "compatible": ["cursor", "copilot", "claude"],
+  "readme": "# Notion Sync\n\n...",
+  "license": "MIT",
+  "createdAt": "2026-01-15T10:00:00Z",
+  "updatedAt": "2026-03-26T10:00:00Z"
+}</code></pre>
+                </div>
+            </div>
+
+            <h2 id="search">Search Packages</h2>
+            <div class="api-endpoint">
+                <div class="api-endpoint-header">
+                    <span class="api-method api-method-get">GET</span>
+                    <span class="api-path">/search</span>
+                </div>
+                <div class="api-endpoint-body">
+                    <p>Semantic search in packages.</p>
+                    
+                    <h4>Query Parameters</h4>
+                    <table class="api-params">
+                        <tr>
+                            <td><span class="param-name">q</span> <span class="param-required">required</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Search query (natural language)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">capabilities</span></td>
+                            <td><span class="param-type">string[]</span></td>
+                            <td>Filter by capabilities</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">compatible</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Filter by runtime (cursor, copilot, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">minStars</span></td>
+                            <td><span class="param-type">integer</span></td>
+                            <td>Minimum star count</td>
+                        </tr>
+                    </table>
+
+                    <h4>Example</h4>
+                    <pre><code>GET /search?q=sync+with+notion+database&capabilities=read_database</code></pre>
+                    
+                    <h4>Response</h4>
+                    <pre><code>{
+  "query": "sync with notion database",
+  "results": [
+    {
+      "slug": "notion-sync",
+      "description": "Bidirectional sync with Notion",
+      "score": 0.94,
+      "stats": { "stars": 45, "downloads": 1200 }
+    }
+  ],
+  "total": 1,
+  "searchTime": 45
+}</code></pre>
+                </div>
+            </div>
+
+            <h2 id="download">Download Package</h2>
+            <div class="api-endpoint">
+                <div class="api-endpoint-header">
+                    <span class="api-method api-method-get">GET</span>
+                    <span class="api-path">/download</span>
+                </div>
+                <div class="api-endpoint-body">
+                    <p>Download a package (ZIP).</p>
+                    
+                    <h4>Query Parameters</h4>
+                    <table class="api-params">
+                        <tr>
+                            <td><span class="param-name">slug</span> <span class="param-required">required</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Package slug</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">version</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Version (default: latest)</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>Response</h4>
+                    <p>Binary ZIP file with <code>Content-Type: application/zip</code></p>
+                </div>
+            </div>
+
+            <h2 id="publish">Publish Package</h2>
+            <div class="api-endpoint">
+                <div class="api-endpoint-header">
+                    <span class="api-method api-method-post">POST</span>
+                    <span class="api-path">/packages</span>
+                </div>
+                <div class="api-endpoint-body">
+                    <p>Publish a new package or version. <strong>Requires authentication.</strong></p>
+                    
+                    <h4>Request Body</h4>
+                    <p>Multipart form data with:</p>
+                    <table class="api-params">
+                        <tr>
+                            <td><span class="param-name">files</span> <span class="param-required">required</span></td>
+                            <td><span class="param-type">files[]</span></td>
+                            <td>Package files (including HIVE.yaml)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">changelog</span></td>
+                            <td><span class="param-type">string</span></td>
+                            <td>Changelog for this version</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>Response</h4>
+                    <pre><code>{
+  "success": true,
+  "package": {
+    "slug": "notion-sync",
+    "version": "1.3.0"
+  },
+  "message": "Package published successfully"
+}</code></pre>
+                </div>
+            </div>
+
+            <h2>Rate Limits</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Unauthenticated</th>
+                        <th>Authenticated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GET (read)</td>
+                        <td>100/min</td>
+                        <td>1000/min</td>
+                    </tr>
+                    <tr>
+                        <td>POST (write)</td>
+                        <td>N/A</td>
+                        <td>60/min</td>
+                    </tr>
+                    <tr>
+                        <td>Search</td>
+                        <td>30/min</td>
+                        <td>300/min</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Errors</h2>
+            <pre><code>{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Package 'xyz' not found",
+    "status": 404
+  }
+}</code></pre>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>UNAUTHORIZED</td><td>401</td><td>Invalid or missing token</td></tr>
+                    <tr><td>FORBIDDEN</td><td>403</td><td>Access denied</td></tr>
+                    <tr><td>NOT_FOUND</td><td>404</td><td>Resource not found</td></tr>
+                    <tr><td>VALIDATION_ERROR</td><td>422</td><td>Invalid data</td></tr>
+                    <tr><td>RATE_LIMITED</td><td>429</td><td>Too many requests</td></tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+</body>
+</html>

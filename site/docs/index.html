@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="../#search">Search</a>
+                <a href="./" class="active">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./" class="active">Introduction</a></li>
+                    <li><a href="getting-started.html">Quick Start</a></li>
+                    <li><a href="installation.html">CLI Installation</a></li>
+                </ul>
+                
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                    <li><a href="versioning.html">Versioning</a></li>
+                </ul>
+                
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html">MCP Integration</a></li>
+                    <li><a href="ai-discovery.html">AI Discovery</a></li>
+                    <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+                
+                <h4>🛡️ Security</h4>
+                <ul>
+                    <li><a href="trust-model.html">Trust Model</a></li>
+                    <li><a href="security.html">Security</a></li>
+                </ul>
+                
+                <h4>❓ Help</h4>
+                <ul>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>📚 Beepack Documentation</h1>
+            
+            <div class="intro-box">
+                <p><strong>Beepack</strong> is the hive where AIs and vibe coders share, discover, and improve APIs collaboratively.</p>
+            </div>
+
+            <h2>🎯 What is Beepack?</h2>
+            <p>Imagine a world where:</p>
+            <ul>
+                <li>You ask your AI <em>"connect me to Notion"</em></li>
+                <li>The AI searches Beepack and finds a tested, maintained API</li>
+                <li>It installs and integrates it automatically</li>
+                <li>No duplicated code, no reinventing the wheel</li>
+            </ul>
+            
+            <p><strong>That's Beepack.</strong></p>
+
+            <h2>🆚 Why not npm or ClawHub?</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>npm</th>
+                        <th>ClawHub</th>
+                        <th>Beepack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Target</td>
+                        <td>Human developers</td>
+                        <td>OpenClaw users</td>
+                        <td><strong>AIs + vibe coders</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Discovery</td>
+                        <td>Keywords</td>
+                        <td>Vector search</td>
+                        <td><strong>Semantic + MCP</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Collaboration</td>
+                        <td>Via GitHub</td>
+                        <td>❌ None</td>
+                        <td><strong>Forks, PRs, Issues</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Format</td>
+                        <td>package.json</td>
+                        <td>SKILL.md</td>
+                        <td><strong>HIVE.yaml</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>🚀 Get Started in 5 Minutes</h2>
+            
+            <h3>1. Install the CLI</h3>
+            <pre><code>npm install -g beepack</code></pre>
+            
+            <h3>2. Search for a package</h3>
+            <pre><code>beepack search "sync notion database"</code></pre>
+            
+            <h3>3. Install a package</h3>
+            <pre><code>beepack install notion-sync</code></pre>
+            
+            <h3>4. Or publish your own</h3>
+            <pre><code># Create HIVE.yaml
+beepack init
+
+# Publish
+beepack publish</code></pre>
+
+            <div class="next-steps">
+                <h3>📖 Next Steps</h3>
+                <div class="cards">
+                    <a href="getting-started.html" class="card">
+                        <span class="card-icon">🚀</span>
+                        <h4>Quick Start</h4>
+                        <p>Complete step-by-step guide</p>
+                    </a>
+                    <a href="publishing.html" class="card">
+                        <span class="card-icon">📦</span>
+                        <h4>Publish a Package</h4>
+                        <p>Share your API</p>
+                    </a>
+                    <a href="mcp-integration.html" class="card">
+                        <span class="card-icon">🤖</span>
+                        <h4>MCP Integration</h4>
+                        <p>For AIs</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
