@@ -176,10 +176,13 @@ export function verifySessionToken(token) {
       sessions.delete(token);
       return null;
     }
-    
-    // Get full session data
+
+    // Get session from memory cache, or rebuild from payload
     const session = sessions.get(token);
-    return session?.user || null;
+    if (session?.user) return session.user;
+
+    // Token is valid (signature + expiration checked) - rebuild user from payload
+    return { id: payload.userId, login: payload.login };
   } catch (e) {
     return null;
   }
@@ -400,6 +403,24 @@ export function setupAuthRoutes(app, db) {
     res.json({
       user: req.user,
     });
+  });
+
+  // Reset token - invalidate current token, generate a new one
+  app.post('/api/v1/reset-token', authMiddleware, (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Not logged in' } });
+    }
+
+    // Invalidate current token
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      sessions.delete(authHeader.slice(7));
+    }
+
+    // Generate new token
+    const newToken = createSessionToken(req.user);
+
+    res.json({ token: newToken, message: 'Token reset. Update your CLI config with the new token.' });
   });
 
   // Logout

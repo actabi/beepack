@@ -102,16 +102,7 @@ function setupSearch() {
 
 async function handleSearch(query) {
     if (!query.trim()) return;
-    
-    try {
-        const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
-        if (response.ok) {
-            const data = await response.json();
-            displaySearchResults(data);
-        }
-    } catch (e) {
-        alert(`🔍 Search: "${query}"\n\nThe API is not available. Start the server with:\nnode server.js`);
-    }
+    window.location.href = `/search.html?q=${encodeURIComponent(query)}`;
 }
 
 function displaySearchResults(data) {
