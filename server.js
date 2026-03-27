@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { existsSync, mkdirSync, readFileSync } from 'fs';
 import { setupAuthRoutes, authMiddleware, requireAuth } from './auth.js';
-import { initEmbeddings, initEmbeddingsTable, generateAllEmbeddings, createSearchHandler, isEmbeddingsEnabled, isUsingQdrant } from './embeddings.js';
+import { initEmbeddings, initEmbeddingsTable, generateAllEmbeddings, createSearchHandler, isEmbeddingsEnabled, isUsingQdrant, generateEmbedding, storeEmbedding, packageToText } from './embeddings.js';
 import { storePackageFiles, getPackageFilesMetadata, getFile, createPackageArchive, initStorage } from './storage.js';
 import { setupRemoteMCP } from './mcp-remote.js';
 
@@ -482,6 +482,29 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
       });
     }
 
+    // Validate content is in English
+    const frenchWords = ['pour', 'avec', 'les', 'des', 'une', 'qui', 'dans', 'est', 'sont', 'peut', 'cette', 'votre', 'vous', 'nous', 'leur', 'aussi', 'mais', 'comme', 'donc', 'depuis'];
+    const descWords = (hiveContent.description || '').toLowerCase().split(/\s+/);
+    const frenchCount = descWords.filter(w => frenchWords.includes(w)).length;
+    if (frenchCount >= 3) {
+      return res.status(400).json({
+        error: { code: 'INVALID_LANGUAGE', message: 'Description must be written in English. French was detected. See https://beepack.dev/llms.txt for publishing guidelines.' },
+      });
+    }
+
+    // Check README language
+    const readmeFileCheck = files.find(f => f.originalname.toLowerCase() === 'readme.md');
+    if (readmeFileCheck) {
+      const readmeText = readmeFileCheck.buffer.toString('utf8').toLowerCase();
+      const readmeWords = readmeText.split(/\s+/);
+      const readmeFrenchCount = readmeWords.filter(w => frenchWords.includes(w)).length;
+      if (readmeFrenchCount >= 5) {
+        return res.status(400).json({
+          error: { code: 'INVALID_LANGUAGE', message: 'README.md must be written in English. French was detected. See https://beepack.dev/llms.txt for publishing guidelines.' },
+        });
+      }
+    }
+
     // Check package ownership or create new
     let pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
     
@@ -552,6 +575,21 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
         changelog = excluded.changelog,
         hive_yaml = excluded.hive_yaml
     `).run(pkg.id, version, changelog || '', hiveFile.buffer.toString('utf8'), req.user.id);
+
+    // Auto-generate embedding for semantic search (non-blocking)
+    if (isEmbeddingsEnabled()) {
+      const pkgData = db.prepare('SELECT * FROM packages WHERE id = ?').get(pkg.id);
+      (async () => {
+        try {
+          const text = packageToText(pkgData);
+          const embedding = await generateEmbedding(text);
+          await storeEmbedding(db, pkg.id, embedding, pkgData);
+          console.log(`✅ Indexed ${slug} in vector DB`);
+        } catch (e) {
+          console.error(`⚠️ Embedding failed for ${slug}:`, e.message);
+        }
+      })();
+    }
 
     res.json({
       success: true,
@@ -670,6 +708,11 @@ app.get('/api/v1/packages/:slug/files/*', authMiddleware, requireAuth, (req, res
 
   res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
   res.send(content);
+});
+
+// Redirect /packages/:slug to /package.html?slug=:slug
+app.get('/packages/:slug', (req, res) => {
+  res.redirect(301, `/package.html?slug=${req.params.slug}`);
 });
 
 // Catch-all for SPA (serve index.html for non-API routes)
