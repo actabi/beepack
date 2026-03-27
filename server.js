@@ -282,7 +282,17 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     repositoryUrl: pkg.repository_url,
     homepageUrl: pkg.homepage_url,
     createdAt: pkg.created_at,
-    updatedAt: pkg.updated_at
+    updatedAt: pkg.updated_at,
+    worksWell: (() => {
+      try {
+        return db.prepare(`
+          SELECT p.slug, p.display_name as displayName, p.description, pl.reason
+          FROM package_links pl
+          JOIN packages p ON (p.id = CASE WHEN pl.from_package_id = ? THEN pl.to_package_id ELSE pl.from_package_id END)
+          WHERE pl.from_package_id = ? OR pl.to_package_id = ?
+        `).all(pkg.id, pkg.id, pkg.id);
+      } catch (e) { return []; }
+    })()
   });
 });
 

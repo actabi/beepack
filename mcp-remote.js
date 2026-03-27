@@ -107,6 +107,9 @@ ${pkg.requires?.env?.length ? pkg.requires.env.map(e => `- \`${e}\``).join('\n')
 
 ## Compatible With
 ${pkg.compatible.join(', ')}
+${pkg.worksWell && pkg.worksWell.length > 0 ? `
+## Works Well With
+${pkg.worksWell.map(l => `- **${l.displayName}** (\`${l.slug}\`): ${l.reason || l.description}`).join('\n')}` : ''}
 
 ## README
 ${pkg.readme || 'No README available.'}`;
