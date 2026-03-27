@@ -877,6 +877,21 @@ app.get('/api/v1/packages/:slug/files/*', (req, res) => {
   res.send(content);
 });
 
+// Get linked packages
+app.get('/api/v1/packages/:slug/links', (req, res) => {
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  const links = db.prepare(`
+    SELECT p.slug, p.display_name as displayName, pl.reason
+    FROM package_links pl
+    JOIN packages p ON (p.id = CASE WHEN pl.from_package_id = ? THEN pl.to_package_id ELSE pl.from_package_id END)
+    WHERE pl.from_package_id = ? OR pl.to_package_id = ?
+  `).all(pkg.id, pkg.id, pkg.id);
+
+  res.json({ links });
+});
+
 // Redirect /packages/:slug to /package.html?slug=:slug
 app.get('/packages/:slug', (req, res) => {
   res.redirect(301, `/package.html?slug=${req.params.slug}`);

@@ -10,36 +10,23 @@
     <style>
         * { box-sizing: border-box; }
         .pkg-page { padding: 40px 0 80px; }
-
-        /* Header */
         .pkg-hero { margin-bottom: 32px; }
         .pkg-hero h1 { font-size: 2rem; margin: 0 0 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .pkg-hero .badge { background: var(--primary); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
         .pkg-hero .desc { font-size: 1.1rem; color: var(--text-muted); margin: 0 0 16px; }
         .pkg-meta { display: flex; gap: 20px; font-size: 14px; color: var(--text-muted); flex-wrap: wrap; }
         .pkg-meta span { display: flex; align-items: center; gap: 4px; }
-
-        /* Install bar */
         .install-bar { background: #1e293b; color: #e2e8f0; padding: 14px 20px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; }
         .install-bar .cmd { opacity: 0.5; }
         .install-bar button { background: var(--primary); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-
-        /* Grid */
         .pkg-grid { display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
         @media (max-width: 900px) { .pkg-grid { grid-template-columns: 1fr; } }
-
-        /* Main content */
-        .pkg-main {}
-
-        /* Tabs */
         .pkg-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
         .pkg-tab { padding: 10px 20px; cursor: pointer; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
         .pkg-tab:hover { color: var(--text); }
         .pkg-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* README */
         .readme-box { line-height: 1.7; }
         .readme-box h1 { font-size: 1.5rem; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
         .readme-box h2 { font-size: 1.25rem; margin: 28px 0 12px; }
@@ -49,33 +36,23 @@
         .readme-box p code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
         .readme-box ul, .readme-box ol { padding-left: 24px; }
         .readme-box li { margin: 4px 0; }
-        .readme-box hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
-        .readme-box strong { color: var(--text); }
-
-        /* Capabilities */
+        .readme-box table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        .readme-box th, .readme-box td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+        .readme-box th { background: #f8fafc; }
         .cap-grid { display: flex; flex-wrap: wrap; gap: 8px; }
         .cap-tag { display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
         .cap-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
-
-        /* Requirements */
         .req-list { list-style: none; padding: 0; }
-        .req-list li { padding: 8px 12px; background: #f8fafc; border-radius: 6px; margin: 4px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .req-list li { padding: 8px 12px; background: #f8fafc; border-radius: 6px; margin: 4px 0; font-size: 14px; }
         .req-list li code { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
         .req-none { color: #10b981; font-weight: 500; }
-
-        /* Sidebar */
-        .pkg-sidebar {}
         .side-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
         .side-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 10px; }
         .side-card .author { display: flex; align-items: center; gap: 8px; font-weight: 500; }
         .side-card .author img { width: 24px; height: 24px; border-radius: 50%; }
-        .side-card ul { list-style: none; padding: 0; margin: 0; }
-        .side-card li { padding: 3px 0; font-size: 14px; }
         .kw-tag { display: inline-block; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
         .compat-tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; font-weight: 500; }
         .ver-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-
-        /* Code viewer */
         .file-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
         .file-item { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
         .file-item:last-child { border-bottom: none; }
@@ -83,29 +60,6 @@
         .file-item.active { background: #eff6ff; }
         .file-name { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
         .file-size { color: var(--text-muted); font-size: 12px; }
-
-        /* Feedback */
-        .ratings-summary { margin-bottom: 24px; }
-        .rating-avg { display: flex; align-items: center; gap: 12px; }
-        .rating-big { font-size: 3rem; font-weight: 700; color: #10b981; }
-        .rating-label { font-size: 1.2rem; color: var(--text-muted); }
-        .rating-count { color: var(--text-muted); font-size: 14px; }
-        .no-ratings { color: var(--text-muted); font-style: italic; }
-        .ratings-list { margin-top: 16px; }
-        .rating-item { padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 12px; }
-        .rating-item.dislike { background: #fef2f2; border-left: 3px solid #ef4444; }
-        .rating-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-        .rating-thumb { font-size: 1.2rem; }
-        .rating-agent { font-weight: 500; color: var(--text); }
-        .rating-comment { margin: 0; color: #475569; }
-
-        /* Related packages */
-        .related-list { list-style: none; padding: 0; margin: 0; }
-        .related-list li { padding: 4px 0; }
-        .related-list a { color: var(--primary); text-decoration: none; font-size: 14px; }
-        .related-list a:hover { text-decoration: underline; }
-        .no-related { font-size: 13px; color: var(--text-muted); margin: 0; }
-        .loading-small { font-size: 13px; color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -130,248 +84,250 @@
     </main>
 
     <script>
+        function el(tag, attrs, children) {
+            const e = document.createElement(tag);
+            if (attrs) Object.entries(attrs).forEach(([k, v]) => {
+                if (k === 'className') e.className = v;
+                else if (k === 'innerHTML') e.innerHTML = v;
+                else if (k === 'textContent') e.textContent = v;
+                else if (k === 'onclick') e.onclick = v;
+                else e.setAttribute(k, v);
+            });
+            if (children) children.forEach(c => { if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+            return e;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         async function loadPackage() {
             const slug = new URLSearchParams(window.location.search).get('slug');
             if (!slug) { document.getElementById('pkg-root').innerHTML = '<p>Package not specified. <a href="/">Go back</a></p>'; return; }
 
             try {
-                const res = await fetch(`/api/v1/packages/${slug}`);
+                const res = await fetch('/api/v1/packages/' + slug);
                 if (!res.ok) throw new Error();
                 const pkg = await res.json();
-                document.title = `${pkg.displayName} - Beepack`;
+                document.title = pkg.displayName + ' - Beepack';
+
+                const root = document.getElementById('pkg-root');
+                root.innerHTML = '';
 
                 const req = pkg.requires || {};
                 const hasEnv = req.env && req.env.length > 0;
                 const hasDeps = req.deps && req.deps.length > 0;
 
-                // Strip first H1 from readme to avoid duplication
-                const readmeClean = (pkg.readme || '').replace(/^#\s+.+\n/, '');
+                // Hero
+                var hero = el('div', {className: 'pkg-hero'});
+                var h1 = el('h1');
+                h1.appendChild(document.createTextNode(pkg.displayName + ' '));
+                h1.appendChild(el('span', {className: 'badge', textContent: 'v' + pkg.latestVersion}));
+                hero.appendChild(h1);
+                hero.appendChild(el('p', {className: 'desc', textContent: pkg.description}));
+                var meta = el('div', {className: 'pkg-meta'});
+                meta.innerHTML = '<span>by <strong>' + escapeHtml(pkg.owner.handle) + '</strong></span>' +
+                    '<span>&#11088; ' + pkg.stats.stars + ' stars</span>' +
+                    '<span>&#8595; ' + pkg.stats.downloads.toLocaleString() + ' downloads</span>';
+                hero.appendChild(meta);
+                root.appendChild(hero);
 
-                document.getElementById('pkg-root').innerHTML = `
-                    <div class="pkg-hero">
-                        <h1>${pkg.displayName} <span class="badge">v${pkg.latestVersion}</span></h1>
-                        <p class="desc">${pkg.description}</p>
-                        <div class="pkg-meta">
-                            <span>by <strong>${pkg.owner.handle}</strong></span>
-                            <span>&#11088; ${pkg.stats.stars} stars</span>
-                            <span>&#8595; ${pkg.stats.downloads.toLocaleString()} downloads</span>
-                        </div>
-                    </div>
+                // Install bar
+                var bar = el('div', {className: 'install-bar'});
+                bar.innerHTML = '<span><span class="cmd">$</span> beepack install ' + escapeHtml(pkg.slug) + '</span>';
+                var copyBtn = el('button', {textContent: 'Copy', onclick: function() { navigator.clipboard.writeText('beepack install ' + pkg.slug); }});
+                bar.appendChild(copyBtn);
+                root.appendChild(bar);
 
-                    <div class="install-bar">
-                        <span><span class="cmd">$</span> beepack install ${pkg.slug}</span>
-                        <button onclick="navigator.clipboard.writeText('beepack install ${pkg.slug}')">Copy</button>
-                    </div>
+                // Grid
+                var grid = el('div', {className: 'pkg-grid'});
 
-                    <div class="pkg-grid">
-                        <div class="pkg-main">
-                            <div class="pkg-tabs">
-                                <div class="pkg-tab active" data-tab="readme">Documentation</div>
-                                <div class="pkg-tab" data-tab="code">Code</div>
-                                <div class="pkg-tab" data-tab="ratings">AI Reviews</div>
-                                <div class="pkg-tab" data-tab="capabilities">Capabilities</div>
-                                <div class="pkg-tab" data-tab="requirements">Requirements</div>
-                            </div>
+                // Main column
+                var main = el('div', {className: 'pkg-main'});
 
-                            <div class="tab-content active" id="tab-readme">
-                                <div class="readme-box">${marked.parse(readmeClean)}</div>
-                            </div>
+                // Tabs
+                var tabs = el('div', {className: 'pkg-tabs'});
+                var tabNames = [{id: 'readme', label: 'Documentation'}, {id: 'code', label: 'Code'}, {id: 'capabilities', label: 'Capabilities'}, {id: 'requirements', label: 'Requirements'}];
+                tabNames.forEach(function(t, i) {
+                    var tab = el('div', {className: 'pkg-tab' + (i === 0 ? ' active' : ''), 'data-tab': t.id, textContent: t.label});
+                    tabs.appendChild(tab);
+                });
+                main.appendChild(tabs);
 
-                            <div class="tab-content" id="tab-code">
-                                <div id="code-viewer">Loading files...</div>
-                            </div>
+                // Tab: Readme
+                var tabReadme = el('div', {className: 'tab-content active', id: 'tab-readme'});
+                var readmeBox = el('div', {className: 'readme-box'});
+                var readmeClean = (pkg.readme || 'No documentation available.').replace(/^#\s+.+\n/, '');
+                readmeBox.innerHTML = marked.parse(readmeClean);
+                tabReadme.appendChild(readmeBox);
+                main.appendChild(tabReadme);
 
-                            <div class="tab-content" id="tab-ratings">
-                                <div id="ratings-viewer">Loading AI reviews...</div>
-                            </div>
+                // Tab: Code
+                var tabCode = el('div', {className: 'tab-content', id: 'tab-code'});
+                tabCode.innerHTML = '<div id="code-viewer">Click to load source files...</div>';
+                main.appendChild(tabCode);
 
-                            <div class="tab-content" id="tab-capabilities">
-                                <div class="cap-grid">
-                                    ${pkg.capabilities.map(c => `<span class="cap-tag">${c.replace(/_/g, ' ')}</span>`).join('')}
-                                </div>
-                            </div>
+                // Tab: Capabilities
+                var tabCap = el('div', {className: 'tab-content', id: 'tab-capabilities'});
+                var capGrid = el('div', {className: 'cap-grid'});
+                (pkg.capabilities || []).forEach(function(c) {
+                    capGrid.appendChild(el('span', {className: 'cap-tag', textContent: c.replace(/_/g, ' ')}));
+                });
+                tabCap.appendChild(capGrid);
+                main.appendChild(tabCap);
 
-                            <div class="tab-content" id="tab-requirements">
-                                ${hasEnv ? `
-                                    <h3>Environment Variables</h3>
-                                    <ul class="req-list">${req.env.map(e => `<li><code>${e}</code></li>`).join('')}</ul>
-                                ` : ''}
-                                ${hasDeps ? `
-                                    <h3>Dependencies</h3>
-                                    <ul class="req-list">${req.deps.map(d => `<li>${d}</li>`).join('')}</ul>
-                                ` : ''}
-                                ${!hasEnv && !hasDeps ? '<p class="req-none">&#10003; No requirements - works out of the box.</p>' : ''}
-                            </div>
-                        </div>
+                // Tab: Requirements
+                var tabReq = el('div', {className: 'tab-content', id: 'tab-requirements'});
+                if (hasEnv) {
+                    tabReq.appendChild(el('h3', {textContent: 'Environment Variables'}));
+                    var ul = el('ul', {className: 'req-list'});
+                    req.env.forEach(function(e) { ul.appendChild(el('li', {innerHTML: '<code>' + escapeHtml(e) + '</code>'})); });
+                    tabReq.appendChild(ul);
+                }
+                if (hasDeps) {
+                    tabReq.appendChild(el('h3', {textContent: 'Dependencies'}));
+                    var ul2 = el('ul', {className: 'req-list'});
+                    req.deps.forEach(function(d) { ul2.appendChild(el('li', {textContent: d})); });
+                    tabReq.appendChild(ul2);
+                }
+                if (!hasEnv && !hasDeps) {
+                    tabReq.appendChild(el('p', {className: 'req-none', innerHTML: '&#10003; No requirements - works out of the box.'}));
+                }
+                main.appendChild(tabReq);
 
-                        <div class="pkg-sidebar">
-                            <div class="side-card">
-                                <h4>Author</h4>
-                                <div class="author">
-                                    <img src="${pkg.owner.avatarUrl}" alt="${pkg.owner.handle}">
-                                    ${pkg.owner.handle}
-                                </div>
-                            </div>
+                grid.appendChild(main);
 
-                            <div class="side-card">
-                                <h4>Compatible with</h4>
-                                <div>${pkg.compatible.map(c => `<span class="compat-tag">${c}</span>`).join(' ')}</div>
-                            </div>
+                // Sidebar
+                var sidebar = el('div', {className: 'pkg-sidebar'});
 
-                            <div class="side-card">
-                                <h4>Version</h4>
-                                <span class="ver-tag">${pkg.latestVersion}</span>
-                            </div>
+                // Author
+                var cardAuthor = el('div', {className: 'side-card'});
+                cardAuthor.appendChild(el('h4', {textContent: 'Author'}));
+                var authorDiv = el('div', {className: 'author'});
+                authorDiv.appendChild(el('img', {src: pkg.owner.avatarUrl, alt: pkg.owner.handle}));
+                authorDiv.appendChild(document.createTextNode(pkg.owner.handle));
+                cardAuthor.appendChild(authorDiv);
+                sidebar.appendChild(cardAuthor);
 
-                            <div class="side-card">
-                                <h4>Keywords</h4>
-                                <div>${pkg.keywords.map(k => `<span class="kw-tag">${k}</span>`).join(' ')}</div>
-                            </div>
+                // Compatible
+                var cardCompat = el('div', {className: 'side-card'});
+                cardCompat.appendChild(el('h4', {textContent: 'Compatible with'}));
+                var compatDiv = el('div');
+                (pkg.compatible || []).forEach(function(c) {
+                    compatDiv.appendChild(el('span', {className: 'compat-tag', textContent: c}));
+                    compatDiv.appendChild(document.createTextNode(' '));
+                });
+                cardCompat.appendChild(compatDiv);
+                sidebar.appendChild(cardCompat);
 
-                            <div class="side-card" id="related-packages">
-                                <h4>Works with</h4>
-                                <div class="loading-small">Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                // Version
+                var cardVer = el('div', {className: 'side-card'});
+                cardVer.appendChild(el('h4', {textContent: 'Version'}));
+                cardVer.appendChild(el('span', {className: 'ver-tag', textContent: pkg.latestVersion}));
+                sidebar.appendChild(cardVer);
+
+                // Keywords
+                var cardKw = el('div', {className: 'side-card'});
+                cardKw.appendChild(el('h4', {textContent: 'Keywords'}));
+                var kwDiv = el('div');
+                (pkg.keywords || []).forEach(function(k) {
+                    kwDiv.appendChild(el('span', {className: 'kw-tag', textContent: k}));
+                    kwDiv.appendChild(document.createTextNode(' '));
+                });
+                cardKw.appendChild(kwDiv);
+                sidebar.appendChild(cardKw);
+
+                // Works with (linked packages)
+                var cardLinks = el('div', {className: 'side-card', id: 'linked-packages'});
+                cardLinks.appendChild(el('h4', {textContent: 'Works with'}));
+                cardLinks.appendChild(el('div', {className: 'loading-small', textContent: 'Loading...'}));
+                sidebar.appendChild(cardLinks);
+
+                grid.appendChild(sidebar);
+                root.appendChild(grid);
+
+                // Load linked packages
+                fetch('/api/v1/packages/' + pkg.slug + '/links')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        var container = document.getElementById('linked-packages');
+                        var loading = container.querySelector('.loading-small');
+                        if (loading) loading.remove();
+                        // Support both formats: {links:[]} or {worksWith:[], usedBy:[]}
+                        var allLinks = data.links || [].concat(data.worksWith || []).concat(data.usedBy || []);
+                        if (allLinks.length === 0) {
+                            container.appendChild(el('p', {textContent: 'No linked packages yet.', style: 'color:var(--text-muted);font-size:13px;margin:0'}));
+                            return;
+                        }
+                        allLinks.forEach(function(link) {
+                            var a = el('a', {href: '/package.html?slug=' + link.slug, style: 'display:block;padding:6px 0;font-size:14px;text-decoration:none;color:var(--primary);font-weight:500'});
+                            a.textContent = link.displayName || link.slug;
+                            container.appendChild(a);
+                            if (link.reason) {
+                                container.appendChild(el('p', {textContent: link.reason, style: 'font-size:12px;color:var(--text-muted);margin:0 0 8px'}));
+                            }
+                        });
+                    })
+                    .catch(function() {
+                        var container = document.getElementById('linked-packages');
+                        var loading = container.querySelector('.loading-small');
+                        if (loading) loading.textContent = 'Could not load links.';
+                    });
 
                 // Tab switching
-                document.querySelectorAll('.pkg-tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.pkg-tab').forEach(t => t.classList.remove('active'));
-                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.pkg-tab').forEach(function(tab) {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('.pkg-tab').forEach(function(t) { t.classList.remove('active'); });
+                        document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
                         tab.classList.add('active');
                         document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-                        
-                        // Load code on first click
+
                         if (tab.dataset.tab === 'code' && !window.codeLoaded) {
                             loadCode(pkg.slug);
-                        }
-                        // Load ratings on first click
-                        if (tab.dataset.tab === 'ratings' && !window.ratingsLoaded) {
-                            loadRatings(pkg.slug);
                         }
                     });
                 });
 
-                // Load code files
-                async function loadCode(slug) {
-                    try {
-                        const res = await fetch(\`/api/v1/packages/\${slug}/files\`);
-                        if (!res.ok) throw new Error('No files');
-                        const data = await res.json();
-                        
-                        let html = '<div class="file-list">';
-                        for (const file of data.files) {
-                            html += \`
-                                <div class="file-item" data-path="\${file.path}">
-                                    <span class="file-name">📄 \${file.path}</span>
-                                    <span class="file-size">\${(file.size / 1024).toFixed(1)} KB</span>
-                                </div>
-                            \`;
-                        }
-                        html += '</div><div id="file-content" class="readme-box" style="margin-top:20px;"></div>';
-                        document.getElementById('code-viewer').innerHTML = html;
-                        
-                        // Click to view file
-                        document.querySelectorAll('.file-item').forEach(item => {
-                            item.addEventListener('click', async () => {
-                                const path = item.dataset.path;
-                                const content = await fetch(\`/api/v1/packages/\${slug}/files/\${path}\`).then(r => r.text());
-                                document.getElementById('file-content').innerHTML = \`<h3>\${path}</h3><pre><code>\${escapeHtml(content)}</code></pre>\`;
-                                document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
-                                item.classList.add('active');
-                            });
-                        });
-                        
-                        window.codeLoaded = true;
-                    } catch (e) {
-                        document.getElementById('code-viewer').innerHTML = '<p>No source files available for this package.</p>';
-                    }
-                }
-                
-                function escapeHtml(text) {
-                    const div = document.createElement('div');
-                    div.textContent = text;
-                    return div.innerHTML;
-                }
-                
-                // Load related packages
-                (async function loadRelated() {
-                    try {
-                        const res = await fetch(\`/api/v1/packages/\${pkg.slug}/links\`);
-                        if (!res.ok) throw new Error();
-                        const data = await res.json();
-                        
-                        const related = [...data.worksWith, ...data.usedBy];
-                        if (related.length === 0) {
-                            document.getElementById('related-packages').innerHTML = '<h4>Works with</h4><p class="no-related">No related packages yet</p>';
-                            return;
-                        }
-                        
-                        let html = '<h4>Works with</h4><ul class="related-list">';
-                        for (const p of related.slice(0, 5)) {
-                            html += \`<li><a href="/package.html?slug=\${p.slug}">\${p.displayName || p.slug}</a></li>\`;
-                        }
-                        html += '</ul>';
-                        document.getElementById('related-packages').innerHTML = html;
-                    } catch (e) {
-                        document.getElementById('related-packages').style.display = 'none';
-                    }
-                })();
-                
-                // Load feedback
-                async function loadRatings(slug) {
-                    try {
-                        const res = await fetch(\`/api/v1/packages/\${slug}/feedback\`);
-                        if (!res.ok) throw new Error('No feedback');
-                        const data = await res.json();
-                        
-                        let html = '<div class="ratings-summary">';
-                        if (data.stats.total > 0) {
-                            html += \`
-                                <div class="rating-avg">
-                                    <span class="rating-big">\${data.stats.likeRatio}%</span>
-                                    <span class="rating-label">liked</span>
-                                    <span class="rating-count">👍 \${data.stats.likes} &nbsp; 👎 \${data.stats.dislikes}</span>
-                                </div>
-                            \`;
-                        } else {
-                            html += '<p class="no-ratings">No AI feedback yet. When AI agents use this package, they can like or dislike it!</p>';
-                        }
-                        html += '</div>';
-                        
-                        const dislikes = data.feedback.filter(f => !f.liked);
-                        if (dislikes.length > 0) {
-                            html += '<h3>Issues reported by AI agents</h3>';
-                            html += '<div class="ratings-list">';
-                            for (const f of dislikes) {
-                                html += \`
-                                    <div class="rating-item dislike">
-                                        <div class="rating-header">
-                                            <span class="rating-thumb">👎</span>
-                                            <span class="rating-agent">\${f.agentName || f.userHandle}</span>
-                                        </div>
-                                        <p class="rating-comment">"\${escapeHtml(f.reason)}"</p>
-                                    </div>
-                                \`;
-                            }
-                            html += '</div>';
-                        }
-                        
-                        document.getElementById('ratings-viewer').innerHTML = html;
-                        window.ratingsLoaded = true;
-                    } catch (e) {
-                        document.getElementById('ratings-viewer').innerHTML = '<p>Could not load feedback.</p>';
-                    }
-                }
             } catch (e) {
-                document.getElementById('pkg-root').innerHTML = `
-                    <h1>Package not found</h1>
-                    <p>The package "${slug}" doesn't exist or the API is not available.</p>
-                    <p><a href="/">Back to home</a></p>
-                `;
+                document.getElementById('pkg-root').innerHTML = '<h1>Package not found</h1><p>The package does not exist or the API is not available.</p><p><a href="/">Back to home</a></p>';
+            }
+        }
+
+        async function loadCode(slug) {
+            try {
+                var res = await fetch('/api/v1/packages/' + slug + '/files');
+                if (!res.ok) throw new Error();
+                var data = await res.json();
+
+                var container = document.getElementById('code-viewer');
+                container.innerHTML = '';
+
+                var list = el('div', {className: 'file-list'});
+                data.files.forEach(function(file) {
+                    var item = el('div', {className: 'file-item', 'data-path': file.path});
+                    item.appendChild(el('span', {className: 'file-name', textContent: file.path}));
+                    item.appendChild(el('span', {className: 'file-size', textContent: (file.size / 1024).toFixed(1) + ' KB'}));
+                    item.addEventListener('click', async function() {
+                        var content = await fetch('/api/v1/packages/' + slug + '/files/' + file.path).then(function(r) { return r.text(); });
+                        var viewer = document.getElementById('file-content');
+                        viewer.innerHTML = '';
+                        viewer.appendChild(el('h3', {textContent: file.path}));
+                        var pre = el('pre');
+                        var code = el('code', {textContent: content});
+                        pre.appendChild(code);
+                        viewer.appendChild(pre);
+                        document.querySelectorAll('.file-item').forEach(function(i) { i.classList.remove('active'); });
+                        item.classList.add('active');
+                    });
+                    list.appendChild(item);
+                });
+                container.appendChild(list);
+                container.appendChild(el('div', {id: 'file-content', className: 'readme-box', style: 'margin-top:20px'}));
+                window.codeLoaded = true;
+            } catch (e) {
+                document.getElementById('code-viewer').innerHTML = '<p>Source files require authentication. <a href="/auth/github">Login</a> to view code.</p>';
             }
         }
 
