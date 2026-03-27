@@ -338,6 +338,22 @@ export function createSearchHandler(db) {
       }));
     }
 
+    // Enrich results with fresh data from database (Qdrant payload may be stale)
+    results = results.map(r => {
+      const fresh = db.prepare('SELECT * FROM packages WHERE slug = ?').get(r.package.slug);
+      if (fresh) {
+        r.package.displayName = fresh.display_name;
+        r.package.description = fresh.description;
+        r.package.keywords = JSON.parse(fresh.keywords || '[]');
+        r.package.capabilities = JSON.parse(fresh.capabilities || '[]');
+        r.package.compatible = JSON.parse(fresh.compatible || '[]');
+        r.package.stats = { stars: fresh.stars_count || 0, downloads: fresh.downloads_count || 0 };
+        r.package.version = fresh.latest_version;
+        r.package.owner = { handle: fresh.owner_handle, avatarUrl: fresh.owner_avatar };
+      }
+      return r;
+    });
+
     // Apply additional filters
     if (capabilities && !useQdrant) {
       const caps = capabilities.split(',').map(c => c.trim().toLowerCase());
