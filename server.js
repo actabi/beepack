@@ -129,149 +129,7 @@ initEmbeddings(db).catch(e => console.error('Embeddings init error:', e));
 
 console.log('📦 Database initialized');
 
-// Seed some example data
-const existingPackages = db.prepare('SELECT COUNT(*) as count FROM packages').get();
-if (existingPackages.count === 0) {
-  console.log('🌱 Seeding example data...');
-  
-  // Create demo user
-  db.prepare(`
-    INSERT INTO users (github_id, handle, name, avatar_url, role)
-    VALUES ('demo', 'beepack', 'Beepack Team', 'https://github.com/github.png', 'admin')
-  `).run();
-  
-  const demoUser = db.prepare('SELECT id FROM users WHERE handle = ?').get('beepack');
-  
-  // Create example packages with more detail
-  const packages = [
-    {
-      slug: 'notion-sync',
-      display_name: 'Notion Sync',
-      description: 'Bidirectional sync with the Notion API. Read/write databases and pages.',
-      keywords: JSON.stringify(['notion', 'sync', 'database', 'productivity']),
-      capabilities: JSON.stringify(['read_database', 'write_pages', 'search_content']),
-      compatible: JSON.stringify(['cursor', 'copilot', 'claude', 'openclaw']),
-      requires: JSON.stringify({ env: ['NOTION_API_KEY'] }),
-      stars_count: 45,
-      downloads_count: 1247,
-      latest_version: '1.2.0',
-      readme: `# Notion Sync
-
-Bidirectional sync with the Notion API.
-
-## Installation
-\`\`\`bash
-beepack install notion-sync
-\`\`\`
-
-## Usage
-\`\`\`javascript
-import { readDatabase, writePage } from 'notion-sync';
-
-// Read a database
-const data = await readDatabase('database-id');
-
-// Write a page
-await writePage('parent-id', { title: 'New Page' });
-\`\`\`
-`
-    },
-    {
-      slug: 'stripe-payments',
-      display_name: 'Stripe Payments',
-      description: 'Complete Stripe integration. Payments, subscriptions, webhooks.',
-      keywords: JSON.stringify(['stripe', 'payments', 'billing', 'subscriptions']),
-      capabilities: JSON.stringify(['create_payment', 'manage_subscriptions', 'handle_webhooks']),
-      compatible: JSON.stringify(['cursor', 'copilot', 'claude']),
-      requires: JSON.stringify({ env: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'] }),
-      stars_count: 89,
-      downloads_count: 3421,
-      latest_version: '2.1.0',
-      readme: `# Stripe Payments
-
-Complete Stripe integration.
-
-## Installation
-\`\`\`bash
-beepack install stripe-payments
-\`\`\`
-`
-    },
-    {
-      slug: 'openai-wrapper',
-      display_name: 'OpenAI Wrapper',
-      description: 'Simplified wrapper for the OpenAI API. Chat, completions, embeddings.',
-      keywords: JSON.stringify(['openai', 'ai', 'gpt', 'embeddings', 'chat']),
-      capabilities: JSON.stringify(['chat_completion', 'generate_embeddings', 'transcribe_audio']),
-      compatible: JSON.stringify(['cursor', 'copilot', 'claude', 'openclaw', 'windsurf']),
-      requires: JSON.stringify({ env: ['OPENAI_API_KEY'] }),
-      stars_count: 156,
-      downloads_count: 5892,
-      latest_version: '3.0.1',
-      readme: `# OpenAI Wrapper
-
-Simplified wrapper for the OpenAI API.
-
-## Installation
-\`\`\`bash
-beepack install openai-wrapper
-\`\`\`
-`
-    },
-    {
-      slug: 'github-api',
-      display_name: 'GitHub API',
-      description: 'GitHub API interactions. Repos, issues, PRs, actions.',
-      keywords: JSON.stringify(['github', 'git', 'repos', 'issues', 'api']),
-      capabilities: JSON.stringify(['manage_repos', 'create_issues', 'handle_prs', 'trigger_actions']),
-      compatible: JSON.stringify(['cursor', 'copilot', 'claude']),
-      requires: JSON.stringify({ env: ['GITHUB_TOKEN'] }),
-      stars_count: 72,
-      downloads_count: 2156,
-      latest_version: '1.5.0',
-      readme: `# GitHub API
-
-GitHub API interactions.
-`
-    },
-    {
-      slug: 'supabase-client',
-      display_name: 'Supabase Client',
-      description: 'Complete Supabase client. Auth, database, storage, realtime.',
-      keywords: JSON.stringify(['supabase', 'database', 'auth', 'storage', 'realtime']),
-      capabilities: JSON.stringify(['auth_users', 'query_database', 'upload_files', 'realtime_subscribe']),
-      compatible: JSON.stringify(['cursor', 'copilot', 'claude', 'openclaw']),
-      requires: JSON.stringify({ env: ['SUPABASE_URL', 'SUPABASE_KEY'] }),
-      stars_count: 63,
-      downloads_count: 1834,
-      latest_version: '2.0.0',
-      readme: `# Supabase Client
-
-Complete Supabase client.
-`
-    }
-  ];
-  
-  const insertPkg = db.prepare(`
-    INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, readme, keywords, capabilities, compatible, requires, stars_count, downloads_count, latest_version, version_count)
-    VALUES (?, ?, ?, 'beepack', 'https://github.com/github.png', ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-  `);
-  
-  for (const pkg of packages) {
-    insertPkg.run(
-      pkg.slug, pkg.display_name, demoUser.id, pkg.description, pkg.readme,
-      pkg.keywords, pkg.capabilities, pkg.compatible, pkg.requires,
-      pkg.stars_count, pkg.downloads_count, pkg.latest_version
-    );
-  }
-  
-  console.log(`✅ Seeded ${packages.length} example packages`);
-  
-  // Generate embeddings if OpenAI key is available
-  if (isEmbeddingsEnabled()) {
-    generateAllEmbeddings(db).catch(console.error);
-  }
-}
+// No seed data - only real packages published via the API
 
 // ============== AUTH ROUTES ==============
 setupAuthRoutes(app, db);
@@ -703,7 +561,7 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
 });
 
 // Download package as tar.gz
-app.get('/api/v1/packages/:slug/download', async (req, res) => {
+app.get('/api/v1/packages/:slug/download', authMiddleware, requireAuth, async (req, res) => {
   try {
     const { slug } = req.params;
     const { version } = req.query;
@@ -743,7 +601,7 @@ app.get('/api/v1/packages/:slug/download', async (req, res) => {
 });
 
 // List package files
-app.get('/api/v1/packages/:slug/files', (req, res) => {
+app.get('/api/v1/packages/:slug/files', authMiddleware, requireAuth, (req, res) => {
   const { slug } = req.params;
   const { version } = req.query;
 
@@ -770,7 +628,7 @@ app.get('/api/v1/packages/:slug/files', (req, res) => {
 });
 
 // Get single file content
-app.get('/api/v1/packages/:slug/files/*', (req, res) => {
+app.get('/api/v1/packages/:slug/files/*', authMiddleware, requireAuth, (req, res) => {
   const { slug } = req.params;
   const filePath = req.params[0];
   const { version } = req.query;

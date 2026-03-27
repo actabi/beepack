@@ -3,34 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Package - Beepack 🐝</title>
+    <title>Package - Beepack</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .package-page { padding: 48px 0; }
-        .package-header-full { margin-bottom: 32px; }
-        .package-title { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-        .package-title h1 { font-size: 2.5rem; margin: 0; }
-        .package-title .version { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; }
-        .package-stats-full { display: flex; gap: 24px; margin-bottom: 24px; }
-        .package-stats-full .stat { display: flex; align-items: center; gap: 8px; }
-        .package-description { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 24px; }
-        .package-actions { display: flex; gap: 12px; margin-bottom: 32px; }
-        .package-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
-        .package-main { }
-        .package-sidebar { }
-        .sidebar-section { background: var(--background-alt); padding: 20px; border-radius: var(--radius); margin-bottom: 16px; }
-        .sidebar-section h3 { font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-        .sidebar-section ul { list-style: none; }
-        .sidebar-section li { padding: 4px 0; }
-        .install-box { background: var(--secondary); color: white; padding: 16px; border-radius: var(--radius); margin-bottom: 24px; }
-        .install-box code { font-family: monospace; }
-        .readme-content { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
-        .readme-content h2 { margin-top: 24px; }
-        .readme-content pre { background: var(--secondary); color: #e5e7eb; padding: 16px; border-radius: var(--radius); overflow-x: auto; }
-        .capability-tag { display: inline-block; background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 4px; font-size: 12px; margin: 2px; }
-        .compatible-tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 4px; font-size: 12px; margin: 2px; }
-        @media (max-width: 900px) { .package-grid { grid-template-columns: 1fr; } }
+        * { box-sizing: border-box; }
+        .pkg-page { padding: 40px 0 80px; }
+
+        /* Header */
+        .pkg-hero { margin-bottom: 32px; }
+        .pkg-hero h1 { font-size: 2rem; margin: 0 0 8px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .pkg-hero .badge { background: var(--primary); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+        .pkg-hero .desc { font-size: 1.1rem; color: var(--text-muted); margin: 0 0 16px; }
+        .pkg-meta { display: flex; gap: 20px; font-size: 14px; color: var(--text-muted); flex-wrap: wrap; }
+        .pkg-meta span { display: flex; align-items: center; gap: 4px; }
+
+        /* Install bar */
+        .install-bar { background: #1e293b; color: #e2e8f0; padding: 14px 20px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; }
+        .install-bar .cmd { opacity: 0.5; }
+        .install-bar button { background: var(--primary); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+
+        /* Grid */
+        .pkg-grid { display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
+        @media (max-width: 900px) { .pkg-grid { grid-template-columns: 1fr; } }
+
+        /* Main content */
+        .pkg-main {}
+
+        /* Tabs */
+        .pkg-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+        .pkg-tab { padding: 10px 20px; cursor: pointer; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .pkg-tab:hover { color: var(--text); }
+        .pkg-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* README */
+        .readme-box { line-height: 1.7; }
+        .readme-box h1 { font-size: 1.5rem; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .readme-box h2 { font-size: 1.25rem; margin: 28px 0 12px; }
+        .readme-box h3 { font-size: 1.1rem; margin: 20px 0 8px; }
+        .readme-box pre { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; }
+        .readme-box code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+        .readme-box p code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+        .readme-box ul, .readme-box ol { padding-left: 24px; }
+        .readme-box li { margin: 4px 0; }
+        .readme-box hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+        .readme-box strong { color: var(--text); }
+
+        /* Capabilities */
+        .cap-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cap-tag { display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; color: #065f46; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+        .cap-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+
+        /* Requirements */
+        .req-list { list-style: none; padding: 0; }
+        .req-list li { padding: 8px 12px; background: #f8fafc; border-radius: 6px; margin: 4px 0; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .req-list li code { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+        .req-none { color: #10b981; font-weight: 500; }
+
+        /* Sidebar */
+        .pkg-sidebar {}
+        .side-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .side-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 10px; }
+        .side-card .author { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .side-card .author img { width: 24px; height: 24px; border-radius: 50%; }
+        .side-card ul { list-style: none; padding: 0; margin: 0; }
+        .side-card li { padding: 3px 0; font-size: 14px; }
+        .kw-tag { display: inline-block; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
+        .compat-tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 4px; font-size: 12px; margin: 2px; font-weight: 500; }
+        .ver-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -48,122 +91,122 @@
         </div>
     </header>
 
-    <main class="package-page">
-        <div class="container">
-            <div id="package-content">
-                <p>Loading...</p>
-            </div>
+    <main class="pkg-page">
+        <div class="container" id="pkg-root">
+            <p>Loading...</p>
         </div>
     </main>
 
     <script>
-        const API_BASE = '/api/v1';
-        
         async function loadPackage() {
-            const params = new URLSearchParams(window.location.search);
-            const slug = params.get('slug');
-            
-            if (!slug) {
-                document.getElementById('package-content').innerHTML = '<p>Package not specified. <a href="/">Go back</a></p>';
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/packages/${slug}`);
-                if (!response.ok) throw new Error('Package not found');
-                const pkg = await response.json();
-                
-                document.title = `${pkg.displayName} - Beepack 🐝`;
-                
-                document.getElementById('package-content').innerHTML = `
-                    <div class="package-header-full">
-                        <div class="package-title">
-                            <h1>${pkg.displayName}</h1>
-                            <span class="version">v${pkg.latestVersion}</span>
-                        </div>
-                        <p class="package-description">${pkg.description}</p>
-                        <div class="package-stats-full">
-                            <div class="stat">⭐ <strong>${pkg.stats.stars}</strong> stars</div>
-                            <div class="stat">📥 <strong>${pkg.stats.downloads.toLocaleString()}</strong> downloads</div>
-                            <div class="stat">📋 <strong>${pkg.stats.versions || 1}</strong> versions</div>
-                        </div>
-                    </div>
-                    
-                    <div class="install-box">
-                        <code>beepack install ${pkg.slug}</code>
-                    </div>
-                    
-                    <div class="package-grid">
-                        <div class="package-main">
-                            <div class="readme-content">
-                                <h2>📖 README</h2>
-                                <p>${pkg.description}</p>
-                                
-                                <h2>🚀 Installation</h2>
-                                <pre><code>beepack install ${pkg.slug}</code></pre>
-                                
-                                <h2>✨ Capabilities</h2>
-                                <p>${pkg.capabilities.map(c => `<span class="capability-tag">${c}</span>`).join(' ')}</p>
-                                
-                                <h2>⚙️ Requirements</h2>
-                                <p>This package requires the following environment variables to be set.</p>
-                                
-                                <h2>📝 Usage</h2>
-                                <pre><code>// Import the package
-import ${pkg.slug.replace(/-/g, '_')} from 'beepack/${pkg.slug}';
+            const slug = new URLSearchParams(window.location.search).get('slug');
+            if (!slug) { document.getElementById('pkg-root').innerHTML = '<p>Package not specified. <a href="/">Go back</a></p>'; return; }
 
-// Use the API
-// See documentation for details</code></pre>
+            try {
+                const res = await fetch(`/api/v1/packages/${slug}`);
+                if (!res.ok) throw new Error();
+                const pkg = await res.json();
+                document.title = `${pkg.displayName} - Beepack`;
+
+                const req = pkg.requires || {};
+                const hasEnv = req.env && req.env.length > 0;
+                const hasDeps = req.deps && req.deps.length > 0;
+
+                // Strip first H1 from readme to avoid duplication
+                const readmeClean = (pkg.readme || '').replace(/^#\s+.+\n/, '');
+
+                document.getElementById('pkg-root').innerHTML = `
+                    <div class="pkg-hero">
+                        <h1>${pkg.displayName} <span class="badge">v${pkg.latestVersion}</span></h1>
+                        <p class="desc">${pkg.description}</p>
+                        <div class="pkg-meta">
+                            <span>by <strong>${pkg.owner.handle}</strong></span>
+                            <span>&#11088; ${pkg.stats.stars} stars</span>
+                            <span>&#8595; ${pkg.stats.downloads.toLocaleString()} downloads</span>
+                        </div>
+                    </div>
+
+                    <div class="install-bar">
+                        <span><span class="cmd">$</span> beepack install ${pkg.slug}</span>
+                        <button onclick="navigator.clipboard.writeText('beepack install ${pkg.slug}')">Copy</button>
+                    </div>
+
+                    <div class="pkg-grid">
+                        <div class="pkg-main">
+                            <div class="pkg-tabs">
+                                <div class="pkg-tab active" data-tab="readme">Documentation</div>
+                                <div class="pkg-tab" data-tab="capabilities">Capabilities</div>
+                                <div class="pkg-tab" data-tab="requirements">Requirements</div>
+                            </div>
+
+                            <div class="tab-content active" id="tab-readme">
+                                <div class="readme-box">${marked.parse(readmeClean)}</div>
+                            </div>
+
+                            <div class="tab-content" id="tab-capabilities">
+                                <div class="cap-grid">
+                                    ${pkg.capabilities.map(c => `<span class="cap-tag">${c.replace(/_/g, ' ')}</span>`).join('')}
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="tab-requirements">
+                                ${hasEnv ? `
+                                    <h3>Environment Variables</h3>
+                                    <ul class="req-list">${req.env.map(e => `<li><code>${e}</code></li>`).join('')}</ul>
+                                ` : ''}
+                                ${hasDeps ? `
+                                    <h3>Dependencies</h3>
+                                    <ul class="req-list">${req.deps.map(d => `<li>${d}</li>`).join('')}</ul>
+                                ` : ''}
+                                ${!hasEnv && !hasDeps ? '<p class="req-none">&#10003; No requirements - works out of the box.</p>' : ''}
                             </div>
                         </div>
-                        
-                        <div class="package-sidebar">
-                            <div class="sidebar-section">
-                                <h3>Author</h3>
-                                <p>👤 ${pkg.owner.handle}</p>
+
+                        <div class="pkg-sidebar">
+                            <div class="side-card">
+                                <h4>Author</h4>
+                                <div class="author">
+                                    <img src="${pkg.owner.avatarUrl}" alt="${pkg.owner.handle}">
+                                    ${pkg.owner.handle}
+                                </div>
                             </div>
-                            
-                            <div class="sidebar-section">
-                                <h3>Keywords</h3>
-                                <ul>
-                                    ${pkg.keywords.map(k => `<li>🏷️ ${k}</li>`).join('')}
-                                </ul>
+
+                            <div class="side-card">
+                                <h4>Compatible with</h4>
+                                <div>${pkg.compatible.map(c => `<span class="compat-tag">${c}</span>`).join(' ')}</div>
                             </div>
-                            
-                            <div class="sidebar-section">
-                                <h3>Compatible With</h3>
-                                <p>${pkg.compatible.map(c => `<span class="compatible-tag">${c}</span>`).join(' ')}</p>
+
+                            <div class="side-card">
+                                <h4>Version</h4>
+                                <span class="ver-tag">${pkg.latestVersion}</span>
                             </div>
-                            
-                            <div class="sidebar-section">
-                                <h3>Versions</h3>
-                                <ul>
-                                    ${pkg.versions.length > 0 
-                                        ? pkg.versions.map(v => `<li>📦 ${v}</li>`).join('')
-                                        : `<li>📦 ${pkg.latestVersion} (latest)</li>`
-                                    }
-                                </ul>
-                            </div>
-                            
-                            <div class="sidebar-section">
-                                <h3>Links</h3>
-                                <ul>
-                                    <li><a href="/api-docs/">📖 API Docs</a></li>
-                                    <li><a href="/docs/hive-yaml.html">📝 HIVE.yaml Spec</a></li>
-                                </ul>
+
+                            <div class="side-card">
+                                <h4>Keywords</h4>
+                                <div>${pkg.keywords.map(k => `<span class="kw-tag">${k}</span>`).join(' ')}</div>
                             </div>
                         </div>
                     </div>
                 `;
+
+                // Tab switching
+                document.querySelectorAll('.pkg-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.pkg-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                    });
+                });
             } catch (e) {
-                document.getElementById('package-content').innerHTML = `
+                document.getElementById('pkg-root').innerHTML = `
                     <h1>Package not found</h1>
                     <p>The package "${slug}" doesn't exist or the API is not available.</p>
-                    <p><a href="/">← Back to home</a></p>
+                    <p><a href="/">Back to home</a></p>
                 `;
             }
         }
-        
+
         loadPackage();
     </script>
 </body>

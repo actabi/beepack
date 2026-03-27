@@ -35,11 +35,11 @@ async function loadStats() {
                 if (!valueEl) return;
                 
                 if (label === 'packages') {
-                    valueEl.textContent = stats.packages || 0;
+                    valueEl.textContent = stats.totalPackages || 0;
                 } else if (label === 'stars') {
-                    valueEl.textContent = stats.stars || 0;
+                    valueEl.textContent = stats.totalStars || 0;
                 } else if (label === 'downloads') {
-                    valueEl.textContent = formatNumber(stats.downloads || 0);
+                    valueEl.textContent = formatNumber(stats.totalDownloads || 0);
                 }
             });
         }
