@@ -1,6 +1,6 @@
 /**
- * Packbee Remote MCP Server
- * Exposes MCP protocol over SSE so any AI can connect directly to packbee.dev
+ * Beepack Remote MCP Server
+ * Exposes MCP protocol over SSE so any AI can connect directly to beepack.dev
  * No CLI install required - just add the URL to your MCP config
  */
 
@@ -8,7 +8,7 @@
 const TOOLS = [
   {
     name: 'search_packages',
-    description: 'Search for API packages on Packbee. Use natural language queries to find packages that match your needs.',
+    description: 'Search for API packages on Beepack. Use natural language queries to find packages that match your needs.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -20,7 +20,7 @@ const TOOLS = [
   },
   {
     name: 'list_packages',
-    description: 'List popular packages on Packbee, sorted by stars or downloads.',
+    description: 'List popular packages on Beepack, sorted by stars or downloads.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -48,6 +48,25 @@ const TOOLS = [
       properties: {
         slug: { type: 'string', description: 'Package slug' },
         file: { type: 'string', description: 'Specific file path (default: all files)' },
+      },
+      required: ['slug'],
+    },
+  },
+  {
+    name: 'list_bundles',
+    description: 'List available bundles - curated groups of packages that work well together for specific use cases.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'get_bundle',
+    description: 'Get details about a specific bundle including all packages, their roles, and the use case.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        slug: { type: 'string', description: 'Bundle slug' },
       },
       required: ['slug'],
     },
@@ -138,6 +157,36 @@ ${pkg.readme || 'No README available.'}`;
         }
       }
       return output.join('\n\n') || 'Could not read package files.';
+    }
+
+    case 'list_bundles': {
+      const data = await apiGet(port, '/bundles');
+      if (!data.bundles || data.bundles.length === 0) {
+        return 'No bundles available yet.';
+      }
+      return data.bundles.map(b =>
+        `**${b.displayName}** (\`${b.slug}\`)\n${b.description}\nPackages: ${b.packages.map(p => p.displayName || p.slug).join(', ')}`
+      ).join('\n\n');
+    }
+
+    case 'get_bundle': {
+      const bundle = await apiGet(port, `/bundles/${args.slug}`);
+      return `# ${bundle.displayName}
+
+${bundle.description}
+${bundle.useCase ? `\n**Use case:** ${bundle.useCase}` : ''}
+
+## Packages (${bundle.packages.length})
+
+${bundle.packages.map(p => `### ${p.displayName} (\`${p.slug}\`)${p.role ? ' - ' + p.role : ''}
+${p.description}
+- Capabilities: ${p.capabilities.join(', ')}
+- Version: ${p.version}`).join('\n\n')}
+
+## Install all
+\`\`\`bash
+${bundle.packages.map(p => `beepack install ${p.slug}`).join('\n')}
+\`\`\``;
     }
 
     default:

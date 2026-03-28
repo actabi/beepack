@@ -117,6 +117,73 @@ program
   .option('-r, --reason <reason>', 'Why you disliked it (required)')
   .action(dislike);
 
+// Bundle command
+program
+  .command('bundle <name> [packages...]')
+  .description('Create a bundle of packages that work well together')
+  .option('-d, --description <desc>', 'Bundle description')
+  .option('-u, --use-case <useCase>', 'Explain the use case')
+  .action(async (name, packages, options) => {
+    if (!packages || packages.length < 2) {
+      console.log(chalk.red('A bundle needs at least 2 packages.'));
+      console.log(chalk.gray('Usage: beepack bundle rag-pipeline openai-embeddings qdrant-client -d "RAG pipeline"'));
+      return;
+    }
+    const { getToken } = await import('../src/commands.js');
+    const token = getToken();
+    if (!token) { console.log(chalk.red('Not logged in. Run: beepack login')); return; }
+    const API_BASE = process.env.BEEPACK_API || 'https://beepack.dev/api/v1';
+
+    const spinner = ora('Creating bundle...').start();
+    try {
+      const response = await fetch(API_BASE + '/bundles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          slug: name,
+          displayName: options.description || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          description: options.description || '',
+          useCase: options.useCase || '',
+          packages: packages,
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || 'Failed');
+      }
+      const result = await response.json();
+      spinner.succeed(chalk.green('Bundle "' + name + '" created with ' + result.packageCount + ' packages'));
+    } catch (e) {
+      spinner.fail(chalk.red(e.message));
+    }
+  });
+
+// Bundles list
+program
+  .command('bundles')
+  .description('List available bundles')
+  .action(async () => {
+    const API_BASE = process.env.BEEPACK_API || 'https://beepack.dev/api/v1';
+    const spinner = ora('Loading bundles...').start();
+    try {
+      const response = await fetch(API_BASE + '/bundles');
+      const data = await response.json();
+      spinner.stop();
+      if (data.bundles.length === 0) {
+        console.log(chalk.gray('No bundles yet. Create one with: beepack bundle <name> <pkg1> <pkg2>'));
+        return;
+      }
+      data.bundles.forEach(function(b) {
+        console.log(chalk.bold(b.displayName) + chalk.gray(' (' + b.slug + ')'));
+        console.log('  ' + b.description);
+        console.log(chalk.gray('  ' + b.packageCount + ' packages: ' + b.packages.map(function(p) { return p.slug; }).join(', ')));
+        console.log();
+      });
+    } catch (e) {
+      spinner.fail(chalk.red(e.message));
+    }
+  });
+
 // Setup command - configure AI assistants to use Beepack
 program
   .command('setup')

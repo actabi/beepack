@@ -138,6 +138,26 @@ db.exec(`
     UNIQUE(from_package_id, to_package_id)
   );
 
+  CREATE TABLE IF NOT EXISTS bundles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT UNIQUE NOT NULL,
+    display_name TEXT NOT NULL,
+    description TEXT,
+    use_case TEXT,
+    owner_id INTEGER REFERENCES users(id),
+    owner_handle TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS bundle_packages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bundle_id INTEGER REFERENCES bundles(id),
+    package_id INTEGER REFERENCES packages(id),
+    role TEXT,
+    UNIQUE(bundle_id, package_id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_packages_slug ON packages(slug);
   CREATE INDEX IF NOT EXISTS idx_packages_owner ON packages(owner_id);
   CREATE INDEX IF NOT EXISTS idx_packages_status ON packages(moderation_status);
@@ -283,6 +303,16 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     homepageUrl: pkg.homepage_url,
     createdAt: pkg.created_at,
     updatedAt: pkg.updated_at,
+    bundles: (() => {
+      try {
+        return db.prepare(`
+          SELECT b.slug, b.display_name as displayName, b.description, bp.role
+          FROM bundle_packages bp
+          JOIN bundles b ON b.id = bp.bundle_id
+          WHERE bp.package_id = ?
+        `).all(pkg.id);
+      } catch (e) { return []; }
+    })(),
     worksWell: (() => {
       try {
         return db.prepare(`
@@ -887,6 +917,118 @@ app.get('/api/v1/packages/:slug/files/*', (req, res) => {
   res.send(content);
 });
 
+// ============== BUNDLES ==============
+
+// List bundles
+app.get('/api/v1/bundles', (req, res) => {
+  const bundles = db.prepare('SELECT * FROM bundles ORDER BY created_at DESC').all();
+
+  res.json({
+    bundles: bundles.map(b => {
+      const packages = db.prepare(`
+        SELECT p.slug, p.display_name as displayName, p.description, bp.role
+        FROM bundle_packages bp
+        JOIN packages p ON p.id = bp.package_id
+        WHERE bp.bundle_id = ?
+      `).all(b.id);
+
+      return {
+        slug: b.slug,
+        displayName: b.display_name,
+        description: b.description,
+        useCase: b.use_case,
+        owner: b.owner_handle,
+        packages,
+        packageCount: packages.length,
+        createdAt: b.created_at,
+      };
+    }),
+  });
+});
+
+// Get single bundle
+app.get('/api/v1/bundles/:slug', (req, res) => {
+  const bundle = db.prepare('SELECT * FROM bundles WHERE slug = ?').get(req.params.slug);
+  if (!bundle) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Bundle not found' } });
+  }
+
+  const packages = db.prepare(`
+    SELECT p.slug, p.display_name as displayName, p.description, p.keywords, p.capabilities, p.requires,
+           p.stars_count, p.downloads_count, p.latest_version, p.owner_handle, bp.role
+    FROM bundle_packages bp
+    JOIN packages p ON p.id = bp.package_id
+    WHERE bp.bundle_id = ?
+  `).all(bundle.id);
+
+  res.json({
+    slug: bundle.slug,
+    displayName: bundle.display_name,
+    description: bundle.description,
+    useCase: bundle.use_case,
+    owner: bundle.owner_handle,
+    packages: packages.map(p => ({
+      slug: p.slug,
+      displayName: p.displayName,
+      description: p.description,
+      role: p.role,
+      version: p.latest_version,
+      stats: { stars: p.stars_count, downloads: p.downloads_count },
+      capabilities: JSON.parse(p.capabilities || '[]'),
+      requires: JSON.parse(p.requires || '{}'),
+    })),
+    createdAt: bundle.created_at,
+  });
+});
+
+// Create bundle (auth required)
+app.post('/api/v1/bundles', authMiddleware, requireAuth, (req, res) => {
+  const { slug, displayName, description, useCase, packages } = req.body;
+
+  if (!slug || !displayName || !packages || packages.length < 2) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'Bundle requires slug, displayName, and at least 2 packages' },
+    });
+  }
+
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'Slug must be lowercase alphanumeric with hyphens' },
+    });
+  }
+
+  // Verify all packages exist
+  const pkgIds = [];
+  for (const p of packages) {
+    const pkgSlug = typeof p === 'string' ? p : p.slug;
+    const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(pkgSlug);
+    if (!pkg) {
+      return res.status(400).json({
+        error: { code: 'PACKAGE_NOT_FOUND', message: 'Package "' + pkgSlug + '" not found' },
+      });
+    }
+    pkgIds.push({ id: pkg.id, role: typeof p === 'object' ? p.role : null });
+  }
+
+  try {
+    const result = db.prepare(
+      'INSERT INTO bundles (slug, display_name, description, use_case, owner_id, owner_handle) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(slug, displayName, description || '', useCase || '', req.user.id, req.user.login);
+
+    const insertBp = db.prepare('INSERT INTO bundle_packages (bundle_id, package_id, role) VALUES (?, ?, ?)');
+    for (const p of pkgIds) {
+      insertBp.run(result.lastInsertRowid, p.id, p.role);
+    }
+
+    res.json({ success: true, slug, packageCount: pkgIds.length });
+  } catch (e) {
+    if (e.message.includes('UNIQUE')) {
+      return res.status(409).json({ error: { code: 'ALREADY_EXISTS', message: 'Bundle "' + slug + '" already exists' } });
+    }
+    throw e;
+  }
+});
+
 // Get linked packages
 app.get('/api/v1/packages/:slug/links', (req, res) => {
   const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(req.params.slug);
@@ -902,9 +1044,12 @@ app.get('/api/v1/packages/:slug/links', (req, res) => {
   res.json({ links });
 });
 
-// Redirect /packages/:slug to /package.html?slug=:slug
+// Redirect /packages/:slug and /bundles/:slug
 app.get('/packages/:slug', (req, res) => {
   res.redirect(301, `/package.html?slug=${req.params.slug}`);
+});
+app.get('/bundles/:slug', (req, res) => {
+  res.redirect(301, `/bundle.html?slug=${req.params.slug}`);
 });
 
 // Catch-all for SPA (serve index.html for non-API routes)
