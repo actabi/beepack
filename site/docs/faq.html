@@ -75,7 +75,7 @@
             <p>ClawHub is limited to OpenClaw skills. Beepack is designed for all vibe coders: Cursor, Copilot, Claude Code, Windsurf, etc.</p>
 
             <h3>Does Beepack work with OpenClaw?</h3>
-            <p>Yes! Beepack is <strong>ClawHub-compatible</strong>. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills using the <code>--registry https://beepack.dev</code> flag. Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API that translates packages into the ClawHub skill format. See our <a href="mcp-integration.html">MCP Integration</a> page for details.</p>
+            <p>Yes! Beepack is <strong>ClawHub-compatible</strong>. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills using the <code>--registry https://beepack.ai</code> flag. Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API that translates packages into the ClawHub skill format. See our <a href="mcp-integration.html">MCP Integration</a> page for details.</p>
 
             <h3>What are bundles?</h3>
             <p>Bundles are <strong>curated groups of packages</strong> that work well together for a specific use case (e.g., "saas-starter", "ai-toolkit"). Instead of searching and installing packages one by one, you can install an entire bundle with <code>beepack install --bundle bundle-name</code>. Browse available bundles with <code>beepack bundles</code> or via the <code>/api/v1/bundles</code> API endpoint.</p>
@@ -116,7 +116,7 @@ beepack publish</code></pre>
 
             <h3>How do I report a suspicious package?</h3>
             <p>You can report a suspicious package by sending a POST request to the report endpoint:</p>
-            <pre><code>POST https://beepack.dev/api/v1/packages/{slug}/report</code></pre>
+            <pre><code>POST https://beepack.ai/api/v1/packages/{slug}/report</code></pre>
             <p>Include a JSON body with a <code>reason</code> field explaining why you believe the package is suspicious. Authentication is required.</p>
 
             <h3>What happens when a package is reported?</h3>

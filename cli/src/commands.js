@@ -12,7 +12,7 @@ import { pipeline } from 'stream/promises';
 import { createGunzip } from 'zlib';
 import * as tar from 'tar';
 
-const API_BASE = process.env.BEEPACK_API || 'https://beepack.dev/api/v1';
+const API_BASE = process.env.BEEPACK_API || 'https://beepack.ai/api/v1';
 const CONFIG_DIR = join(homedir(), '.beepack');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 
@@ -252,7 +252,7 @@ This package was installed as metadata only. The source files haven't been uploa
 Contact the package author to upload the actual source code.
 
 ---
-Installed with [Beepack](https://beepack.dev) 🐝
+Installed with [Beepack](https://beepack.ai) 🐝
 `;
       
       writeFileSync(join(installDir, 'README.md'), placeholder);

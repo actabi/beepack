@@ -1,6 +1,6 @@
 /**
  * Beepack Remote MCP Server
- * Exposes MCP protocol over SSE so any AI can connect directly to beepack.dev
+ * Exposes MCP protocol over SSE so any AI can connect directly to beepack.ai
  * No CLI install required - just add the URL to your MCP config
  */
 

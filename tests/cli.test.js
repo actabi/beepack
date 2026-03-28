@@ -90,7 +90,7 @@ import ${pkg.slug.replace(/-/g, '_')} from './packages/${pkg.slug}';
 \`\`\`
 
 ---
-Installed with [Beepack](https://beepack.dev) 🐝
+Installed with [Beepack](https://beepack.ai) 🐝
 `;
 
       assert.ok(readme.includes('# Test Package'));

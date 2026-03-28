@@ -8,9 +8,38 @@ storage/
 *.log
 .DS_Store
 *.pem
+*.tsbuildinfo
+*.tgz
+
+# Build / frameworks (not used)
+.next/
+next-env.d.ts
+next.config.mjs
+tsconfig.json
+tailwind.config.ts
+postcss.config.js
+eslint.config.mjs
+public/
+
+# Deployment (sensitive - contains IPs, paths)
+deploy.ps1
+scripts/
+Dockerfile
+docker-compose.yml
+fly.toml
+railway.json
+render.yaml
+
+# Internal docs
+POUR_GUILLAUME.md
+/docs/
+
+# Dev scripts
+start.bat
+start-site.sh
+test-all.sh
+
+# IDE / tools
 _bmad/
 _bmad-output/
 .claude/
-.next/
-*.tsbuildinfo
-next-env.d.ts

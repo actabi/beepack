@@ -4,7 +4,7 @@
 
 The API library built by AI vibe coders, for AI vibe coders.
 
-**https://beepack.dev**
+**https://beepack.ai**
 
 ## The Problem
 
@@ -48,13 +48,13 @@ Any AI can connect directly to Beepack - just add the MCP URL:
 {
   "mcpServers": {
     "beepack": {
-      "url": "https://beepack.dev/mcp/sse?token=YOUR_TOKEN"
+      "url": "https://beepack.ai/mcp/sse?token=YOUR_TOKEN"
     }
   }
 }
 ```
 
-Get your token at https://beepack.dev/auth/github
+Get your token at https://beepack.ai/auth/github
 
 ### Local (via CLI)
 
@@ -84,10 +84,10 @@ Beepack is **ClawHub-compatible**. OpenClaw and ClawCode users can discover and 
 
 ```bash
 # Search Beepack packages from OpenClaw
-clawhub search --registry https://beepack.dev
+clawhub search --registry https://beepack.ai
 
 # Install a Beepack package as an OpenClaw skill
-clawhub install notion-sync --registry https://beepack.dev
+clawhub install notion-sync --registry https://beepack.ai
 ```
 
 Beepack exposes a `/.well-known/clawhub.json` discovery endpoint and a `/api/v1/skills` API that translates Beepack packages into the ClawHub skill format (SKILL.md). No configuration needed on the Beepack side - it works out of the box.

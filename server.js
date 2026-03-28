@@ -732,7 +732,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
     const frenchCount = descWords.filter(w => frenchWords.includes(w)).length;
     if (frenchCount >= 3) {
       return res.status(400).json({
-        error: { code: 'INVALID_LANGUAGE', message: 'Description must be written in English. French was detected. See https://beepack.dev/llms.txt for publishing guidelines.' },
+        error: { code: 'INVALID_LANGUAGE', message: 'Description must be written in English. French was detected. See https://beepack.ai/llms.txt for publishing guidelines.' },
       });
     }
 
@@ -744,7 +744,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       const readmeFrenchCount = readmeWords.filter(w => frenchWords.includes(w)).length;
       if (readmeFrenchCount >= 5) {
         return res.status(400).json({
-          error: { code: 'INVALID_LANGUAGE', message: 'README.md must be written in English. French was detected. See https://beepack.dev/llms.txt for publishing guidelines.' },
+          error: { code: 'INVALID_LANGUAGE', message: 'README.md must be written in English. French was detected. See https://beepack.ai/llms.txt for publishing guidelines.' },
         });
       }
     }
