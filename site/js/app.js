@@ -76,6 +76,7 @@ async function loadPackages() {
                             <span class="package-author">by ${pkg.owner.handle}</span>
                         </div>
                         <div class="package-tags">
+                            ${pkg.security === 'clean' ? '<span class="tag" style="background:#d1fae5;color:#065f46">&#9989; Scanned</span>' : ''}
                             ${pkg.keywords.slice(0, 3).map(k => `<span class="tag">${k}</span>`).join('')}
                         </div>
                         <a href="/package.html?slug=${pkg.slug}" class="btn btn-sm btn-outline">View details</a>

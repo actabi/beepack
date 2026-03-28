@@ -285,6 +285,12 @@ app.get('/api/v1/packages', (req, res) => {
       keywords: JSON.parse(p.keywords || '[]'),
       capabilities: JSON.parse(p.capabilities || '[]'),
       compatible: JSON.parse(p.compatible || '[]'),
+      security: (() => {
+        try {
+          const scan = db.prepare('SELECT final_verdict FROM security_scans WHERE package_id = ? ORDER BY created_at DESC LIMIT 1').get(p.id);
+          return scan ? scan.final_verdict : null;
+        } catch (e) { return null; }
+      })(),
       updatedAt: p.updated_at
     })),
     pagination: {

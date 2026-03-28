@@ -19,9 +19,9 @@ const PATTERNS = [
   { code: 'CHILD_PROCESS', pattern: /child_process|exec\s*\(|execSync|spawn\s*\(|spawnSync/, severity: SEVERITY.WARN, description: 'Process execution detected' },
   { code: 'VM_USAGE', pattern: /\brequire\s*\(\s*['"]vm['"]\s*\)|import\s+.*from\s+['"]vm['"]/, severity: SEVERITY.WARN, description: 'VM module usage detected' },
 
-  // Network exfiltration
-  { code: 'CREDENTIAL_HARVEST', pattern: /process\.env\b[\s\S]{0,200}(fetch|http|axios|request|XMLHttpRequest|WebSocket)/, severity: SEVERITY.CRITICAL, description: 'Reading env vars near network calls - potential credential theft' },
-  { code: 'REVERSE_CREDENTIAL', pattern: /(fetch|http|axios|request)[\s\S]{0,200}process\.env/, severity: SEVERITY.CRITICAL, description: 'Network call near env var reading - potential exfiltration' },
+  // Network exfiltration (only flag when env vars are passed as body/data, not as auth headers - that's normal)
+  { code: 'CREDENTIAL_HARVEST', pattern: /process\.env[\s\S]{0,50}(body|data|payload|JSON\.stringify)[\s\S]{0,50}(fetch|http|axios)/, severity: SEVERITY.CRITICAL, description: 'Env vars sent as request body - potential credential exfiltration', fileTypes: ['js', 'ts', 'mjs'] },
+  { code: 'ENV_MASS_READ', pattern: /Object\.(keys|entries|values)\s*\(\s*process\.env\s*\)/, severity: SEVERITY.CRITICAL, description: 'Reading all environment variables at once', fileTypes: ['js', 'ts', 'mjs'] },
   { code: 'WEBSOCKET_NONSTANDARD', pattern: /new\s+WebSocket\s*\(\s*['"]ws:\/\/(?!localhost)/, severity: SEVERITY.WARN, description: 'WebSocket connection to non-localhost' },
 
   // Obfuscation
@@ -67,7 +67,12 @@ export function runStaticScan(files) {
   for (const file of files) {
     const content = typeof file.content === 'string' ? file.content : file.content.toString('utf8');
 
+    const fileExt = (file.name || '').split('.').pop()?.toLowerCase();
+
     for (const pattern of PATTERNS) {
+      // Skip patterns that only apply to specific file types
+      if (pattern.fileTypes && !pattern.fileTypes.includes(fileExt)) continue;
+
       const matches = content.match(new RegExp(pattern.pattern, 'gi'));
       if (matches) {
         findings.push({
