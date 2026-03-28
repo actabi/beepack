@@ -85,7 +85,7 @@
                 root.appendChild(hero);
 
                 // Install all
-                var installCmd = bundle.packages.map(function(p) { return 'beepack install ' + p.slug; }).join(' && ');
+                var installCmd = bundle.packages.map(function(p) { return 'beepack pull ' + p.slug; }).join(' && ');
                 var bar = document.createElement('div');
                 bar.className = 'install-all';
                 bar.innerHTML = '<span><span class="cmd">$</span> ' + esc(installCmd) + '</span>';

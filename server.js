@@ -1002,41 +1002,16 @@ app.get('/api/v1/packages/:slug/files', (req, res) => {
   });
 });
 
-// Get single file content
+// Get single file content - DISABLED: use beepack pull to download packages
+// This ensures downloads are tracked and code isn't scraped without attribution
 app.get('/api/v1/packages/:slug/files/*', (req, res) => {
-  const { slug } = req.params;
-  const filePath = req.params[0];
-  const { version } = req.query;
-
-  const pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({
-      error: { code: 'NOT_FOUND', message: 'Package not found' },
-    });
-  }
-
-  const targetVersion = version || pkg.latest_version;
-  
-  const file = db.prepare(`
-    SELECT * FROM package_files 
-    WHERE package_id = ? AND version = ? AND file_path = ?
-  `).get(pkg.id, targetVersion, filePath);
-
-  if (!file) {
-    return res.status(404).json({
-      error: { code: 'FILE_NOT_FOUND', message: `File '${filePath}' not found` },
-    });
-  }
-
-  const content = getFile(file.storage_path);
-  if (!content) {
-    return res.status(404).json({
-      error: { code: 'FILE_MISSING', message: 'File not found in storage' },
-    });
-  }
-
-  res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
-  res.send(content);
+  res.status(403).json({
+    error: { 
+      code: 'USE_PULL', 
+      message: 'Direct file access is disabled. Use `beepack pull <package>` to download the source code. This ensures proper download tracking and attribution.' 
+    },
+    hint: `Run: beepack pull ${req.params.slug}`,
+  });
 });
 
 // ============== SECURITY & REPORTING ==============

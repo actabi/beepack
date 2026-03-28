@@ -60,13 +60,13 @@ program
   .description('Get detailed info about a package')
   .action(info);
 
-// Install command
+// Pull command (download package source code)
 program
-  .command('install <package>')
-  .alias('i')
-  .description('Install a package')
+  .command('pull <package>')
+  .alias('p')
+  .description('Pull package source code into your project')
   .option('-v, --version <version>', 'Specific version')
-  .option('-d, --dir <directory>', 'Install directory', './packages')
+  .option('-d, --dir <directory>', 'Target directory', './packages')
   .action(install);
 
 // Init command

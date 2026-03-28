@@ -69,29 +69,33 @@
                 <li>✅ Check compatibility with the current project</li>
             </ul>
 
-            <h2>MCP Configuration</h2>
+            <h2>Quick Setup</h2>
             
+            <p>The easiest way to configure MCP is to run:</p>
+            <pre><code>beepack init</code></pre>
+            <p>This generates a <code>mcp-config.json</code> file you can merge with your IDE settings.</p>
+
+            <h2>Manual MCP Configuration</h2>
+            
+            <h3>For Cursor</h3>
+            <p>Add to your Cursor MCP settings:</p>
+            <pre><code>{
+  "mcpServers": {
+    "beepack": {
+      "command": "npx",
+      "args": ["-y", "@actabi/beepack", "mcp"]
+    }
+  }
+}</code></pre>
+
             <h3>For Claude Desktop / OpenClaw</h3>
             <p>Add to your MCP configuration:</p>
             <pre><code>{
   "mcpServers": {
     "beepack": {
-      "command": "beepack",
-      "args": ["mcp-server"],
-      "env": {
-        "PACKBEE_TOKEN": "your-optional-token"
-      }
-    }
-  }
-}</code></pre>
-
-            <h3>For Cursor</h3>
-            <p>In Cursor settings, add the Beepack MCP server:</p>
-            <pre><code>// .cursor/mcp.json
-{
-  "servers": {
-    "beepack": {
-      "command": "beepack mcp-server"
+      "command": "npx",
+      "args": ["-y", "@actabi/beepack", "mcp"],
+      "env": {}
     }
   }
 }</code></pre>
@@ -148,11 +152,11 @@
   ]
 }</code></pre>
 
-            <h3>install_package</h3>
-            <p>Install a package in the current project.</p>
+            <h3>get_package_code</h3>
+            <p>Pull package source code into the project.</p>
             <pre><code>{
-  "name": "install_package",
-  "description": "Install a Beepack package",
+  "name": "get_package_code",
+  "description": "Pull a Beepack package source code",
   "parameters": {
     "type": "object",
     "properties": {
@@ -168,6 +172,7 @@
     "required": ["slug"]
   }
 }</code></pre>
+            <p>This downloads the package to <code>./packages/{slug}/</code> and creates a <code>BEEPACK.yaml</code> manifest.</p>
 
             <h3>get_package_info</h3>
             <p>Get package details.</p>

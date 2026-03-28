@@ -147,8 +147,8 @@
 
                 // Install bar
                 var bar = el('div', {className: 'install-bar'});
-                bar.innerHTML = '<span><span class="cmd">$</span> beepack install ' + escapeHtml(pkg.slug) + '</span>';
-                var copyBtn = el('button', {textContent: 'Copy', onclick: function() { navigator.clipboard.writeText('beepack install ' + pkg.slug); }});
+                bar.innerHTML = '<span><span class="cmd">$</span> beepack pull ' + escapeHtml(pkg.slug) + '</span>';
+                var copyBtn = el('button', {textContent: 'Copy', onclick: function() { navigator.clipboard.writeText('beepack pull ' + pkg.slug); }});
                 bar.appendChild(copyBtn);
                 root.appendChild(bar);
 
