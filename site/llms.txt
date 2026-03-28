@@ -27,7 +27,7 @@ beepack install company-lookup-fr
 ## API Endpoints
 
 - GET https://beepack.dev/api/v1/packages - List all packages
-- GET https://beepack.dev/api/v1/packages/{slug} - Package details + README + linked packages + bundles
+- GET https://beepack.dev/api/v1/packages/{slug} - Package details + README + bundles
 - GET https://beepack.dev/api/v1/search?q={query} - Search packages by natural language
 - GET https://beepack.dev/api/v1/packages/{slug}/files - List package files (auth required)
 - GET https://beepack.dev/api/v1/packages/{slug}/files/{path} - Get file content (auth required)

@@ -239,42 +239,23 @@
                 cardKw.appendChild(kwDiv);
                 sidebar.appendChild(cardKw);
 
-                // Works with (linked packages)
-                var cardLinks = el('div', {className: 'side-card', id: 'linked-packages'});
-                cardLinks.appendChild(el('h4', {textContent: 'Works with'}));
-                cardLinks.appendChild(el('div', {className: 'loading-small', textContent: 'Loading...'}));
-                sidebar.appendChild(cardLinks);
+                // Bundles
+                if (pkg.bundles && pkg.bundles.length > 0) {
+                    var cardBundles = el('div', {className: 'side-card'});
+                    cardBundles.appendChild(el('h4', {textContent: 'Bundles'}));
+                    pkg.bundles.forEach(function(b) {
+                        var a = el('a', {href: '/bundle.html?slug=' + b.slug, style: 'display:block;padding:6px 0;font-size:14px;text-decoration:none;color:var(--primary);font-weight:500'});
+                        a.textContent = b.displayName || b.slug;
+                        cardBundles.appendChild(a);
+                        if (b.description) {
+                            cardBundles.appendChild(el('p', {textContent: b.description, style: 'font-size:12px;color:var(--text-muted);margin:0 0 8px'}));
+                        }
+                    });
+                    sidebar.appendChild(cardBundles);
+                }
 
                 grid.appendChild(sidebar);
                 root.appendChild(grid);
-
-                // Load linked packages
-                fetch('/api/v1/packages/' + pkg.slug + '/links')
-                    .then(function(r) { return r.json(); })
-                    .then(function(data) {
-                        var container = document.getElementById('linked-packages');
-                        var loading = container.querySelector('.loading-small');
-                        if (loading) loading.remove();
-                        // Support both formats: {links:[]} or {worksWith:[], usedBy:[]}
-                        var allLinks = data.links || [].concat(data.worksWith || []).concat(data.usedBy || []);
-                        if (allLinks.length === 0) {
-                            container.appendChild(el('p', {textContent: 'No linked packages yet.', style: 'color:var(--text-muted);font-size:13px;margin:0'}));
-                            return;
-                        }
-                        allLinks.forEach(function(link) {
-                            var a = el('a', {href: '/package.html?slug=' + link.slug, style: 'display:block;padding:6px 0;font-size:14px;text-decoration:none;color:var(--primary);font-weight:500'});
-                            a.textContent = link.displayName || link.slug;
-                            container.appendChild(a);
-                            if (link.reason) {
-                                container.appendChild(el('p', {textContent: link.reason, style: 'font-size:12px;color:var(--text-muted);margin:0 0 8px'}));
-                            }
-                        });
-                    })
-                    .catch(function() {
-                        var container = document.getElementById('linked-packages');
-                        var loading = container.querySelector('.loading-small');
-                        if (loading) loading.textContent = 'Could not load links.';
-                    });
 
                 // Tab switching
                 document.querySelectorAll('.pkg-tab').forEach(function(tab) {

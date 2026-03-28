@@ -312,16 +312,6 @@ app.get('/api/v1/packages/:slug', (req, res) => {
           WHERE bp.package_id = ?
         `).all(pkg.id);
       } catch (e) { return []; }
-    })(),
-    worksWell: (() => {
-      try {
-        return db.prepare(`
-          SELECT p.slug, p.display_name as displayName, p.description, pl.reason
-          FROM package_links pl
-          JOIN packages p ON (p.id = CASE WHEN pl.from_package_id = ? THEN pl.to_package_id ELSE pl.from_package_id END)
-          WHERE pl.from_package_id = ? OR pl.to_package_id = ?
-        `).all(pkg.id, pkg.id, pkg.id);
-      } catch (e) { return []; }
     })()
   });
 });
@@ -466,72 +456,6 @@ app.get('/api/v1/packages/:slug/feedback', (req, res) => {
   });
 });
 
-// Suggest a link between packages (AI feedback)
-app.post('/api/v1/packages/:slug/links', authMiddleware, requireAuth, (req, res) => {
-  const { slug } = req.params;
-  const { targetSlug, reason, agentName } = req.body;
-  
-  if (!targetSlug) {
-    return res.status(400).json({ 
-      error: { code: 'VALIDATION_ERROR', message: 'targetSlug is required' } 
-    });
-  }
-  
-  const fromPkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  const toPkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(targetSlug);
-  
-  if (!fromPkg || !toPkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  if (fromPkg.id === toPkg.id) {
-    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Cannot link package to itself' } });
-  }
-  
-  // Upsert link (increment votes if exists)
-  const existing = db.prepare('SELECT id, votes FROM package_links WHERE from_package_id = ? AND to_package_id = ?').get(fromPkg.id, toPkg.id);
-  
-  if (existing) {
-    db.prepare('UPDATE package_links SET votes = votes + 1, reason = COALESCE(?, reason) WHERE id = ?').run(reason, existing.id);
-    res.json({ success: true, action: 'upvoted', votes: existing.votes + 1 });
-  } else {
-    db.prepare(`
-      INSERT INTO package_links (from_package_id, to_package_id, reason, suggested_by, agent_name)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(fromPkg.id, toPkg.id, reason || null, req.user.id, agentName || null);
-    res.json({ success: true, action: 'created', votes: 1 });
-  }
-});
-
-// Get links for a package (public)
-app.get('/api/v1/packages/:slug/links', (req, res) => {
-  const { slug } = req.params;
-  
-  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  // Get outgoing links (this package works with...)
-  const worksWith = db.prepare(`
-    SELECT p.slug, p.display_name as displayName, p.description, l.reason, l.votes, l.agent_name as agentName
-    FROM package_links l
-    JOIN packages p ON l.to_package_id = p.id
-    WHERE l.from_package_id = ?
-    ORDER BY l.votes DESC
-  `).all(pkg.id);
-  
-  // Get incoming links (...works with this package)
-  const usedBy = db.prepare(`
-    SELECT p.slug, p.display_name as displayName, p.description, l.reason, l.votes, l.agent_name as agentName
-    FROM package_links l
-    JOIN packages p ON l.from_package_id = p.id
-    WHERE l.to_package_id = ?
-    ORDER BY l.votes DESC
-  `).all(pkg.id);
-  
-  res.json({ worksWith, usedBy });
-});
 
 // Publish a package (create or update)
 app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {

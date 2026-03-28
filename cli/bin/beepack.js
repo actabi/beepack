@@ -12,7 +12,7 @@ import { createRequire } from 'module';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { search, list, info, install, init, publish, login, whoami, link, like, dislike } from '../src/commands.js';
+import { search, list, info, install, init, publish, login, whoami, like, dislike } from '../src/commands.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -95,14 +95,6 @@ program
   .command('whoami')
   .description('Show current logged-in user')
   .action(whoami);
-
-// Link command
-program
-  .command('link <package1> <package2>')
-  .description('Link two packages that work well together')
-  .option('-r, --reason <reason>', 'Why they work well together')
-  .option('-a, --agent <name>', 'Agent name', 'CLI')
-  .action(link);
 
 // Like command
 program
