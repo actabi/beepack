@@ -23,7 +23,7 @@ Beepack is a package registry of **production-tested code** that just works:
 ### Install the CLI
 
 ```bash
-npm install -g @actabi/beepack
+npm install -g @beepack/cli
 ```
 
 ### Search, install, publish

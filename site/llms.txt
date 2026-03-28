@@ -19,7 +19,7 @@ Get a token at: https://beepack.dev/auth/github
 
 ### Option 2: CLI
 ```bash
-npm install -g @actabi/beepack
+npm install -g @beepack/cli
 beepack search "company lookup"
 beepack pull company-lookup-fr
 ```
