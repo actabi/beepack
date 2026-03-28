@@ -58,28 +58,26 @@
             <h1>📚 Beepack Documentation</h1>
             
             <div class="intro-box">
-                <p><strong>Beepack</strong> is the hive where AIs and vibe coders share, discover, and improve APIs collaboratively.</p>
+                <p><strong>Beepack</strong> is the package manager for vibe coders. Stop wasting tokens, stop debugging AI-generated code that almost works. Pull production-tested packages and ship.</p>
             </div>
 
             <h2>🎯 What is Beepack?</h2>
-            <p>Imagine a world where:</p>
+            <p>Every vibe coder knows the pain:</p>
             <ul>
-                <li>You ask your AI <em>"connect me to Notion"</em></li>
-                <li>The AI searches Beepack and finds a tested, maintained API</li>
-                <li>It installs and integrates it automatically</li>
-                <li>No duplicated code, no reinventing the wheel</li>
+                <li>Your AI regenerates the same Stripe/Notion/OAuth code every session</li>
+                <li>You burn tokens on code that "should work" but needs 3 rounds of debugging</li>
+                <li>You copy-paste from old projects and pray nothing broke</li>
             </ul>
-            
-            <p><strong>That's Beepack.</strong></p>
 
-            <h2>🆚 Why not npm or ClawHub?</h2>
-            
+            <p><strong>Beepack fixes this.</strong> One command, tested code, zero headaches.</p>
+
+            <h2>🆚 Why not just npm?</h2>
+
             <table class="comparison-table">
                 <thead>
                     <tr>
                         <th></th>
                         <th>npm</th>
-                        <th>ClawHub</th>
                         <th>Beepack</th>
                     </tr>
                 </thead>
@@ -87,32 +85,32 @@
                     <tr>
                         <td>Target</td>
                         <td>Human developers</td>
-                        <td>OpenClaw users</td>
                         <td><strong>AIs + vibe coders</strong></td>
                     </tr>
                     <tr>
                         <td>Discovery</td>
                         <td>Keywords</td>
-                        <td>Vector search</td>
-                        <td><strong>Semantic + MCP</strong></td>
+                        <td><strong>Semantic search + MCP</strong></td>
                     </tr>
                     <tr>
-                        <td>Collaboration</td>
-                        <td>Via GitHub</td>
-                        <td>❌ None</td>
-                        <td><strong>Forks, PRs, Issues</strong></td>
+                        <td>AI integration</td>
+                        <td>None</td>
+                        <td><strong>MCP protocol (remote + local)</strong></td>
                     </tr>
                     <tr>
                         <td>Format</td>
                         <td>package.json</td>
-                        <td>SKILL.md</td>
-                        <td><strong>HIVE.yaml</strong></td>
+                        <td><strong>HIVE.yaml (capabilities, env vars)</strong></td>
                     </tr>
                     <tr>
                         <td>Security</td>
                         <td>Community audit</td>
-                        <td>None</td>
                         <td><strong>3-layer scan (static + LLM + community)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Community</td>
+                        <td>Via GitHub</td>
+                        <td><strong>Suggestions, bundles, likes</strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -128,14 +126,20 @@
             <h3>2. Search for a package</h3>
             <pre><code>beepack search "sync notion database"</code></pre>
             
-            <h3>3. Install a package</h3>
-            <pre><code>beepack install notion-sync</code></pre>
+            <h3>3. Pull a package</h3>
+            <pre><code>beepack pull notion-sync</code></pre>
             
-            <h3>4. Or publish your own</h3>
-            <pre><code># Create HIVE.yaml
+            <h3>4. Set up your project</h3>
+            <pre><code># Configure your project for Beepack
 beepack init
 
-# Publish
+# This creates:
+# - .cursorrules (AI instructions)
+# - mcp-config.json (MCP setup)
+# - packages/ (where pulled code goes)</code></pre>
+            
+            <h3>5. Or publish your own</h3>
+            <pre><code># In your package directory
 beepack publish</code></pre>
 
             <div class="next-steps">

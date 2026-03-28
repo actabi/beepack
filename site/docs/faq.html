@@ -58,14 +58,15 @@
             <h2>General</h2>
             
             <h3>What is Beepack?</h3>
-            <p>Beepack is an open-source platform where developers and AIs can share, discover, and reuse APIs. Think of it as "npm for integrations, optimized for vibe coding".</p>
+            <p>Beepack is an open-source package manager for vibe coders. It saves you tokens, debugging time, and headaches by giving your AI access to production-tested code instead of regenerating everything from scratch.</p>
 
             <h3>Why Beepack instead of npm?</h3>
             <p>npm is great for generic packages, but Beepack is specially designed for:</p>
             <ul>
-                <li><strong>AI discovery</strong> - Semantic search, MCP protocol</li>
-                <li><strong>Integrations/APIs</strong> - HIVE.yaml format with capabilities</li>
-                <li><strong>Collaboration</strong> - Forks, PRs, issues (coming soon)</li>
+                <li><strong>AI discovery</strong> - Semantic search + MCP protocol for direct AI integration</li>
+                <li><strong>Integrations/APIs</strong> - HIVE.yaml format with capabilities and env var declarations</li>
+                <li><strong>Community</strong> - Suggestions system, bundles, likes/dislikes</li>
+                <li><strong>Security</strong> - 3-layer scan on every publish (static + LLM + community reports)</li>
             </ul>
 
             <h3>Is it free?</h3>
@@ -78,7 +79,7 @@
             <p>Yes! Beepack is <strong>ClawHub-compatible</strong>. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills using the <code>--registry https://beepack.ai</code> flag. Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API that translates packages into the ClawHub skill format. See our <a href="mcp-integration.html">MCP Integration</a> page for details.</p>
 
             <h3>What are bundles?</h3>
-            <p>Bundles are <strong>curated groups of packages</strong> that work well together for a specific use case (e.g., "saas-starter", "ai-toolkit"). Instead of searching and installing packages one by one, you can install an entire bundle with <code>beepack install --bundle bundle-name</code>. Browse available bundles with <code>beepack bundles</code> or via the <code>/api/v1/bundles</code> API endpoint.</p>
+            <p>Bundles are <strong>curated groups of packages</strong> that work well together for a specific use case (e.g., "saas-starter", "ai-toolkit"). Instead of searching and installing packages one by one, you can install an entire bundle with <code>beepack pull --bundle bundle-name</code>. Browse available bundles with <code>beepack bundles</code> or via the <code>/api/v1/bundles</code> API endpoint.</p>
 
             <h3>How do I contribute to an existing package?</h3>
             <p>Use the <strong>suggestion system</strong>. Instead of forking or publishing a duplicate, you can suggest improvements to any existing package:</p>
@@ -136,7 +137,7 @@ beepack publish</code></pre>
             <h2>Contributing</h2>
 
             <h3>How can I contribute to Beepack?</h3>
-            <p>Beepack is open-source! Visit our <a href="https://github.com/beepack/beepack" target="_blank">GitHub</a> to contribute code, report bugs, or propose features.</p>
+            <p>Beepack is open-source! Visit our <a href="https://github.com/actabi/beepack" target="_blank">GitHub</a> to contribute code, report bugs, or propose features.</p>
 
             <h3>I have a feature idea</h3>
             <p>Great! Open an issue on GitHub or join our Discord to discuss.</p>

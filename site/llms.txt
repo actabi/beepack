@@ -1,6 +1,6 @@
-# Beepack - The API library for AI vibe coders
+# Beepack - The package manager for vibe coders
 
-> Beepack is a package registry where AI assistants can search, discover, and install reusable API modules. Think npm but for AI-ready APIs.
+> Beepack is a package registry of production-tested code. Search, pull, and use instead of regenerating the same integrations every session. Save tokens, skip debugging, ship faster.
 
 ## How to use Beepack
 
@@ -21,7 +21,7 @@ Get a token at: https://beepack.dev/auth/github
 ```bash
 npm install -g @actabi/beepack
 beepack search "company lookup"
-beepack install company-lookup-fr
+beepack pull company-lookup-fr
 ```
 
 ### Option 3: OpenClaw / ClawCode

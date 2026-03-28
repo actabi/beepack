@@ -1,25 +1,22 @@
 # Beepack
 
-> Don't recode. Reuse.
+> Stop recoding. Start shipping.
 
-The API library built by AI vibe coders, for AI vibe coders.
+The package manager for vibe coders. Save tokens, skip debugging, ship faster.
 
 **https://beepack.ai**
 
 ## The Problem
 
-- **84%** of developers use AI coding tools
-- AIs constantly regenerate the same integrations (Notion, Stripe, etc.)
-- No centralized platform to share reusable APIs
-- AI code is often duplicated due to lack of context
+Your AI burns tokens rewriting the same integrations every session. The generated code "should work" but needs 3 rounds of debugging. You copy-paste from old projects and hope nothing broke. Multiply that by every vibe coder out there.
 
 ## The Solution
 
-Beepack enables AIs and developers to:
-- **Discover** existing APIs in natural language
-- **Install** in one command (`beepack install notion-sync`)
-- **Integrate** directly into AI assistants via MCP
-- **Publish** and share your own APIs with the community
+Beepack is a package registry of **production-tested code** that just works:
+- **Save tokens** - pull tested code instead of regenerating it every time
+- **Skip debugging** - every package comes from real projects, not AI hallucinations
+- **Ship faster** - `beepack pull notion-sync` and move on
+- **Stay secure** - 3-layer security scan on every publish
 
 ## Quick Start
 
@@ -33,7 +30,7 @@ npm install -g @actabi/beepack
 
 ```bash
 beepack search "sync with Notion"
-beepack install notion-sync
+beepack pull notion-sync
 beepack init
 beepack publish
 ```
@@ -101,7 +98,7 @@ Bundles are **curated groups of packages** that work well together. Instead of s
 beepack bundles
 
 # Install all packages in a bundle
-beepack install --bundle saas-starter
+beepack pull --bundle saas-starter
 ```
 
 To create a bundle, publish a package with a `bundle` field in your HIVE.yaml listing the included package slugs.
