@@ -23,6 +23,8 @@ initStorage();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+import rateLimit from 'express-rate-limit';
+
 const app = express();
 const PORT = process.env.PORT || 3011;
 
@@ -30,10 +32,44 @@ const PORT = process.env.PORT || 3011;
 app.use(cors());
 app.use(express.json());
 
-// Multer for file uploads (50MB limit)
+// Rate limiting
+const readLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 180, // 180 requests per minute for reads
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'RATE_LIMIT', message: 'Too many requests. Try again in a minute.' } },
+});
+
+const writeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 45, // 45 writes per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'RATE_LIMIT', message: 'Too many write requests. Slow down.' } },
+});
+
+const publishLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 publishes per hour
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'PUBLISH_LIMIT', message: 'Too many publishes. Max 10 per hour.' } },
+});
+
+// Apply rate limiters
+app.use('/api/', readLimiter);
+app.use((req, res, next) => {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && req.path.startsWith('/api/')) {
+    return writeLimiter(req, res, next);
+  }
+  next();
+});
+
+// Multer for file uploads (50MB total, 10MB per file)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024, files: 50 },
 });
 
 // Serve static site
@@ -587,7 +623,7 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
 // ============== FILE UPLOAD/DOWNLOAD ROUTES ==============
 
 // Upload package files (multipart)
-app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.array('files', 100), async (req, res) => {
+app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requireAuth, upload.array('files', 50), async (req, res) => {
   try {
     const { slug } = req.params;
     const { version, changelog } = req.body;
@@ -629,6 +665,57 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
       return res.status(400).json({
         error: { code: 'INVALID_HIVE', message: 'HIVE.yaml must contain name and description' },
       });
+    }
+
+    // Verify GitHub account age (14 days minimum)
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+    if (user && user.github_id && user.github_id !== 'demo') {
+      try {
+        const ghRes = await fetch(`https://api.github.com/user/${user.github_id}`, {
+          headers: { 'User-Agent': 'Beepack/1.0' },
+          signal: AbortSignal.timeout(5000),
+        });
+        if (ghRes.ok) {
+          const ghUser = await ghRes.json();
+          const accountAge = (Date.now() - new Date(ghUser.created_at).getTime()) / (1000 * 60 * 60 * 24);
+          if (accountAge < 14) {
+            return res.status(403).json({
+              error: { code: 'ACCOUNT_TOO_NEW', message: `GitHub account must be at least 14 days old to publish. Your account is ${Math.floor(accountAge)} days old.` },
+            });
+          }
+        }
+      } catch (e) { /* GitHub API unavailable - allow publish */ }
+    }
+
+    // Check daily publish limit (20 per day)
+    const today = new Date().toISOString().split('T')[0];
+    const publishCount = db.prepare(
+      "SELECT COUNT(*) as count FROM package_versions WHERE created_by = ? AND created_at >= ?"
+    ).get(req.user.id, today + ' 00:00:00');
+    if (publishCount.count >= 20) {
+      return res.status(429).json({
+        error: { code: 'DAILY_LIMIT', message: 'You have reached the daily publish limit (20 per day). Try again tomorrow.' },
+      });
+    }
+
+    // Validate file sizes (10MB per file max)
+    for (const file of files) {
+      if (file.size > 10 * 1024 * 1024) {
+        return res.status(400).json({
+          error: { code: 'FILE_TOO_LARGE', message: `File "${file.originalname}" exceeds 10MB limit (${(file.size / 1024 / 1024).toFixed(1)}MB)` },
+        });
+      }
+    }
+
+    // Only allow text files
+    const allowedExtensions = ['js', 'ts', 'mjs', 'cjs', 'json', 'yaml', 'yml', 'md', 'txt', 'html', 'css', 'sh', 'py', 'toml', 'cfg', 'ini', 'env.example'];
+    for (const file of files) {
+      const ext = file.originalname.split('.').pop()?.toLowerCase();
+      if (ext && !allowedExtensions.includes(ext) && file.originalname !== 'LICENSE') {
+        return res.status(400).json({
+          error: { code: 'INVALID_FILE_TYPE', message: `Only text files are allowed. "${file.originalname}" is not a supported file type.` },
+        });
+      }
     }
 
     // Validate displayName is explicit (not just the slug)
