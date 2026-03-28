@@ -138,6 +138,23 @@ db.exec(`
     UNIQUE(from_package_id, to_package_id)
   );
 
+  CREATE TABLE IF NOT EXISTS suggestions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    author_id INTEGER REFERENCES users(id),
+    author_handle TEXT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    code_diff TEXT,
+    status TEXT DEFAULT 'open' CHECK(status IN ('open', 'accepted', 'rejected')),
+    review_comment TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_suggestions_package ON suggestions(package_id);
+  CREATE INDEX IF NOT EXISTS idx_suggestions_status ON suggestions(status);
+
   CREATE TABLE IF NOT EXISTS bundles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     slug TEXT UNIQUE NOT NULL,
@@ -303,6 +320,13 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     homepageUrl: pkg.homepage_url,
     createdAt: pkg.created_at,
     updatedAt: pkg.updated_at,
+    openSuggestions: (() => {
+      try {
+        return db.prepare(
+          'SELECT id, title, description, author_handle as author, created_at as createdAt FROM suggestions WHERE package_id = ? AND status = ? ORDER BY created_at DESC LIMIT 5'
+        ).all(pkg.id, 'open');
+      } catch (e) { return []; }
+    })(),
     bundles: (() => {
       try {
         return db.prepare(`
@@ -655,7 +679,7 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
             code: 'SIMILAR_EXISTS',
             message: 'Similar packages already exist. Check them before publishing a duplicate.',
             similar: similar.map(s => ({ slug: s.slug, displayName: s.display_name, description: s.description })),
-            hint: 'If your package is genuinely different, change the description to clearly differentiate it, then retry.'
+            hint: 'Option 1: Use the existing package instead. Option 2: Suggest an improvement via POST /api/v1/packages/{slug}/suggestions. Option 3: If genuinely different, change description to differentiate, then retry.'
           },
         });
       }
@@ -861,6 +885,79 @@ app.get('/api/v1/packages/:slug/files/*', (req, res) => {
 
   res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
   res.send(content);
+});
+
+// ============== SUGGESTIONS (Package Contributions) ==============
+
+// List suggestions for a package
+app.get('/api/v1/packages/:slug/suggestions', (req, res) => {
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  const suggestions = db.prepare(
+    'SELECT * FROM suggestions WHERE package_id = ? ORDER BY created_at DESC'
+  ).all(pkg.id);
+
+  res.json({
+    suggestions: suggestions.map(s => ({
+      id: s.id,
+      title: s.title,
+      description: s.description,
+      codeDiff: s.code_diff,
+      status: s.status,
+      author: s.author_handle,
+      reviewComment: s.review_comment,
+      createdAt: s.created_at,
+    })),
+  });
+});
+
+// Submit a suggestion for a package
+app.post('/api/v1/packages/:slug/suggestions', authMiddleware, requireAuth, (req, res) => {
+  const { title, description, codeDiff } = req.body;
+
+  if (!title || !description) {
+    return res.status(400).json({
+      error: { code: 'VALIDATION_ERROR', message: 'title and description are required' },
+    });
+  }
+
+  const pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  // Can't suggest on your own package
+  if (pkg.owner_id === req.user.id) {
+    return res.status(400).json({
+      error: { code: 'OWN_PACKAGE', message: 'You own this package. Edit it directly with beepack publish.' },
+    });
+  }
+
+  const result = db.prepare(
+    'INSERT INTO suggestions (package_id, author_id, author_handle, title, description, code_diff) VALUES (?, ?, ?, ?, ?, ?)'
+  ).run(pkg.id, req.user.id, req.user.login, title, description, codeDiff || null);
+
+  res.json({ success: true, id: result.lastInsertRowid, message: 'Suggestion submitted. The package owner will review it.' });
+});
+
+// Review a suggestion (accept/reject) - only package owner
+app.patch('/api/v1/suggestions/:id', authMiddleware, requireAuth, (req, res) => {
+  const { status, comment } = req.body;
+
+  if (!['accepted', 'rejected'].includes(status)) {
+    return res.status(400).json({ error: { code: 'INVALID_STATUS', message: 'Status must be "accepted" or "rejected"' } });
+  }
+
+  const suggestion = db.prepare('SELECT s.*, p.owner_id FROM suggestions s JOIN packages p ON p.id = s.package_id WHERE s.id = ?').get(req.params.id);
+  if (!suggestion) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Suggestion not found' } });
+
+  if (suggestion.owner_id !== req.user.id) {
+    return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Only the package owner can review suggestions' } });
+  }
+
+  db.prepare('UPDATE suggestions SET status = ?, review_comment = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+    .run(status, comment || null, req.params.id);
+
+  res.json({ success: true, status, message: status === 'accepted' ? 'Suggestion accepted. Apply the changes in your next publish.' : 'Suggestion rejected.' });
 });
 
 // ============== BUNDLES ==============

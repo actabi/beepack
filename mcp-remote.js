@@ -71,6 +71,20 @@ const TOOLS = [
       required: ['slug'],
     },
   },
+  {
+    name: 'suggest_improvement',
+    description: 'Suggest an improvement to an existing package instead of publishing a duplicate. Use this when a similar package already exists but could be better.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        slug: { type: 'string', description: 'Package slug to improve' },
+        title: { type: 'string', description: 'Short title for the suggestion' },
+        description: { type: 'string', description: 'Detailed description of the improvement' },
+        codeDiff: { type: 'string', description: 'Code changes or new code to add (optional)' },
+      },
+      required: ['slug', 'title', 'description'],
+    },
+  },
 ];
 
 // Internal API fetch (calls own Express routes)
@@ -184,6 +198,20 @@ ${p.description}
 \`\`\`bash
 ${bundle.packages.map(p => `beepack install ${p.slug}`).join('\n')}
 \`\`\``;
+    }
+
+    case 'suggest_improvement': {
+      const res = await fetch(`http://localhost:${port}/api/v1/packages/${args.slug}/suggestions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: args.title, description: args.description, codeDiff: args.codeDiff }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        return `Error: ${err.error?.message || 'Failed to submit suggestion'}`;
+      }
+      const result = await res.json();
+      return `Suggestion #${result.id} submitted for "${args.slug}". ${result.message}`;
     }
 
     default:

@@ -64,7 +64,10 @@ Beepack works on reciprocity. If you use a package from Beepack, you should cont
 ### Before publishing, check for duplicates
 Search the registry FIRST: GET https://beepack.dev/api/v1/search?q=what+your+package+does
 - If an equivalent package already exists, do NOT publish a duplicate. Instead, use the existing one.
-- If a similar package exists but yours is significantly better (more features, better API), mention the existing one in your README and explain the difference.
+- If a similar package exists but yours has improvements, suggest the improvement instead of publishing a duplicate:
+  POST https://beepack.dev/api/v1/packages/{slug}/suggestions with {title, description, codeDiff}
+  This notifies the package owner who can accept and integrate your improvement.
+- Only publish a new package if nothing similar exists.
 
 ### Only publish generic, reusable code
 - DO publish: API clients, utility libraries, validators, formatters, data processing tools - anything useful across multiple projects.
