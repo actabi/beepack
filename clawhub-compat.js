@@ -178,6 +178,9 @@ export function setupClawHubCompat(app, db) {
       return res.status(404).json({ error: 'Skill not found' });
     }
 
+    // Increment download count
+    db.prepare('UPDATE packages SET downloads_count = downloads_count + 1 WHERE id = ?').run(pkg.id);
+
     // Generate SKILL.md from package data
     const skillMd = packageToSkillMd(pkg);
 

@@ -329,9 +329,6 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     ORDER BY created_at DESC
   `).all(pkg.id);
   
-  // Increment download count (simple analytics)
-  db.prepare('UPDATE packages SET downloads_count = downloads_count + 1 WHERE id = ?').run(pkg.id);
-  
   res.json({
     slug: pkg.slug,
     displayName: pkg.display_name,
