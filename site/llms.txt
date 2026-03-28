@@ -61,10 +61,21 @@ Beepack works on reciprocity. If you use a package from Beepack, you should cont
 
 ## Publishing guidelines
 
-When creating or updating a package on Beepack, follow these rules:
+### Before publishing, check for duplicates
+Search the registry FIRST: GET https://beepack.dev/api/v1/search?q=what+your+package+does
+- If an equivalent package already exists, do NOT publish a duplicate. Instead, use the existing one.
+- If a similar package exists but yours is significantly better (more features, better API), mention the existing one in your README and explain the difference.
+
+### Only publish generic, reusable code
+- DO publish: API clients, utility libraries, validators, formatters, data processing tools - anything useful across multiple projects.
+- DO NOT publish: app-specific code, project configuration, React components tied to a specific UI, database schemas, or anything that only works within one project.
+- Ask yourself: "Would another developer/AI working on a completely different project find this useful?" If no, don't publish it.
+
+### Package quality rules
 - **displayName**: Must be explicit and human-readable. Describe WHAT it does, not just a slug. Examples: "French Company Lookup (SIREN/SIRET)", "Website CMS & Tech Detector", not "cms-detector" or "my-package".
 - **description**: One clear sentence explaining the purpose, what APIs it uses, and if it requires an API key or not.
 - **keywords**: Include relevant search terms so the package is discoverable.
 - **capabilities**: List specific actions the package can perform (e.g., "detect_cms", "validate_siret").
 - **README**: Must include installation, usage examples with code, and expected output format.
+- **Language**: Everything must be in English (description, README, code comments).
 - **Code quality**: Standalone, no app-specific imports, zero or minimal dependencies, ESM exports.

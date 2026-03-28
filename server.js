@@ -636,9 +636,31 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
       }
     }
 
-    // Check package ownership or create new
+    // Check for similar existing packages (only for new packages)
     let pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
-    
+
+    if (!pkg) {
+      const descWords = (hiveContent.description || '').split(/\s+/).filter(w => w.length > 3);
+      const searchTerm = '%' + descWords.slice(0, 3).join('%') + '%';
+      const similar = db.prepare(`
+        SELECT slug, display_name, description FROM packages
+        WHERE (description LIKE ? OR display_name LIKE ?)
+        AND slug != ?
+        LIMIT 3
+      `).all(searchTerm, searchTerm, slug);
+
+      if (similar.length > 0) {
+        return res.status(409).json({
+          error: {
+            code: 'SIMILAR_EXISTS',
+            message: 'Similar packages already exist. Check them before publishing a duplicate.',
+            similar: similar.map(s => ({ slug: s.slug, displayName: s.display_name, description: s.description })),
+            hint: 'If your package is genuinely different, change the description to clearly differentiate it, then retry.'
+          },
+        });
+      }
+    }
+
     if (pkg) {
       if (pkg.owner_id !== req.user.id) {
         return res.status(403).json({
