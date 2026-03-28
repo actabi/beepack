@@ -117,6 +117,18 @@ beepack suggest notion-sync "Add support for Notion databases filtering"
 
 Package authors can review, accept, or decline suggestions from their dashboard. Users can also like or dislike suggestions to help authors prioritize.
 
+## Security
+
+Beepack uses a **3-layer security pipeline** to protect the ecosystem from malicious packages:
+
+1. **Static scan** - Every package is scanned at publish time for dangerous patterns (`eval()`, `child_process`, credential harvesting, data exfiltration). Packages that fail this scan are **blocked immediately** and cannot be published.
+
+2. **LLM evaluation** - An AI-powered analysis runs asynchronously after publish to detect more subtle threats like obfuscated code, hidden network calls, or social engineering patterns.
+
+3. **Community reports** - Any user can report a suspicious package. After **3 independent reports**, the package is automatically hidden from search results and downloads pending manual review.
+
+Packages are scanned automatically every time a new version is published. No action is needed from the author - the security pipeline runs transparently.
+
 ## HIVE.yaml
 
 Every package has a `HIVE.yaml` manifest:
@@ -179,6 +191,7 @@ beepack/
 │   └── src/
 │       ├── commands.js
 │       └── mcp-server.js
+├── security-engine.js  # 3-layer security pipeline
 ├── site/               # Static website
 ├── storage/            # Package files
 └── data/               # SQLite database
@@ -195,6 +208,8 @@ beepack/
 | `GET /api/v1/bundles` | List available bundles |
 | `GET /api/v1/skills` | List packages in ClawHub skill format |
 | `GET /api/v1/packages/:slug/suggestions` | Get/submit suggestions for a package |
+| `GET /api/v1/packages/:slug/security` | Get security scan results for a package |
+| `POST /api/v1/packages/:slug/report` | Report a suspicious package |
 | `GET /.well-known/clawhub.json` | ClawHub discovery endpoint |
 | `GET /mcp/sse` | Remote MCP endpoint (auth required) |
 
@@ -211,8 +226,8 @@ beepack/
 - [x] Suggestions (community contribution system)
 - [x] ClawHub compatibility (OpenClaw/ClawCode integration)
 - [x] Like/dislike system for suggestions
+- [x] Automatic security scan (3-layer pipeline: static + LLM + community reports)
 - [ ] Forks and pull requests
-- [ ] Automatic security scan
 - [ ] CI test badges
 
 ## Contributing

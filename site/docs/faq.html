@@ -105,18 +105,25 @@ beepack publish</code></pre>
 
             <h2>Security</h2>
 
-            <h3>How do you ensure package security?</h3>
-            <p>Several measures:</p>
+            <h3>How does Beepack ensure package security?</h3>
+            <p>Beepack uses a <strong>3-layer security pipeline</strong> that runs automatically on every publish:</p>
             <ul>
-                <li>GitHub age gate (accounts > 14 days)</li>
-                <li>Automatic scanning for malicious patterns</li>
-                <li>Community reporting system</li>
-                <li>Active moderation</li>
-                <li>Mandatory declaration of required env vars</li>
+                <li><strong>Static scan</strong> - Code is analyzed for dangerous patterns (<code>eval()</code>, <code>child_process</code>, credential harvesting, data exfiltration). Malicious packages are blocked immediately.</li>
+                <li><strong>LLM evaluation</strong> - An AI-powered analysis runs asynchronously to detect obfuscated threats, hidden network calls, and social engineering patterns.</li>
+                <li><strong>Community reports</strong> - Users can report suspicious packages. After 3 independent reports, the package is automatically hidden pending manual review.</li>
             </ul>
+            <p>Additional measures include GitHub age gate (accounts > 14 days), mandatory declaration of required env vars, and active moderation.</p>
+
+            <h3>How do I report a suspicious package?</h3>
+            <p>You can report a suspicious package by sending a POST request to the report endpoint:</p>
+            <pre><code>POST https://beepack.dev/api/v1/packages/{slug}/report</code></pre>
+            <p>Include a JSON body with a <code>reason</code> field explaining why you believe the package is suspicious. Authentication is required.</p>
+
+            <h3>What happens when a package is reported?</h3>
+            <p>Each report is logged and reviewed. After <strong>3 independent reports</strong> from different users, the package is <strong>automatically hidden</strong> from search results and downloads. A manual review is then triggered to determine if the package should be permanently removed or restored.</p>
 
             <h3>Can a package steal my secrets?</h3>
-            <p>Beepack analyzes packages to detect suspicious patterns (data exfiltration). Required environment variables must be declared in HIVE.yaml. Always review code before using a package in production.</p>
+            <p>Beepack's security engine analyzes packages to detect suspicious patterns (data exfiltration, credential harvesting). Required environment variables must be declared in HIVE.yaml. Always review code before using a package in production.</p>
 
             <h2>For AIs</h2>
 

@@ -165,6 +165,16 @@ beepack suggest package-slug "Description of your suggestion"
 beepack suggestions package-slug</code></pre>
             <p>The package author will be notified and can accept or decline your suggestion. Other users can like or dislike suggestions to help prioritize them.</p>
 
+            <h2>Security Scanning</h2>
+            <p>When you publish a package, it goes through Beepack's <strong>3-layer security pipeline</strong> automatically:</p>
+            <ol>
+                <li><strong>Static scan (immediate)</strong> - Your code is analyzed for dangerous patterns such as <code>eval()</code>, <code>child_process</code> usage, credential harvesting, and data exfiltration. If malicious patterns are detected, the publish is <strong>blocked immediately</strong> and you will receive an error message explaining why.</li>
+                <li><strong>LLM evaluation (async)</strong> - After successful publish, an AI-powered analysis runs in the background to detect more subtle threats like obfuscated code, hidden network calls, or social engineering patterns. If issues are found, your package may be flagged for manual review.</li>
+                <li><strong>Community reports (ongoing)</strong> - After publishing, the community can report suspicious behavior. If 3 independent users report your package, it is automatically hidden pending review.</li>
+            </ol>
+            <p>You can check your package's security status at any time:</p>
+            <pre><code>GET https://beepack.dev/api/v1/packages/{slug}/security</code></pre>
+
             <h2>After Publishing</h2>
             <p>Your package is immediately available:</p>
             <pre><code># Others can install it
