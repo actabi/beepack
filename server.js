@@ -15,6 +15,7 @@ import { initEmbeddings, initEmbeddingsTable, generateAllEmbeddings, createSearc
 import { storePackageFiles, getPackageFilesMetadata, getFile, createPackageArchive, initStorage } from './storage.js';
 import { setupRemoteMCP } from './mcp-remote.js';
 import { setupClawHubCompat } from './clawhub-compat.js';
+import { runStaticScan, runLLMEvaluation, buildModerationSnapshot, AUTO_HIDE_THRESHOLD, MAX_REPORTS_PER_USER } from './security-engine.js';
 
 // Initialize storage
 initStorage();
@@ -155,6 +156,31 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_suggestions_package ON suggestions(package_id);
   CREATE INDEX IF NOT EXISTS idx_suggestions_status ON suggestions(status);
+
+  CREATE TABLE IF NOT EXISTS security_scans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    version TEXT,
+    static_verdict TEXT,
+    llm_verdict TEXT,
+    final_verdict TEXT,
+    findings TEXT,
+    scan_data TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    reporter_id INTEGER REFERENCES users(id),
+    reason TEXT NOT NULL,
+    status TEXT DEFAULT 'open' CHECK(status IN ('open', 'resolved', 'dismissed')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(package_id, reporter_id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_reports_package ON reports(package_id);
+  CREATE INDEX IF NOT EXISTS idx_security_scans_package ON security_scans(package_id);
 
   CREATE TABLE IF NOT EXISTS bundles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -324,6 +350,12 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     homepageUrl: pkg.homepage_url,
     createdAt: pkg.created_at,
     updatedAt: pkg.updated_at,
+    security: (() => {
+      try {
+        const scan = db.prepare('SELECT final_verdict, static_verdict, llm_verdict, created_at FROM security_scans WHERE package_id = ? ORDER BY created_at DESC LIMIT 1').get(pkg.id);
+        return scan ? { verdict: scan.final_verdict, staticVerdict: scan.static_verdict, llmVerdict: scan.llm_verdict, scannedAt: scan.created_at } : null;
+      } catch (e) { return null; }
+    })(),
     openSuggestions: (() => {
       try {
         return db.prepare(
@@ -757,6 +789,64 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
         hive_yaml = excluded.hive_yaml
     `).run(pkg.id, version, changelog || '', hiveFile.buffer.toString('utf8'), req.user.id);
 
+    // Security scan (blocking - reject malicious packages)
+    const filesToScan = files.map(f => ({ name: f.originalname, content: f.buffer }));
+    const staticScan = runStaticScan(filesToScan);
+
+    if (staticScan.verdict === 'malicious') {
+      // Hide the package immediately
+      db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkg.id);
+      console.error(`🚨 MALICIOUS package blocked: ${slug} by ${req.user.login}`);
+
+      return res.status(403).json({
+        error: {
+          code: 'SECURITY_BLOCKED',
+          message: 'Package blocked: critical security issues detected.',
+          findings: staticScan.findings.filter(f => f.severity === 'critical'),
+        },
+      });
+    }
+
+    // Store scan results
+    db.prepare(
+      'INSERT INTO security_scans (package_id, version, static_verdict, final_verdict, findings, scan_data) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(pkg.id, version, staticScan.verdict, staticScan.verdict, JSON.stringify(staticScan.findings), JSON.stringify(staticScan));
+
+    // LLM evaluation (async, non-blocking - updates scan results later)
+    const openaiKey = process.env.OPENAI_API_KEY;
+    if (openaiKey) {
+      (async () => {
+        try {
+          const pkgMeta = db.prepare('SELECT * FROM packages WHERE id = ?').get(pkg.id);
+          const llmEval = await runLLMEvaluation({
+            slug: pkgMeta.slug,
+            displayName: pkgMeta.display_name,
+            description: pkgMeta.description,
+            requires: JSON.parse(pkgMeta.requires || '{}'),
+            keywords: JSON.parse(pkgMeta.keywords || '[]'),
+            capabilities: JSON.parse(pkgMeta.capabilities || '[]'),
+          }, filesToScan, openaiKey);
+
+          const snapshot = buildModerationSnapshot(staticScan, llmEval);
+
+          // Update scan with LLM results
+          db.prepare(
+            'UPDATE security_scans SET llm_verdict = ?, final_verdict = ?, scan_data = ? WHERE package_id = ? AND version = ?'
+          ).run(llmEval.verdict, snapshot.verdict, JSON.stringify(snapshot), pkg.id, version);
+
+          // Auto-hide if final verdict is malicious
+          if (snapshot.verdict === 'malicious') {
+            db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkg.id);
+            console.error(`🚨 Package hidden after LLM evaluation: ${slug}`);
+          }
+
+          console.log(`🔒 Security scan for ${slug}: static=${staticScan.verdict}, llm=${llmEval.verdict}, final=${snapshot.verdict}`);
+        } catch (e) {
+          console.error(`⚠️ LLM security eval failed for ${slug}:`, e.message);
+        }
+      })();
+    }
+
     // Auto-generate embedding for semantic search (non-blocking)
     if (isEmbeddingsEnabled()) {
       const pkgData = db.prepare('SELECT * FROM packages WHERE id = ?').get(pkg.id);
@@ -778,6 +868,11 @@ app.post('/api/v1/packages/:slug/upload', authMiddleware, requireAuth, upload.ar
       version,
       filesStored,
       totalSize,
+      security: {
+        staticVerdict: staticScan.verdict,
+        findings: staticScan.findings.length,
+        criticalCount: staticScan.criticalCount,
+      },
     });
   } catch (e) {
     console.error('Upload error:', e);
@@ -889,6 +984,84 @@ app.get('/api/v1/packages/:slug/files/*', (req, res) => {
 
   res.setHeader('Content-Type', file.mime_type || 'application/octet-stream');
   res.send(content);
+});
+
+// ============== SECURITY & REPORTING ==============
+
+// Get security scan results for a package
+app.get('/api/v1/packages/:slug/security', (req, res) => {
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  const scan = db.prepare(
+    'SELECT * FROM security_scans WHERE package_id = ? ORDER BY created_at DESC LIMIT 1'
+  ).get(pkg.id);
+
+  if (!scan) return res.json({ verdict: 'unscanned', message: 'No security scan available' });
+
+  res.json({
+    verdict: scan.final_verdict,
+    staticVerdict: scan.static_verdict,
+    llmVerdict: scan.llm_verdict,
+    findings: JSON.parse(scan.findings || '[]'),
+    scannedAt: scan.created_at,
+  });
+});
+
+// Report a package
+app.post('/api/v1/packages/:slug/report', authMiddleware, requireAuth, (req, res) => {
+  const { reason } = req.body;
+
+  if (!reason || reason.length < 10) {
+    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Reason is required (min 10 characters)' } });
+  }
+
+  if (reason.length > 500) {
+    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'Reason too long (max 500 characters)' } });
+  }
+
+  const pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  // Can't report your own package
+  if (pkg.owner_id === req.user.id) {
+    return res.status(400).json({ error: { code: 'OWN_PACKAGE', message: 'You cannot report your own package' } });
+  }
+
+  // Check report cap
+  const userReportCount = db.prepare(
+    'SELECT COUNT(*) as count FROM reports WHERE reporter_id = ? AND status = ?'
+  ).get(req.user.id, 'open');
+
+  if (userReportCount.count >= MAX_REPORTS_PER_USER) {
+    return res.status(429).json({ error: { code: 'REPORT_LIMIT', message: 'You have reached the maximum number of active reports' } });
+  }
+
+  try {
+    db.prepare('INSERT INTO reports (package_id, reporter_id, reason) VALUES (?, ?, ?)').run(pkg.id, req.user.id, reason);
+
+    // Check if auto-hide threshold reached
+    const reportCount = db.prepare(
+      'SELECT COUNT(*) as count FROM reports WHERE package_id = ? AND status = ?'
+    ).get(pkg.id, 'open');
+
+    if (reportCount.count >= AUTO_HIDE_THRESHOLD) {
+      db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkg.id);
+      console.warn(`⚠️ Package auto-hidden: ${req.params.slug} (${reportCount.count} reports)`);
+    }
+
+    res.json({
+      success: true,
+      message: 'Report submitted. Thank you for helping keep Beepack safe.',
+      totalReports: reportCount.count,
+      autoHidden: reportCount.count >= AUTO_HIDE_THRESHOLD,
+    });
+  } catch (e) {
+    if (e.message.includes('UNIQUE')) {
+      return res.json({ success: true, message: 'You have already reported this package' });
+    }
+    throw e;
+  }
 });
 
 // ============== SUGGESTIONS (Package Contributions) ==============

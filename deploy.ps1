@@ -148,6 +148,7 @@ if ($Deploy) {
         "storage.js",
         "mcp-remote.js",
         "clawhub-compat.js",
+        "security-engine.js",
         "package.json",
         "package-lock.json"
     )
