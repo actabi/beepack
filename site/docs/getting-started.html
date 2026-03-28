@@ -30,20 +30,25 @@
                 <ul>
                     <li><a href="./">Introduction</a></li>
                     <li><a href="getting-started.html" class="active">Quick Start</a></li>
-                    <li><a href="installation.html">CLI Installation</a></li>
                 </ul>
-                
+
                 <h4>📦 Packages</h4>
                 <ul>
                     <li><a href="publishing.html">Publishing a Package</a></li>
                     <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
-                    <li><a href="versioning.html">Versioning</a></li>
+                    <li><a href="bundles.html">Bundles</a></li>
                 </ul>
-                
+
                 <h4>🤖 For AIs</h4>
                 <ul>
                     <li><a href="mcp-integration.html">MCP Integration</a></li>
                     <li><a href="ai-discovery.html">AI Discovery</a></li>
+                    <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+
+                <h4>🤝 Community</h4>
+                <ul>
+                    <li><a href="suggestions.html">Contributing to Packages</a></li>
                 </ul>
             </nav>
         </aside>
@@ -61,11 +66,15 @@
             </ul>
 
             <h2>Step 1: Install the CLI</h2>
-            <pre><code>npm install -g beepack</code></pre>
-            
+            <pre><code>npm install -g @actabi/beepack</code></pre>
+
             <p>Verify the installation:</p>
-            <pre><code>beepack --version
-# beepack v1.0.0</code></pre>
+            <pre><code>beepack --version</code></pre>
+
+            <h2>Step 1b: Initial Setup</h2>
+            <p>Run the interactive setup to configure your environment:</p>
+            <pre><code>beepack setup</code></pre>
+            <p>This will guide you through connecting your GitHub account and choosing your default AI tool (Cursor, Copilot, Claude Code, <strong>OpenClaw</strong>, etc.).</p>
 
             <h2>Step 2: Login</h2>
             <pre><code>beepack login</code></pre>
@@ -99,7 +108,8 @@ requires:
 compatible:
   - cursor
   - copilot
-  - claude</code></pre>
+  - claude
+  - openclaw</code></pre>
 
             <h2>Step 4: Add Your Code</h2>
             

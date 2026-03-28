@@ -25,11 +25,29 @@
     <div class="docs-layout">
         <aside class="docs-sidebar">
             <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="getting-started.html">Quick Start</a></li>
+                </ul>
+
                 <h4>📦 Packages</h4>
                 <ul>
                     <li><a href="publishing.html" class="active">Publishing a Package</a></li>
                     <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
-                    <li><a href="versioning.html">Versioning</a></li>
+                    <li><a href="bundles.html">Bundles</a></li>
+                </ul>
+
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html">MCP Integration</a></li>
+                    <li><a href="ai-discovery.html">AI Discovery</a></li>
+                    <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+
+                <h4>🤝 Community</h4>
+                <ul>
+                    <li><a href="suggestions.html">Contributing to Packages</a></li>
                 </ul>
             </nav>
         </aside>
@@ -39,11 +57,19 @@
             
             <p>This guide walks you through publishing a quality package on Beepack.</p>
 
-            <h2>Prerequisites</h2>
+            <h2>Before You Publish: Check for Duplicates</h2>
+            <p>Before publishing a new package, <strong>always search first</strong> to check if a similar package already exists:</p>
+            <pre><code>beepack search "your package description"</code></pre>
+            <p>If a similar package exists, consider using the <strong>suggestion system</strong> to propose improvements instead of publishing a duplicate:</p>
+            <pre><code>beepack suggest existing-package "Add support for feature X"</code></pre>
+            <p>This keeps the ecosystem clean and helps existing packages improve rather than fragmenting effort.</p>
+
+            <h2>Requirements</h2>
             <ul>
+                <li><strong>English only</strong> - All package names, descriptions, READMEs, and documentation must be written in English. This ensures discoverability for the global community.</li>
+                <li><strong>displayName required</strong> - Your HIVE.yaml must include a <code>displayName</code> field with a human-readable name for your package (e.g., <code>displayName: "Notion Sync"</code>).</li>
                 <li>A GitHub account created more than 14 days ago</li>
-                <li>Beepack CLI installed: <code>npm install -g beepack</code></li>
-                <li>An API/integration you want to share</li>
+                <li>Beepack CLI installed: <code>npm install -g @actabi/beepack</code></li>
             </ul>
 
             <h2>Recommended Structure</h2>
@@ -63,6 +89,7 @@
             <h2>1. Create the HIVE.yaml</h2>
             <p>The most important file. See the <a href="hive-yaml.html">complete format guide</a>.</p>
             <pre><code>name: my-api
+displayName: "My API"
 version: 1.0.0
 description: Clear and concise description
 
@@ -124,7 +151,19 @@ beepack publish</code></pre>
                 <li>Forget to document</li>
                 <li>Publish untested code</li>
                 <li>Use undeclared dependencies</li>
+                <li>Publish duplicates - use <code>beepack suggest</code> to improve existing packages</li>
+                <li>Write descriptions in languages other than English</li>
+                <li>Omit the <code>displayName</code> field in HIVE.yaml</li>
             </ul>
+
+            <h2>Contributing to Existing Packages</h2>
+            <p>If you find a package that could be improved, use the <strong>suggestion system</strong> instead of publishing a duplicate:</p>
+            <pre><code># Suggest an improvement
+beepack suggest package-slug "Description of your suggestion"
+
+# View suggestions for a package
+beepack suggestions package-slug</code></pre>
+            <p>The package author will be notified and can accept or decline your suggestion. Other users can like or dislike suggestions to help prioritize them.</p>
 
             <h2>After Publishing</h2>
             <p>Your package is immediately available:</p>

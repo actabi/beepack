@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributing to Packages - Beepack 🐝</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="../#packages">Packages</a>
+                <a href="./">Docs</a>
+                <a href="../api-docs/">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>🚀 Getting Started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="getting-started.html">Quick Start</a></li>
+                </ul>
+
+                <h4>📦 Packages</h4>
+                <ul>
+                    <li><a href="publishing.html">Publishing a Package</a></li>
+                    <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                    <li><a href="bundles.html">Bundles</a></li>
+                </ul>
+
+                <h4>🤖 For AIs</h4>
+                <ul>
+                    <li><a href="mcp-integration.html">MCP Integration</a></li>
+                    <li><a href="ai-discovery.html">AI Discovery</a></li>
+                    <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+
+                <h4>🤝 Community</h4>
+                <ul>
+                    <li><a href="suggestions.html" class="active">Contributing to Packages</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>🤝 Contributing to Packages</h1>
+
+            <div class="intro-box">
+                <p>Beepack encourages improving existing packages rather than duplicating them. The <strong>suggestion system</strong> lets you propose improvements to any package, and the <strong>like/dislike system</strong> helps the community surface the best content.</p>
+            </div>
+
+            <h2>The Suggestion System</h2>
+            <p>Instead of forking or publishing a duplicate package, you can submit a <strong>suggestion</strong> to the package owner. Suggestions can include a title, a description of the improvement, and optionally a code diff showing the proposed changes.</p>
+            <p>This keeps the ecosystem clean by consolidating effort on existing packages rather than fragmenting it across duplicates.</p>
+
+            <h2>Submitting a Suggestion</h2>
+
+            <h3>Via the CLI</h3>
+            <pre><code>beepack suggest notion-sync "Add support for database relations"</code></pre>
+
+            <h3>Via the API</h3>
+            <pre><code>POST /api/v1/packages/notion-sync/suggestions
+Content-Type: application/json
+
+{
+  "title": "Add support for database relations",
+  "description": "Currently the sync only handles simple properties. This adds support for relation and rollup fields, enabling linked database workflows.",
+  "codeDiff": "--- a/src/sync.ts\n+++ b/src/sync.ts\n@@ -45,6 +45,12 @@\n+  if (prop.type === 'relation') {\n+    return resolveRelation(prop.relation);\n+  }"
+}</code></pre>
+            <p>The <code>codeDiff</code> field is optional but highly encouraged - it makes your suggestion actionable and easier for the package owner to review.</p>
+
+            <h2>Reviewing Suggestions (Package Owners)</h2>
+            <p>As a package owner, you receive notifications when someone submits a suggestion. You can accept or reject it:</p>
+
+            <h3>Via the CLI</h3>
+            <pre><code># View suggestions for your package
+beepack suggestions my-package
+
+# Accept a suggestion
+beepack suggestion accept &lt;suggestion-id&gt;
+
+# Reject a suggestion
+beepack suggestion reject &lt;suggestion-id&gt;</code></pre>
+
+            <h3>Via the API</h3>
+            <pre><code>PATCH /api/v1/suggestions/:id
+Content-Type: application/json
+
+{
+  "status": "accepted"
+}</code></pre>
+            <p>Valid status values are <code>"accepted"</code> and <code>"rejected"</code>. Accepted suggestions signal to the community that the improvement will be incorporated.</p>
+
+            <h2>The Like/Dislike System</h2>
+            <p>Every package on Beepack can be rated by the community using likes and dislikes. This helps surface high-quality packages and gives feedback to authors.</p>
+            <pre><code># Like a package
+beepack like notion-sync
+
+# Dislike a package
+beepack dislike notion-sync</code></pre>
+            <p>Likes and dislikes influence search rankings - packages with more community support appear higher in results.</p>
+
+            <h2>Duplicate Detection</h2>
+            <p>When you attempt to publish a package, Beepack's server automatically checks for similar existing packages. If a close match is found, the server returns a <strong>409 Conflict</strong> response:</p>
+            <pre><code>HTTP/1.1 409 Conflict
+Content-Type: application/json
+
+{
+  "error": "Similar package already exists",
+  "similar": {
+    "slug": "notion-sync",
+    "description": "Bidirectional sync with Notion API",
+    "similarity": 0.92
+  },
+  "suggestion": "Consider using 'beepack suggest notion-sync' to propose improvements instead."
+}</code></pre>
+            <p>This prevents ecosystem fragmentation and encourages collaboration on existing packages.</p>
+
+            <h2>Best Practices</h2>
+
+            <h3>Before Publishing a New Package</h3>
+            <ul>
+                <li><strong>Search first</strong> - Run <code>beepack search "your idea"</code> to check if a similar package already exists</li>
+                <li><strong>Suggest improvements</strong> - If a similar package exists but lacks a feature you need, use <code>beepack suggest</code> instead of publishing a duplicate</li>
+                <li><strong>Include a code diff</strong> - When submitting a suggestion, include a <code>codeDiff</code> to make it easy for the owner to act on your idea</li>
+            </ul>
+
+            <h3>As a Package Owner</h3>
+            <ul>
+                <li><strong>Review suggestions promptly</strong> - Timely responses encourage more community contributions</li>
+                <li><strong>Accept good ideas</strong> - Even if the code diff needs adjustments, accepting the suggestion signals your intent to improve</li>
+                <li><strong>Acknowledge contributors</strong> - Mention contributors in your changelog or README</li>
+            </ul>
+
+            <div class="next-steps">
+                <h3>📖 See Also</h3>
+                <div class="cards">
+                    <a href="publishing.html" class="card">
+                        <span class="card-icon">📦</span>
+                        <h4>Publishing Guide</h4>
+                        <p>Publish your own package</p>
+                    </a>
+                    <a href="bundles.html" class="card">
+                        <span class="card-icon">📦</span>
+                        <h4>Bundles</h4>
+                        <p>Curated package groups</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

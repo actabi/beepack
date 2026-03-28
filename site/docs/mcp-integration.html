@@ -31,18 +31,24 @@
                     <li><a href="./">Introduction</a></li>
                     <li><a href="getting-started.html">Quick Start</a></li>
                 </ul>
-                
+
                 <h4>📦 Packages</h4>
                 <ul>
                     <li><a href="publishing.html">Publishing a Package</a></li>
                     <li><a href="hive-yaml.html">HIVE.yaml Format</a></li>
+                    <li><a href="bundles.html">Bundles</a></li>
                 </ul>
-                
+
                 <h4>🤖 For AIs</h4>
                 <ul>
                     <li><a href="mcp-integration.html" class="active">MCP Integration</a></li>
                     <li><a href="ai-discovery.html">AI Discovery</a></li>
                     <li><a href="semantic-search.html">Semantic Search</a></li>
+                </ul>
+
+                <h4>🤝 Community</h4>
+                <ul>
+                    <li><a href="suggestions.html">Contributing to Packages</a></li>
                 </ul>
             </nav>
         </aside>
@@ -205,6 +211,59 @@ const info = await mcp.call("get_package_info", {
 // 5. Guides user
 // "Package installed! You need to configure NOTION_API_KEY.
 //  Here's how to use it: ..."</code></pre>
+
+            <h2>OpenClaw / ClawCode Integration</h2>
+
+            <p>Beepack is fully <strong>ClawHub-compatible</strong>. This means OpenClaw and ClawCode users can discover and install Beepack packages as skills without any extra configuration.</p>
+
+            <h3>How it works</h3>
+            <p>Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API. These endpoints translate Beepack packages into the ClawHub skill format (SKILL.md), making them fully compatible with the OpenClaw ecosystem.</p>
+
+            <h3>Usage from OpenClaw</h3>
+            <pre><code># Search Beepack packages from OpenClaw CLI
+clawhub search --registry https://beepack.dev
+
+# Install a Beepack package as a skill
+clawhub install notion-sync --registry https://beepack.dev
+
+# Resolve available versions
+clawhub resolve notion-sync --registry https://beepack.dev</code></pre>
+
+            <h3>Supported ClawHub endpoints</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/.well-known/clawhub.json</code></td>
+                        <td>Registry discovery</td>
+                    </tr>
+                    <tr>
+                        <td><code>/api/v1/skills</code></td>
+                        <td>List all skills (packages)</td>
+                    </tr>
+                    <tr>
+                        <td><code>/api/v1/skills/:slug</code></td>
+                        <td>Get a single skill</td>
+                    </tr>
+                    <tr>
+                        <td><code>/api/v1/download?slug=...&amp;version=...</code></td>
+                        <td>Download skill as SKILL.md</td>
+                    </tr>
+                    <tr>
+                        <td><code>/api/v1/resolve?slug=...</code></td>
+                        <td>Resolve available versions</td>
+                    </tr>
+                    <tr>
+                        <td><code>/api/v1/whoami</code></td>
+                        <td>Check authentication</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <h2>Benefits for AIs</h2>
             

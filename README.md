@@ -26,7 +26,7 @@ Beepack enables AIs and developers to:
 ### Install the CLI
 
 ```bash
-npm install -g beepack
+npm install -g @actabi/beepack
 ```
 
 ### Search, install, publish
@@ -77,6 +77,45 @@ Get your token at https://beepack.dev/auth/github
 | `list_packages` | Browse popular packages |
 | `get_package_info` | Full package details and docs |
 | `get_package_code` | Actual source code |
+
+## OpenClaw / ClawCode Integration
+
+Beepack is **ClawHub-compatible**. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills:
+
+```bash
+# Search Beepack packages from OpenClaw
+clawhub search --registry https://beepack.dev
+
+# Install a Beepack package as an OpenClaw skill
+clawhub install notion-sync --registry https://beepack.dev
+```
+
+Beepack exposes a `/.well-known/clawhub.json` discovery endpoint and a `/api/v1/skills` API that translates Beepack packages into the ClawHub skill format (SKILL.md). No configuration needed on the Beepack side - it works out of the box.
+
+## Bundles
+
+Bundles are **curated groups of packages** that work well together. Instead of searching and installing packages one by one, you can install an entire bundle for a use case.
+
+```bash
+# List available bundles
+beepack bundles
+
+# Install all packages in a bundle
+beepack install --bundle saas-starter
+```
+
+To create a bundle, publish a package with a `bundle` field in your HIVE.yaml listing the included package slugs.
+
+## Suggestions
+
+The **suggestion system** lets the community contribute improvements to existing packages without forking. If you find a package that almost fits your needs, you can suggest an enhancement instead of publishing a duplicate.
+
+```bash
+# Submit a suggestion for a package
+beepack suggest notion-sync "Add support for Notion databases filtering"
+```
+
+Package authors can review, accept, or decline suggestions from their dashboard. Users can also like or dislike suggestions to help authors prioritize.
 
 ## HIVE.yaml
 
@@ -133,6 +172,7 @@ beepack/
 ├── server.js           # Express API server
 ├── auth.js             # GitHub OAuth
 ├── embeddings.js       # Semantic search (OpenAI + Qdrant)
+├── clawhub-compat.js   # ClawHub compatibility layer
 ├── mcp-remote.js       # Remote MCP server (SSE)
 ├── cli/                # npm CLI (published as "beepack")
 │   ├── bin/beepack.js
@@ -152,6 +192,10 @@ beepack/
 | `GET /api/v1/packages/:slug` | Package details |
 | `GET /api/v1/search?q=...` | Search packages |
 | `POST /api/v1/packages/:slug/upload` | Publish (auth required) |
+| `GET /api/v1/bundles` | List available bundles |
+| `GET /api/v1/skills` | List packages in ClawHub skill format |
+| `GET /api/v1/packages/:slug/suggestions` | Get/submit suggestions for a package |
+| `GET /.well-known/clawhub.json` | ClawHub discovery endpoint |
 | `GET /mcp/sse` | Remote MCP endpoint (auth required) |
 
 ## Roadmap
@@ -163,10 +207,13 @@ beepack/
 - [x] Semantic search (OpenAI embeddings + Qdrant)
 - [x] MCP Server (local + remote)
 - [x] Package file upload and download
+- [x] Bundles (curated package groups)
+- [x] Suggestions (community contribution system)
+- [x] ClawHub compatibility (OpenClaw/ClawCode integration)
+- [x] Like/dislike system for suggestions
 - [ ] Forks and pull requests
 - [ ] Automatic security scan
 - [ ] CI test badges
-- [ ] Community features
 
 ## Contributing
 
