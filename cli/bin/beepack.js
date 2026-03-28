@@ -50,7 +50,7 @@ program
   .command('list')
   .alias('ls')
   .description('List popular packages')
-  .option('-s, --sort <field>', 'Sort by: stars, downloads, updated', 'stars')
+  .option('-s, --sort <field>', 'Sort by: downloads, updated', 'downloads')
   .option('-n, --limit <number>', 'Max results', '10')
   .action(list);
 

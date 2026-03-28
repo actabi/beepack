@@ -103,7 +103,7 @@ export async function search(query, options) {
     data.results.slice(0, parseInt(options.limit)).forEach((pkg, i) => {
       console.log(chalk.bold(`${i + 1}. ${pkg.displayName}`) + chalk.gray(` (${pkg.slug})`));
       console.log(`   ${pkg.description}`);
-      console.log(chalk.gray(`   ⭐ ${pkg.stats.stars}  📥 ${formatNum(pkg.stats.downloads)}  Score: ${(pkg.score * 100).toFixed(0)}%`));
+      console.log(chalk.gray(`   👍 ${pkg.stats.likes || 0}  👎 ${pkg.stats.dislikes || 0}  📥 ${formatNum(pkg.stats.downloads)}  Score: ${(pkg.score * 100).toFixed(0)}%`));
       console.log();
     });
     
@@ -129,7 +129,7 @@ export async function list(options) {
         chalk.gray(` v${pkg.version}`)
       );
       console.log(`    ${pkg.description.slice(0, 60)}${pkg.description.length > 60 ? '...' : ''}`);
-      console.log(chalk.gray(`    ⭐ ${pkg.stats.stars}  📥 ${formatNum(pkg.stats.downloads)}  by ${pkg.owner.handle}`));
+      console.log(chalk.gray(`    👍 ${pkg.stats.likes || 0}  👎 ${pkg.stats.dislikes || 0}  📥 ${formatNum(pkg.stats.downloads)}  by ${pkg.owner.handle}`));
       console.log();
     });
   } catch (e) {
@@ -152,7 +152,8 @@ export async function info(packageSlug) {
     console.log(pkg.description);
     console.log();
     console.log(chalk.bold('Stats'));
-    console.log(`  ⭐ Stars:     ${pkg.stats.stars}`);
+    console.log(`  👍 Likes:     ${pkg.stats.likes || 0}`);
+    console.log(`  👎 Dislikes:  ${pkg.stats.dislikes || 0}`);
     console.log(`  📥 Downloads: ${formatNum(pkg.stats.downloads)}`);
     console.log(`  📋 Versions:  ${pkg.stats.versions}`);
     console.log();

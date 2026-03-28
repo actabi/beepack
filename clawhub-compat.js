@@ -136,7 +136,6 @@ export function setupClawHubCompat(app, db) {
     const sortColumn = {
       'updated': 'updated_at DESC',
       'downloads': 'downloads_count DESC',
-      'stars': 'stars_count DESC',
       'trending': 'downloads_count DESC',
     }[sort] || 'updated_at DESC';
 
@@ -275,7 +274,7 @@ function packageToClawHubSkill(pkg) {
     },
     stats: {
       downloads: pkg.downloads_count || 0,
-      stars: pkg.stars_count || 0,
+      likes: 0,
     },
     metadata: {
       openclaw: {

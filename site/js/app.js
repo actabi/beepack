@@ -36,8 +36,8 @@ async function loadStats() {
                 
                 if (label === 'packages') {
                     valueEl.textContent = stats.totalPackages || 0;
-                } else if (label === 'stars') {
-                    valueEl.textContent = stats.totalStars || 0;
+                } else if (label === 'likes') {
+                    valueEl.textContent = stats.totalLikes || 0;
                 } else if (label === 'downloads') {
                     valueEl.textContent = formatNumber(stats.totalDownloads || 0);
                 }
@@ -54,7 +54,7 @@ async function loadPackages() {
     if (!packagesGrid) return;
     
     try {
-        const response = await fetch(`${API_BASE}/packages?limit=6&sort=stars`);
+        const response = await fetch(`${API_BASE}/packages?limit=6&sort=downloads`);
         if (response.ok) {
             const data = await response.json();
             
@@ -64,7 +64,8 @@ async function loadPackages() {
                         <div class="package-header">
                             <span class="package-icon">${getPackageIcon(pkg.keywords)}</span>
                             <div class="package-stats-mini">
-                                <span>⭐ ${pkg.stats.stars}</span>
+                                <span>👍 ${pkg.stats.likes}</span>
+                                <span>👎 ${pkg.stats.dislikes}</span>
                                 <span>📥 ${formatNumber(pkg.stats.downloads)}</span>
                             </div>
                         </div>
@@ -113,7 +114,7 @@ function displaySearchResults(data) {
     }
     
     const resultsText = data.results.map(r => 
-        `• ${r.displayName} (⭐${r.stats.stars}) - ${r.description.slice(0, 50)}...`
+        `• ${r.displayName} (👍${r.stats.likes}) - ${r.description.slice(0, 50)}...`
     ).join('\n');
     
     alert(`🔍 ${data.results.length} result(s) for "${data.query}":\n\n${resultsText}\n\n(${data.searchTime}ms)`);

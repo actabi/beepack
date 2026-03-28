@@ -59,7 +59,7 @@
                         <div class="result-content">
                             <div class="result-title"><a href="/package.html?slug=${p.slug}">${p.displayName || p.slug}</a></div>
                             <p class="result-desc">${p.description}</p>
-                            <div class="result-meta"><span>⭐ ${p.stats.stars}</span><span>📥 ${p.stats.downloads}</span></div>
+                            <div class="result-meta"><span>👍 ${p.stats.likes || 0}</span><span>👎 ${p.stats.dislikes || 0}</span><span>📥 ${p.stats.downloads}</span></div>
                         </div>
                     </div>
                 `).join('') + '</div>';

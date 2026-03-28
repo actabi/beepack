@@ -71,15 +71,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list_packages',
-        description: 'List popular packages on Beepack, sorted by stars or downloads.',
+        description: 'List popular packages on Beepack, sorted by downloads or update date.',
         inputSchema: {
           type: 'object',
           properties: {
             sort: {
               type: 'string',
-              enum: ['stars', 'downloads', 'updated'],
+              enum: ['downloads', 'updated'],
               description: 'Sort order',
-              default: 'stars',
+              default: 'downloads',
             },
             limit: {
               type: 'number',
@@ -255,7 +255,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const formatted = results.map((pkg, i) => 
           `${i + 1}. **${pkg.displayName}** (\`${pkg.slug}\`)
    ${pkg.description}
-   ⭐ ${pkg.stats.stars} | 📥 ${pkg.stats.downloads} downloads
+   👍 ${pkg.stats.likes || 0} | 👎 ${pkg.stats.dislikes || 0} | 📥 ${pkg.stats.downloads} downloads
    Capabilities: ${pkg.capabilities?.join(', ') || 'N/A'}
    Install: \`beepack install ${pkg.slug}\``
         ).join('\n\n');
@@ -271,7 +271,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'list_packages': {
-        const sort = args.sort || 'stars';
+        const sort = args.sort || 'downloads';
         const limit = args.limit || 10;
         
         const data = await fetchAPI(`/packages?sort=${sort}&limit=${limit}`);
@@ -279,7 +279,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const formatted = data.packages.map((pkg, i) => 
           `${i + 1}. **${pkg.displayName}** v${pkg.version}
    ${pkg.description}
-   ⭐ ${pkg.stats.stars} | 📥 ${pkg.stats.downloads} | by ${pkg.owner.handle}`
+   👍 ${pkg.stats.likes || 0} | 📥 ${pkg.stats.downloads} | by ${pkg.owner.handle}`
         ).join('\n\n');
         
         return {
@@ -305,7 +305,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 ${pkg.description}
 
 ## Stats
-- ⭐ Stars: ${pkg.stats.stars}
+- 👍 Likes: ${pkg.stats.likes || 0}
+- 👎 Dislikes: ${pkg.stats.dislikes || 0}
 - 📥 Downloads: ${pkg.stats.downloads}
 - 📋 Versions: ${pkg.stats.versions}
 

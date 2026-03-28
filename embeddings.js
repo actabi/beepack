@@ -160,7 +160,6 @@ export async function storeEmbedding(db, packageId, embedding, packageData = {})
         compatible: JSON.parse(packageData.compatible || '[]'),
         owner: packageData.owner_handle,
         version: packageData.latest_version,
-        stars: packageData.stars_count || 0,
         downloads: packageData.downloads_count || 0,
       });
     } catch (e) {
@@ -237,7 +236,7 @@ export async function semanticSearch(db, query, limit = 10, filters = {}) {
           compatible: r.compatible || [],
           owner: { handle: r.owner },
           version: r.version,
-          stats: { stars: r.stars || 0, downloads: r.downloads || 0 },
+          stats: { downloads: r.downloads || 0 },
         },
         score: r.score,
         searchTime: Date.now() - startTime,
@@ -271,7 +270,6 @@ export async function semanticSearch(db, query, limit = 10, filters = {}) {
           },
           version: row.latest_version,
           stats: {
-            stars: row.stars_count || 0,
             downloads: row.downloads_count || 0,
           },
         },
@@ -316,7 +314,7 @@ export function createSearchHandler(db) {
            OR description LIKE ?
            OR slug LIKE ?
            OR keywords LIKE ?
-        ORDER BY stars_count DESC
+        ORDER BY downloads_count DESC
         LIMIT ?
       `).all(searchTerm, searchTerm, searchTerm, searchTerm, parseInt(limit));
 
@@ -331,7 +329,7 @@ export function createSearchHandler(db) {
           compatible: JSON.parse(pkg.compatible || '[]'),
           owner: { handle: pkg.owner_handle, avatarUrl: pkg.owner_avatar },
           version: pkg.latest_version,
-          stats: { stars: pkg.stars_count || 0, downloads: pkg.downloads_count || 0 },
+          stats: { downloads: pkg.downloads_count || 0 },
         },
         score: 1 - (index * 0.1),
         engine: 'basic',
@@ -347,7 +345,7 @@ export function createSearchHandler(db) {
         r.package.keywords = JSON.parse(fresh.keywords || '[]');
         r.package.capabilities = JSON.parse(fresh.capabilities || '[]');
         r.package.compatible = JSON.parse(fresh.compatible || '[]');
-        r.package.stats = { stars: fresh.stars_count || 0, downloads: fresh.downloads_count || 0 };
+        r.package.stats = { downloads: fresh.downloads_count || 0 };
         r.package.version = fresh.latest_version;
         r.package.owner = { handle: fresh.owner_handle, avatarUrl: fresh.owner_avatar };
       }

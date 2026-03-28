@@ -139,7 +139,8 @@
                 hero.appendChild(el('p', {className: 'desc', textContent: pkg.description}));
                 var meta = el('div', {className: 'pkg-meta'});
                 meta.innerHTML = '<span>by <strong>' + escapeHtml(pkg.owner.handle) + '</strong></span>' +
-                    '<span>&#11088; ' + pkg.stats.stars + ' stars</span>' +
+                    '<span>&#128077; ' + pkg.stats.likes + ' likes</span>' +
+                    '<span>&#128078; ' + pkg.stats.dislikes + ' dislikes</span>' +
                     '<span>&#8595; ' + pkg.stats.downloads.toLocaleString() + ' downloads</span>';
                 hero.appendChild(meta);
                 root.appendChild(hero);

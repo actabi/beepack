@@ -117,7 +117,7 @@
                     }
                     html += '<div class="stats">';
                     html += '<span class="ver">v' + esc(p.version) + '</span>';
-                    html += ' - ' + p.stats.stars + ' stars, ' + p.stats.downloads + ' downloads';
+                    html += ' - ' + (p.stats.likes || 0) + ' likes, ' + p.stats.downloads + ' downloads';
                     html += '</div>';
 
                     card.innerHTML = html;

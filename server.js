@@ -246,15 +246,14 @@ app.get('/api/health', (req, res) => {
 
 // List packages
 app.get('/api/v1/packages', (req, res) => {
-  const { page = 1, limit = 20, sort = 'stars' } = req.query;
+  const { page = 1, limit = 20, sort = 'downloads' } = req.query;
   const offset = (parseInt(page) - 1) * parseInt(limit);
-  
+
   const sortColumn = {
-    'stars': 'stars_count DESC',
     'downloads': 'downloads_count DESC',
     'updated': 'updated_at DESC',
     'name': 'display_name ASC'
-  }[sort] || 'stars_count DESC';
+  }[sort] || 'downloads_count DESC';
   
   const packages = db.prepare(`
     SELECT *
@@ -279,7 +278,8 @@ app.get('/api/v1/packages', (req, res) => {
       },
       version: p.latest_version,
       stats: {
-        stars: p.stars_count,
+        likes: db.prepare('SELECT COUNT(*) as c FROM ratings WHERE package_id = ? AND liked = 1').get(p.id).c,
+        dislikes: db.prepare('SELECT COUNT(*) as c FROM ratings WHERE package_id = ? AND liked = 0').get(p.id).c,
         downloads: p.downloads_count
       },
       keywords: JSON.parse(p.keywords || '[]'),
@@ -338,7 +338,8 @@ app.get('/api/v1/packages/:slug', (req, res) => {
     latestVersion: pkg.latest_version,
     versions: versions.map(v => v.version),
     stats: {
-      stars: pkg.stars_count,
+      likes: db.prepare('SELECT COUNT(*) as c FROM ratings WHERE package_id = ? AND liked = 1').get(pkg.id).c,
+      dislikes: db.prepare('SELECT COUNT(*) as c FROM ratings WHERE package_id = ? AND liked = 0').get(pkg.id).c,
       downloads: pkg.downloads_count,
       versions: pkg.version_count
     },
@@ -382,64 +383,26 @@ app.get('/api/v1/search', createSearchHandler(db));
 // Get stats
 app.get('/api/v1/stats', (req, res) => {
   const stats = db.prepare(`
-    SELECT 
+    SELECT
       COUNT(*) as totalPackages,
-      COALESCE(SUM(stars_count), 0) as totalStars,
       COALESCE(SUM(downloads_count), 0) as totalDownloads
     FROM packages
     WHERE moderation_status = 'active'
   `).get();
-  
+
+  const totalLikes = db.prepare('SELECT COUNT(*) as c FROM ratings WHERE liked = 1').get().c;
+
   const users = db.prepare('SELECT COUNT(*) as count FROM users').get();
-  
+
   res.json({
     totalPackages: stats.totalPackages,
-    totalStars: stats.totalStars,
+    totalLikes: totalLikes,
     totalDownloads: stats.totalDownloads,
     totalUsers: users.count
   });
 });
 
 // ============== AUTHENTICATED ROUTES ==============
-
-// Star a package
-app.post('/api/v1/packages/:slug/star', authMiddleware, requireAuth, (req, res) => {
-  const { slug } = req.params;
-  
-  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  try {
-    db.prepare('INSERT INTO stars (package_id, user_id) VALUES (?, ?)').run(pkg.id, req.user.id);
-    db.prepare('UPDATE packages SET stars_count = stars_count + 1 WHERE id = ?').run(pkg.id);
-    res.json({ success: true, starred: true });
-  } catch (e) {
-    if (e.message.includes('UNIQUE')) {
-      res.json({ success: true, starred: true, message: 'Already starred' });
-    } else {
-      throw e;
-    }
-  }
-});
-
-// Unstar a package
-app.delete('/api/v1/packages/:slug/star', authMiddleware, requireAuth, (req, res) => {
-  const { slug } = req.params;
-  
-  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  const result = db.prepare('DELETE FROM stars WHERE package_id = ? AND user_id = ?').run(pkg.id, req.user.id);
-  if (result.changes > 0) {
-    db.prepare('UPDATE packages SET stars_count = MAX(0, stars_count - 1) WHERE id = ?').run(pkg.id);
-  }
-  
-  res.json({ success: true, starred: false });
-});
 
 // Like/Dislike a package (AI feedback)
 app.post('/api/v1/packages/:slug/feedback', authMiddleware, requireAuth, (req, res) => {
@@ -1193,7 +1156,7 @@ app.get('/api/v1/bundles/:slug', (req, res) => {
       description: p.description,
       role: p.role,
       version: p.latest_version,
-      stats: { stars: p.stars_count, downloads: p.downloads_count },
+      stats: { downloads: p.downloads_count },
       capabilities: JSON.parse(p.capabilities || '[]'),
       requires: JSON.parse(p.requires || '{}'),
     })),

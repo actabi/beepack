@@ -20,11 +20,11 @@ const TOOLS = [
   },
   {
     name: 'list_packages',
-    description: 'List popular packages on Beepack, sorted by stars or downloads.',
+    description: 'List popular packages on Beepack, sorted by downloads or update date.',
     inputSchema: {
       type: 'object',
       properties: {
-        sort: { type: 'string', enum: ['stars', 'downloads', 'updated'], default: 'stars' },
+        sort: { type: 'string', enum: ['downloads', 'updated'], default: 'downloads' },
         limit: { type: 'number', default: 10 },
       },
     },
@@ -107,14 +107,14 @@ async function handleToolCall(port, name, args) {
         return `No packages found for "${args.query}". Try a different search term or use list_packages.`;
       }
       return results.map((pkg, i) =>
-        `${i + 1}. **${pkg.displayName}** (\`${pkg.slug}\`)\n   ${pkg.description}\n   Stars: ${pkg.stats.stars} | Downloads: ${pkg.stats.downloads}\n   Capabilities: ${pkg.capabilities?.join(', ') || 'N/A'}`
+        `${i + 1}. **${pkg.displayName}** (\`${pkg.slug}\`)\n   ${pkg.description}\n   Likes: ${pkg.stats.likes || 0} | Dislikes: ${pkg.stats.dislikes || 0} | Downloads: ${pkg.stats.downloads}\n   Capabilities: ${pkg.capabilities?.join(', ') || 'N/A'}`
       ).join('\n\n');
     }
 
     case 'list_packages': {
-      const data = await apiGet(port, `/packages?sort=${args.sort || 'stars'}&limit=${args.limit || 10}`);
+      const data = await apiGet(port, `/packages?sort=${args.sort || 'downloads'}&limit=${args.limit || 10}`);
       return data.packages.map((pkg, i) =>
-        `${i + 1}. **${pkg.displayName}** v${pkg.version} - ${pkg.description}\n   Stars: ${pkg.stats.stars} | Downloads: ${pkg.stats.downloads} | by ${pkg.owner.handle}`
+        `${i + 1}. **${pkg.displayName}** v${pkg.version} - ${pkg.description}\n   Likes: ${pkg.stats.likes || 0} | Downloads: ${pkg.stats.downloads} | by ${pkg.owner.handle}`
       ).join('\n\n');
     }
 
@@ -129,7 +129,8 @@ async function handleToolCall(port, name, args) {
 ${pkg.description}
 
 ## Stats
-- Stars: ${pkg.stats.stars}
+- Likes: ${pkg.stats.likes || 0}
+- Dislikes: ${pkg.stats.dislikes || 0}
 - Downloads: ${pkg.stats.downloads}
 
 ## Capabilities

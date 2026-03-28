@@ -144,8 +144,7 @@ packbee/
 | `GET /api/v1/stats` | No | Statistics |
 | `GET /api/v1/me` | Yes | Current user |
 | `POST /api/v1/packages` | Yes | Publish package |
-| `POST /api/v1/packages/:slug/star` | Yes | Star |
-| `DELETE /api/v1/packages/:slug/star` | Yes | Unstar |
+| `POST /api/v1/packages/:slug/feedback` | Yes | Like/Dislike |
 | `GET /auth/github` | No | Start OAuth |
 | `GET /auth/github/callback` | No | OAuth callback |
 
