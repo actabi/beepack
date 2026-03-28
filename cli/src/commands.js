@@ -17,7 +17,7 @@ const CONFIG_DIR = join(homedir(), '.beepack');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 
 // Get auth token
-function getToken() {
+export function getToken() {
   // Check env first
   if (process.env.BEEPACK_TOKEN) {
     return process.env.BEEPACK_TOKEN;

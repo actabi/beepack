@@ -1,6 +1,6 @@
 {
   "name": "@actabi/beepack",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "CLI for Beepack - The API registry for vibe-coders",
   "type": "module",
   "bin": {
