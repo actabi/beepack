@@ -14,6 +14,7 @@ import { setupAuthRoutes, authMiddleware, requireAuth } from './auth.js';
 import { initEmbeddings, initEmbeddingsTable, generateAllEmbeddings, createSearchHandler, isEmbeddingsEnabled, isUsingQdrant, generateEmbedding, storeEmbedding, packageToText } from './embeddings.js';
 import { storePackageFiles, getPackageFilesMetadata, getFile, createPackageArchive, initStorage } from './storage.js';
 import { setupRemoteMCP } from './mcp-remote.js';
+import { setupClawHubCompat } from './clawhub-compat.js';
 
 // Initialize storage
 initStorage();
@@ -198,6 +199,9 @@ setupAuthRoutes(app, db);
 
 // ============== REMOTE MCP SERVER ==============
 setupRemoteMCP(app, PORT, db);
+
+// ============== CLAWHUB COMPATIBILITY ==============
+setupClawHubCompat(app, db);
 
 // ============== API ROUTES ==============
 

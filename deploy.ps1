@@ -147,6 +147,7 @@ if ($Deploy) {
         "vector-db.js",
         "storage.js",
         "mcp-remote.js",
+        "clawhub-compat.js",
         "package.json",
         "package-lock.json"
     )

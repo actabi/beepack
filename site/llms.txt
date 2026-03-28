@@ -24,6 +24,14 @@ beepack search "company lookup"
 beepack install company-lookup-fr
 ```
 
+### Option 3: OpenClaw / ClawCode
+Beepack is a ClawHub-compatible registry. Add it as a custom registry:
+```bash
+clawhub search "company lookup" --registry https://beepack.dev
+clawhub install company-lookup-fr --registry https://beepack.dev
+```
+Discovery endpoint: https://beepack.dev/.well-known/clawhub.json
+
 ## API Endpoints
 
 - GET https://beepack.dev/api/v1/packages - List all packages
