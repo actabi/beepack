@@ -395,7 +395,7 @@ export default {
               text: `# Beepack Statistics
 
 - 📦 Total Packages: ${stats.totalPackages}
-- ⭐ Total Stars: ${stats.totalStars}
+- 👍 Total Likes: ${stats.totalLikes}
 - 📥 Total Downloads: ${stats.totalDownloads}
 - 👥 Total Users: ${stats.totalUsers}
 
