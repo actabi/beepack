@@ -212,7 +212,6 @@
                 var tabSec = el('div', {className: 'tab-content', id: 'tab-security'});
                 tabSec.innerHTML = '<p style="color:var(--text-muted)">Loading security scan...</p>';
                 main.appendChild(tabSec);
-                loadSecurity(pkg.slug);
 
                 // Tab: Suggestions
                 var tabSug = el('div', {className: 'tab-content', id: 'tab-suggestions'});
@@ -317,6 +316,9 @@
 
                 grid.appendChild(sidebar);
                 root.appendChild(grid);
+
+                // Load security scan (after DOM is ready)
+                loadSecurity(pkg.slug);
 
                 // Tab switching
                 document.querySelectorAll('.pkg-tab').forEach(function(tab) {
