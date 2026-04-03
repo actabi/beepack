@@ -114,7 +114,6 @@ db.exec(`
     capabilities TEXT, -- JSON array
     compatible TEXT, -- JSON array
     requires TEXT, -- JSON object
-    stars_count INTEGER DEFAULT 0,
     downloads_count INTEGER DEFAULT 0,
     version_count INTEGER DEFAULT 0,
     latest_version TEXT,
@@ -134,34 +133,6 @@ db.exec(`
     created_by INTEGER REFERENCES users(id),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(package_id, version)
-  );
-
-  CREATE TABLE IF NOT EXISTS stars (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    package_id INTEGER REFERENCES packages(id),
-    user_id INTEGER REFERENCES users(id),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(package_id, user_id)
-  );
-
-  CREATE TABLE IF NOT EXISTS comments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    package_id INTEGER REFERENCES packages(id),
-    user_id INTEGER REFERENCES users(id),
-    body TEXT NOT NULL,
-    deleted_at DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS ratings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    package_id INTEGER REFERENCES packages(id),
-    user_id INTEGER REFERENCES users(id),
-    liked INTEGER NOT NULL CHECK(liked IN (0, 1)),
-    reason TEXT,
-    agent_name TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(package_id, user_id)
   );
 
   CREATE TABLE IF NOT EXISTS package_links (
@@ -217,6 +188,25 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_reports_package ON reports(package_id);
   CREATE INDEX IF NOT EXISTS idx_security_scans_package ON security_scans(package_id);
+
+  -- Version-specific feedback from AIs
+  CREATE TABLE IF NOT EXISTS version_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    version TEXT NOT NULL,
+    agent_name TEXT,
+    agent_session TEXT,
+    rating INTEGER CHECK(rating IN (-1, 0, 1)), -- -1 dislike, 0 neutral, 1 like
+    worked INTEGER CHECK(worked IN (0, 1)), -- Did it work out of the box?
+    edge_cases TEXT, -- JSON array of edge cases discovered
+    adaptations TEXT, -- What did the AI have to change?
+    comment TEXT, -- Free-form feedback
+    use_case TEXT, -- What was it used for?
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_version_feedback_package ON version_feedback(package_id);
+  CREATE INDEX IF NOT EXISTS idx_version_feedback_version ON version_feedback(package_id, version);
 
   CREATE TABLE IF NOT EXISTS bundles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -442,82 +432,6 @@ app.get('/api/v1/stats', (req, res) => {
 });
 
 // ============== AUTHENTICATED ROUTES ==============
-
-// Like/Dislike a package (AI feedback)
-app.post('/api/v1/packages/:slug/feedback', authMiddleware, requireAuth, (req, res) => {
-  const { slug } = req.params;
-  const { liked, reason, agentName } = req.body;
-  
-  // Validate
-  if (typeof liked !== 'boolean') {
-    return res.status(400).json({ 
-      error: { code: 'VALIDATION_ERROR', message: 'liked must be true or false' } 
-    });
-  }
-  
-  // Dislike requires a reason
-  if (!liked && (!reason || reason.trim().length < 5)) {
-    return res.status(400).json({ 
-      error: { code: 'VALIDATION_ERROR', message: 'Please provide a reason for disliking (min 5 chars)' } 
-    });
-  }
-  
-  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  // Upsert feedback (one per user per package)
-  db.prepare(`
-    INSERT INTO ratings (package_id, user_id, liked, reason, agent_name)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(package_id, user_id) DO UPDATE SET
-      liked = excluded.liked,
-      reason = excluded.reason,
-      agent_name = excluded.agent_name,
-      created_at = CURRENT_TIMESTAMP
-  `).run(pkg.id, req.user.id, liked ? 1 : 0, liked ? null : reason, agentName || null);
-  
-  res.json({ success: true, liked, reason: liked ? null : reason, agentName });
-});
-
-// Get feedback for a package (public)
-app.get('/api/v1/packages/:slug/feedback', (req, res) => {
-  const { slug } = req.params;
-  
-  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
-  }
-  
-  const feedback = db.prepare(`
-    SELECT r.liked, r.reason, r.agent_name as agentName, r.created_at as createdAt,
-           u.github_handle as userHandle, u.avatar_url as userAvatar
-    FROM ratings r
-    JOIN users u ON r.user_id = u.id
-    WHERE r.package_id = ?
-    ORDER BY r.created_at DESC
-  `).all(pkg.id);
-  
-  const stats = db.prepare(`
-    SELECT 
-      COUNT(*) as total,
-      SUM(CASE WHEN liked = 1 THEN 1 ELSE 0 END) as likes,
-      SUM(CASE WHEN liked = 0 THEN 1 ELSE 0 END) as dislikes
-    FROM ratings WHERE package_id = ?
-  `).get(pkg.id);
-  
-  res.json({
-    feedback: feedback.map(f => ({ ...f, liked: !!f.liked })),
-    stats: {
-      total: stats.total,
-      likes: stats.likes,
-      dislikes: stats.dislikes,
-      likeRatio: stats.total > 0 ? Math.round((stats.likes / stats.total) * 100) : null
-    }
-  });
-});
-
 
 // Publish a package (create or update)
 app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
@@ -1092,6 +1006,144 @@ app.post('/api/v1/packages/:slug/report', authMiddleware, requireAuth, (req, res
   }
 });
 
+// ============== VERSION FEEDBACK (AI Ratings & Comments) ==============
+
+// Get feedback for a package (all versions)
+app.get('/api/v1/packages/:slug/feedback', (req, res) => {
+  const { version } = req.query;
+  const pkg = db.prepare('SELECT id FROM packages WHERE slug = ?').get(req.params.slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  let query = 'SELECT * FROM version_feedback WHERE package_id = ?';
+  const params = [pkg.id];
+  
+  if (version) {
+    query += ' AND version = ?';
+    params.push(version);
+  }
+  
+  query += ' ORDER BY created_at DESC LIMIT 100';
+  
+  const feedback = db.prepare(query).all(...params);
+
+  // Compute stats
+  const stats = db.prepare(`
+    SELECT 
+      version,
+      COUNT(*) as total,
+      SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as likes,
+      SUM(CASE WHEN rating = -1 THEN 1 ELSE 0 END) as dislikes,
+      SUM(CASE WHEN worked = 1 THEN 1 ELSE 0 END) as worked_count,
+      SUM(CASE WHEN worked = 0 THEN 1 ELSE 0 END) as failed_count
+    FROM version_feedback 
+    WHERE package_id = ?
+    GROUP BY version
+  `).all(pkg.id);
+
+  res.json({
+    feedback: feedback.map(f => ({
+      id: f.id,
+      version: f.version,
+      agentName: f.agent_name,
+      rating: f.rating,
+      worked: f.worked === 1,
+      edgeCases: f.edge_cases ? JSON.parse(f.edge_cases) : [],
+      adaptations: f.adaptations,
+      comment: f.comment,
+      useCase: f.use_case,
+      createdAt: f.created_at,
+    })),
+    stats: stats.reduce((acc, s) => {
+      acc[s.version] = {
+        total: s.total,
+        likes: s.likes,
+        dislikes: s.dislikes,
+        workedRate: s.total > 0 ? Math.round((s.worked_count / s.total) * 100) : null,
+      };
+      return acc;
+    }, {}),
+  });
+});
+
+// Submit feedback for a package version (no auth required - IAs are anonymous)
+app.post('/api/v1/packages/:slug/feedback', (req, res) => {
+  const { slug } = req.params;
+  let { version, agentName, agentSession, rating, worked, edgeCases, adaptations, comment, useCase } = req.body;
+
+  const pkg = db.prepare('SELECT id, latest_version FROM packages WHERE slug = ?').get(slug);
+  if (!pkg) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Package not found' } });
+
+  const targetVersion = version || pkg.latest_version;
+
+  // Validate rating
+  if (rating !== undefined && ![-1, 0, 1].includes(rating)) {
+    return res.status(400).json({ error: { code: 'INVALID_RATING', message: 'Rating must be -1, 0, or 1' } });
+  }
+
+  // Validate & sanitize field lengths
+  const MAX_COMMENT = 2000;
+  const MAX_FIELD = 500;
+  const MAX_AGENT_NAME = 100;
+  
+  if (comment && comment.length > MAX_COMMENT) {
+    return res.status(400).json({ error: { code: 'FIELD_TOO_LONG', message: `comment must be max ${MAX_COMMENT} characters` } });
+  }
+  if (adaptations && adaptations.length > MAX_FIELD) {
+    return res.status(400).json({ error: { code: 'FIELD_TOO_LONG', message: `adaptations must be max ${MAX_FIELD} characters` } });
+  }
+  if (useCase && useCase.length > MAX_FIELD) {
+    return res.status(400).json({ error: { code: 'FIELD_TOO_LONG', message: `useCase must be max ${MAX_FIELD} characters` } });
+  }
+  if (agentName && agentName.length > MAX_AGENT_NAME) {
+    agentName = agentName.slice(0, MAX_AGENT_NAME);
+  }
+  
+  // Validate edgeCases array
+  if (edgeCases) {
+    if (!Array.isArray(edgeCases)) {
+      return res.status(400).json({ error: { code: 'INVALID_FIELD', message: 'edgeCases must be an array' } });
+    }
+    if (edgeCases.length > 20) {
+      return res.status(400).json({ error: { code: 'FIELD_TOO_LONG', message: 'edgeCases max 20 items' } });
+    }
+    edgeCases = edgeCases.map(e => String(e).slice(0, 200)); // Truncate each
+  }
+
+  // Sanitize HTML/XSS (basic - strip tags)
+  const stripTags = (str) => str ? str.replace(/<[^>]*>/g, '') : str;
+  comment = stripTags(comment);
+  adaptations = stripTags(adaptations);
+  useCase = stripTags(useCase);
+  agentName = stripTags(agentName);
+
+  try {
+    const result = db.prepare(`
+      INSERT INTO version_feedback (package_id, version, agent_name, agent_session, rating, worked, edge_cases, adaptations, comment, use_case)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      pkg.id,
+      targetVersion,
+      agentName || 'anonymous',
+      agentSession || null,
+      rating ?? 0,
+      worked === true ? 1 : worked === false ? 0 : null,
+      edgeCases ? JSON.stringify(edgeCases) : null,
+      adaptations || null,
+      comment || null,
+      useCase || null
+    );
+
+    res.status(201).json({
+      success: true,
+      feedbackId: result.lastInsertRowid,
+      message: 'Feedback recorded. Thank you for helping improve this package! 🐝',
+    });
+  } catch (e) {
+    console.error('Feedback error:', e);
+    res.status(500).json({ error: { code: 'DB_ERROR', message: e.message } });
+  }
+});
+
 // ============== SUGGESTIONS (Package Contributions) ==============
 
 // List suggestions for a package
@@ -1203,7 +1255,7 @@ app.get('/api/v1/bundles/:slug', (req, res) => {
 
   const packages = db.prepare(`
     SELECT p.slug, p.display_name as displayName, p.description, p.keywords, p.capabilities, p.requires,
-           p.stars_count, p.downloads_count, p.latest_version, p.owner_handle, bp.role
+           p.downloads_count, p.latest_version, p.owner_handle, bp.role
     FROM bundle_packages bp
     JOIN packages p ON p.id = bp.package_id
     WHERE bp.bundle_id = ?

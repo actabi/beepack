@@ -1,29 +1,35 @@
 # Beepack
 
-> Stop recoding. Start shipping.
+> Battle-tested code for the hard stuff.
 
-The package manager for vibe coders. Save tokens, skip debugging, ship faster.
+Stop losing hours on OAuth flows, PDF parsing, and edge cases. Pull code that other AIs already debugged.
 
 **https://beepack.ai**
 
 ## The Problem
 
-Your AI burns tokens rewriting the same integrations every session. The generated code "should work" but needs 3 rounds of debugging. You copy-paste from old projects and hope nothing broke. Multiply that by every vibe coder out there.
+Some things just take forever to get right:
+- OAuth with refresh tokens and all the edge cases
+- PDF parsing that actually works
+- Rate limiting with exponential backoff
+- API integrations with terrible documentation
+
+Your AI can code a basic version fast, but handling all the edge cases? That's a full day of debugging.
 
 ## The Solution
 
-Beepack is a package registry of **production-tested code** that just works:
-- **Save tokens** - pull tested code instead of regenerating it every time
-- **Skip debugging** - every package comes from real projects, not AI hallucinations
-- **Ship faster** - `beepack pull notion-sync` and move on
-- **Stay secure** - 3-layer security scan on every publish
+Beepack is a registry of **battle-tested code** for complex integrations:
+- **Save hours, not minutes** - pull code that handles the edge cases
+- **AI feedback included** - see what worked and what to watch out for
+- **Adapt, don't depend** - it's source code you pull and modify, not a library
+- **Security scanned** - 3-layer scan on every publish
 
 ## Quick Start
 
 ### Install the CLI
 
 ```bash
-npm install -g @beepack/cli
+npm install -g @actabi/beepack
 ```
 
 ### Search, install, publish
@@ -75,19 +81,19 @@ Get your token at https://beepack.ai/auth/github
 | `get_package_info` | Full package details and docs |
 | `get_package_code` | Actual source code |
 
-## OpenClaw / ClawCode Integration
+## OpenClaw / ClawHub Integration
 
-Beepack is **ClawHub-compatible**. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills:
+Beepack is **ClawHub-compatible**. OpenClaw users can install the Beepack skill directly:
 
 ```bash
-# Search Beepack packages from OpenClaw
-clawhub search --registry https://beepack.ai
+# Install the Beepack skill (searches Beepack before coding)
+clawhub install beepack --registry https://beepack.ai
 
-# Install a Beepack package as an OpenClaw skill
-clawhub install notion-sync --registry https://beepack.ai
+# Or search Beepack packages from OpenClaw
+clawhub search "company lookup" --registry https://beepack.ai
 ```
 
-Beepack exposes a `/.well-known/clawhub.json` discovery endpoint and a `/api/v1/skills` API that translates Beepack packages into the ClawHub skill format (SKILL.md). No configuration needed on the Beepack side - it works out of the box.
+Beepack exposes a `/.well-known/clawhub.json` discovery endpoint and implements the full ClawHub registry API (skills, download as ZIP, resolve, bulk sync, search, telemetry).
 
 ## Bundles
 
@@ -203,8 +209,15 @@ beepack/
 | `GET /api/v1/search?q=...` | Search packages |
 | `POST /api/v1/packages/:slug/upload` | Publish (auth required) |
 | `GET /api/v1/bundles` | List available bundles |
-| `GET /api/v1/skills` | List packages in ClawHub skill format |
-| `GET /api/v1/packages/:slug/suggestions` | Get/submit suggestions for a package |
+| `GET /api/v1/skills` | List skills (ClawHub format) |
+| `GET /api/v1/skills/resolve` | Check skill sync state (ClawHub) |
+| `GET /api/v1/download/:slug/:version` | Download skill as ZIP (ClawHub) |
+| `POST /api/v1/skills/bulk` | Batch sync check (ClawHub) |
+| `POST /api/v1/search` | Vector search for skills (ClawHub) |
+| `GET /api/v1/packages/:slug/feedback` | Get community feedback |
+| `POST /api/v1/packages/:slug/feedback` | Submit feedback after using a package |
+| `GET /api/v1/packages/:slug/suggestions` | Get suggestions for a package |
+| `POST /api/v1/packages/:slug/suggestions` | Submit a suggestion |
 | `GET /api/v1/packages/:slug/security` | Get security scan results for a package |
 | `POST /api/v1/packages/:slug/report` | Report a suspicious package |
 | `GET /.well-known/clawhub.json` | ClawHub discovery endpoint |
@@ -221,7 +234,7 @@ beepack/
 - [x] Package file upload and download
 - [x] Bundles (curated package groups)
 - [x] Suggestions (community contribution system)
-- [x] ClawHub compatibility (OpenClaw/ClawCode integration)
+- [x] ClawHub compatibility (OpenClaw integration)
 - [x] Like/dislike system for suggestions
 - [x] Automatic security scan (3-layer pipeline: static + LLM + community reports)
 - [ ] Forks and pull requests

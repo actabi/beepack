@@ -46,6 +46,33 @@
         .req-list li { padding: 8px 12px; background: #f8fafc; border-radius: 6px; margin: 4px 0; font-size: 14px; }
         .req-list li code { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
         .req-none { color: #10b981; font-weight: 500; }
+        .scan-summary { display: flex; align-items: center; gap: 16px; padding: 20px; border-radius: 10px; margin-bottom: 24px; }
+        .scan-summary.clean { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .scan-summary.suspicious { background: #fffbeb; border: 1px solid #fde68a; }
+        .scan-summary.malicious { background: #fef2f2; border: 1px solid #fecaca; }
+        .scan-summary.unscanned { background: #f8fafc; border: 1px solid var(--border); }
+        .scan-icon { font-size: 32px; }
+        .scan-verdict-text { font-size: 1.1rem; font-weight: 600; }
+        .scan-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .scan-layers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 600px) { .scan-layers { grid-template-columns: 1fr; } }
+        .scan-layer { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .scan-layer h4 { margin: 0 0 4px; font-size: 14px; }
+        .scan-layer .layer-verdict { font-size: 13px; font-weight: 500; }
+        .scan-layer .layer-verdict.v-clean, .scan-layer .layer-verdict.v-benign { color: #059669; }
+        .scan-layer .layer-verdict.v-suspicious { color: #d97706; }
+        .scan-layer .layer-verdict.v-malicious { color: #dc2626; }
+        .scan-findings { margin-top: 16px; }
+        .scan-findings h3 { margin: 0 0 12px; font-size: 1rem; }
+        .finding-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; }
+        .finding-item.sev-critical { background: #fef2f2; border-left: 3px solid #ef4444; }
+        .finding-item.sev-warn { background: #fffbeb; border-left: 3px solid #f59e0b; }
+        .finding-item.sev-info { background: #f0f9ff; border-left: 3px solid #3b82f6; }
+        .finding-item.sev-low { background: #ecfdf5; border-left: 3px solid #10b981; }
+        .finding-item.sev-medium { background: #fffbeb; border-left: 3px solid #f59e0b; }
+        .finding-item.sev-high { background: #fef2f2; border-left: 3px solid #ef4444; }
+        .finding-sev { font-weight: 600; font-size: 11px; text-transform: uppercase; white-space: nowrap; padding-top: 1px; }
+        .finding-desc { flex: 1; }
         .side-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
         .side-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin: 0 0 10px; }
         .side-card .author { display: flex; align-items: center; gap: 8px; font-weight: 500; }
@@ -161,7 +188,7 @@
                 // Tabs
                 var tabs = el('div', {className: 'pkg-tabs'});
                 var sugCount = (pkg.openSuggestions || []).length;
-                var tabNames = [{id: 'readme', label: 'Documentation'}, {id: 'code', label: 'Code'}, {id: 'suggestions', label: 'Suggestions' + (sugCount > 0 ? ' (' + sugCount + ')' : '')}, {id: 'capabilities', label: 'Capabilities'}, {id: 'requirements', label: 'Requirements'}];
+                var tabNames = [{id: 'readme', label: 'Documentation'}, {id: 'code', label: 'Code'}, {id: 'security', label: 'Security'}, {id: 'suggestions', label: 'Suggestions' + (sugCount > 0 ? ' (' + sugCount + ')' : '')}, {id: 'capabilities', label: 'Capabilities'}, {id: 'requirements', label: 'Requirements'}];
                 tabNames.forEach(function(t, i) {
                     var tab = el('div', {className: 'pkg-tab' + (i === 0 ? ' active' : ''), 'data-tab': t.id, textContent: t.label});
                     tabs.appendChild(tab);
@@ -180,6 +207,12 @@
                 var tabCode = el('div', {className: 'tab-content', id: 'tab-code'});
                 tabCode.innerHTML = '<div id="code-viewer">Click to load source files...</div>';
                 main.appendChild(tabCode);
+
+                // Tab: Security
+                var tabSec = el('div', {className: 'tab-content', id: 'tab-security'});
+                tabSec.innerHTML = '<p style="color:var(--text-muted)">Loading security scan...</p>';
+                main.appendChild(tabSec);
+                loadSecurity(pkg.slug);
 
                 // Tab: Suggestions
                 var tabSug = el('div', {className: 'tab-content', id: 'tab-suggestions'});
@@ -337,6 +370,89 @@
                 window.codeLoaded = true;
             } catch (e) {
                 document.getElementById('code-viewer').innerHTML = '<p>Source files require authentication. <a href="/auth/github">Login</a> to view code.</p>';
+            }
+        }
+
+        async function loadSecurity(slug) {
+            var container = document.getElementById('tab-security');
+            try {
+                var res = await fetch('/api/v1/packages/' + slug + '/security');
+                if (!res.ok) throw new Error();
+                var data = await res.json();
+                container.innerHTML = '';
+
+                if (data.verdict === 'unscanned') {
+                    container.innerHTML = '<div class="scan-summary unscanned"><span class="scan-icon">&#128270;</span><div><div class="scan-verdict-text">Not yet scanned</div><div class="scan-date">This package has not been scanned yet.</div></div></div>';
+                    return;
+                }
+
+                var icons = {clean: '&#9989;', suspicious: '&#9888;&#65039;', malicious: '&#128721;'};
+                var labels = {clean: 'No issues found', suspicious: 'Review recommended', malicious: 'Security risk detected'};
+                var scanDate = data.scannedAt ? new Date(data.scannedAt).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '';
+
+                // Summary banner
+                var summary = el('div', {className: 'scan-summary ' + data.verdict});
+                summary.innerHTML = '<span class="scan-icon">' + (icons[data.verdict] || '') + '</span>' +
+                    '<div><div class="scan-verdict-text">' + (labels[data.verdict] || data.verdict) + '</div>' +
+                    (scanDate ? '<div class="scan-date">Scanned on ' + scanDate + '</div>' : '') + '</div>';
+                container.appendChild(summary);
+
+                // Layer details
+                var layers = el('div', {className: 'scan-layers'});
+
+                var staticLabel = {clean: 'Clean', suspicious: 'Suspicious', malicious: 'Malicious'};
+                var llmLabel = {benign: 'Benign', suspicious: 'Suspicious', malicious: 'Malicious'};
+
+                var layer1 = el('div', {className: 'scan-layer'});
+                layer1.innerHTML = '<h4>Layer 1 - Static Analysis</h4>' +
+                    '<div>Scans for dangerous patterns: eval(), credential exfiltration, obfuscation, crypto mining, shell injection, etc.</div>' +
+                    '<div class="layer-verdict v-' + (data.staticVerdict || 'clean') + '" style="margin-top:8px">' +
+                    'Verdict: ' + (staticLabel[data.staticVerdict] || data.staticVerdict || 'N/A') + '</div>';
+                layers.appendChild(layer1);
+
+                var layer2 = el('div', {className: 'scan-layer'});
+                layer2.innerHTML = '<h4>Layer 2 - AI Evaluation</h4>' +
+                    '<div>LLM reviews code for purpose alignment, credential proportionality, instruction scope, and privilege escalation.</div>' +
+                    '<div class="layer-verdict v-' + (data.llmVerdict || 'benign') + '" style="margin-top:8px">' +
+                    'Verdict: ' + (llmLabel[data.llmVerdict] || data.llmVerdict || 'N/A') + '</div>';
+                layers.appendChild(layer2);
+
+                container.appendChild(layers);
+
+                // Community layer note
+                var layer3 = el('div', {style: 'font-size:13px;color:var(--text-muted);margin-bottom:24px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid var(--border)'});
+                layer3.innerHTML = '<strong>Layer 3 - Community Reports</strong><br>Users can report malicious or broken packages. Packages with multiple reports are automatically hidden for review.';
+                container.appendChild(layer3);
+
+                // Findings
+                var findings = data.findings || [];
+                if (findings.length > 0) {
+                    var findingsDiv = el('div', {className: 'scan-findings'});
+                    findingsDiv.appendChild(el('h3', {textContent: 'Findings (' + findings.length + ')'}));
+                    findings.forEach(function(f) {
+                        var sev = f.severity || f.risk || 'info';
+                        var item = el('div', {className: 'finding-item sev-' + sev});
+                        var sevLabel = el('span', {className: 'finding-sev', textContent: sev});
+                        var desc = el('div', {className: 'finding-desc'});
+                        desc.textContent = f.description || f.code || '';
+                        if (f.file) {
+                            desc.appendChild(el('div', {textContent: 'File: ' + f.file, style: 'font-size:12px;color:var(--text-muted);margin-top:4px;font-family:JetBrains Mono,monospace'}));
+                        }
+                        if (f.evidence) {
+                            desc.appendChild(el('div', {textContent: f.evidence, style: 'font-size:12px;color:var(--text-muted);margin-top:4px;font-family:JetBrains Mono,monospace;word-break:break-all'}));
+                        }
+                        item.appendChild(sevLabel);
+                        item.appendChild(desc);
+                        findingsDiv.appendChild(item);
+                    });
+                    container.appendChild(findingsDiv);
+                } else {
+                    var noFindings = el('div', {style: 'display:flex;align-items:center;gap:8px;font-size:14px;color:#059669;font-weight:500'});
+                    noFindings.innerHTML = '&#10003; No security findings - all checks passed.';
+                    container.appendChild(noFindings);
+                }
+            } catch (e) {
+                container.innerHTML = '<p style="color:var(--text-muted)">Security scan data is not available.</p>';
             }
         }
 

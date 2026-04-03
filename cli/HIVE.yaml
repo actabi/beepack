@@ -1,0 +1,26 @@
+# HIVE.yaml - Beepack Package Definition
+name: my-package
+version: 1.0.0
+description: Description of your API
+
+# Help others find your package
+keywords:
+  - keyword1
+  - keyword2
+
+# What your API can do (important for AI discovery)
+capabilities:
+  - main_action
+  - secondary_action
+
+# Environment variables your API needs
+requires:
+  env:
+    - API_KEY
+
+# Compatible runtimes
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw

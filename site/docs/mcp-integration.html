@@ -217,22 +217,19 @@ const info = await mcp.call("get_package_info", {
 // "Package installed! You need to configure NOTION_API_KEY.
 //  Here's how to use it: ..."</code></pre>
 
-            <h2>OpenClaw / ClawCode Integration</h2>
+            <h2>OpenClaw / ClawHub Integration</h2>
 
-            <p>Beepack is fully <strong>ClawHub-compatible</strong>. This means OpenClaw and ClawCode users can discover and install Beepack packages as skills without any extra configuration.</p>
+            <p>Beepack is fully <strong>ClawHub-compatible</strong>. OpenClaw users can install the Beepack skill to automatically search the registry before coding.</p>
 
             <h3>How it works</h3>
-            <p>Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API. These endpoints translate Beepack packages into the ClawHub skill format (SKILL.md), making them fully compatible with the OpenClaw ecosystem.</p>
+            <p>Beepack implements the full ClawHub registry API. It exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and serves skills as ZIP bundles containing a SKILL.md - fully compatible with the OpenClaw ecosystem.</p>
 
             <h3>Usage from OpenClaw</h3>
-            <pre><code># Search Beepack packages from OpenClaw CLI
-clawhub search --registry https://beepack.ai
+            <pre><code># Install the Beepack skill (auto-searches before coding)
+clawhub install beepack --registry https://beepack.ai
 
-# Install a Beepack package as a skill
-clawhub install notion-sync --registry https://beepack.ai
-
-# Resolve available versions
-clawhub resolve notion-sync --registry https://beepack.ai</code></pre>
+# Or search packages directly
+clawhub search "company lookup" --registry https://beepack.ai</code></pre>
 
             <h3>Supported ClawHub endpoints</h3>
             <table class="comparison-table">
@@ -248,23 +245,35 @@ clawhub resolve notion-sync --registry https://beepack.ai</code></pre>
                         <td>Registry discovery</td>
                     </tr>
                     <tr>
-                        <td><code>/api/v1/skills</code></td>
-                        <td>List all skills (packages)</td>
+                        <td><code>GET /api/v1/skills?q=...</code></td>
+                        <td>List / search skills</td>
                     </tr>
                     <tr>
-                        <td><code>/api/v1/skills/:slug</code></td>
+                        <td><code>GET /api/v1/skills/:slug</code></td>
                         <td>Get a single skill</td>
                     </tr>
                     <tr>
-                        <td><code>/api/v1/download?slug=...&amp;version=...</code></td>
-                        <td>Download skill as SKILL.md</td>
+                        <td><code>GET /api/v1/skills/resolve?slug=...</code></td>
+                        <td>Check sync state</td>
                     </tr>
                     <tr>
-                        <td><code>/api/v1/resolve?slug=...</code></td>
-                        <td>Resolve available versions</td>
+                        <td><code>GET /api/v1/download/:slug/:version</code></td>
+                        <td>Download skill as ZIP</td>
                     </tr>
                     <tr>
-                        <td><code>/api/v1/whoami</code></td>
+                        <td><code>POST /api/v1/skills/bulk</code></td>
+                        <td>Batch sync check</td>
+                    </tr>
+                    <tr>
+                        <td><code>POST /api/v1/search</code></td>
+                        <td>Vector search</td>
+                    </tr>
+                    <tr>
+                        <td><code>POST /api/v1/telemetry</code></td>
+                        <td>Download/install metrics</td>
+                    </tr>
+                    <tr>
+                        <td><code>GET /api/v1/whoami</code></td>
                         <td>Check authentication</td>
                     </tr>
                 </tbody>

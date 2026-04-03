@@ -70,7 +70,7 @@
             <p>ClawHub is limited to OpenClaw skills. Beepack is designed for all vibe coders: Cursor, Copilot, Claude Code, Windsurf, etc.</p>
 
             <h3>Does Beepack work with OpenClaw?</h3>
-            <p>Yes! Beepack is <strong>ClawHub-compatible</strong>. OpenClaw and ClawCode users can discover and install Beepack packages directly as skills using the <code>--registry https://beepack.ai</code> flag. Beepack exposes a <code>/.well-known/clawhub.json</code> discovery endpoint and a <code>/api/v1/skills</code> API that translates packages into the ClawHub skill format. See our <a href="mcp-integration.html">MCP Integration</a> page for details.</p>
+            <p>Yes! Beepack is <strong>ClawHub-compatible</strong>. OpenClaw users can install the Beepack skill with <code>clawhub install beepack --registry https://beepack.ai</code>. This adds a skill that automatically searches Beepack before coding. Beepack implements the full ClawHub registry API (discovery, skills, download as ZIP, resolve, bulk sync, search, telemetry). See our <a href="mcp-integration.html">MCP Integration</a> page for details.</p>
 
             <h3>What are bundles?</h3>
             <p>Bundles are <strong>curated groups of packages</strong> that work well together for a specific use case (e.g., "saas-starter", "ai-toolkit"). Instead of searching and installing packages one by one, you can install an entire bundle with <code>beepack pull --bundle bundle-name</code>. Browse available bundles with <code>beepack bundles</code> or via the <code>/api/v1/bundles</code> API endpoint.</p>

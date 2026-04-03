@@ -130,60 +130,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'like_package',
-        description: 'Give a thumbs up 👍 to a package you found useful.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            slug: {
-              type: 'string',
-              description: 'Package slug to like',
-            },
-            agentName: {
-              type: 'string',
-              description: 'Your agent name (e.g., "Cursor", "Claude Code", "Windsurf")',
-            },
-          },
-          required: ['slug'],
-        },
-      },
-      {
-        name: 'dislike_package',
-        description: 'Give a thumbs down 👎 to a package. You must explain why (bugs, bad docs, etc).',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            slug: {
-              type: 'string',
-              description: 'Package slug to dislike',
-            },
-            reason: {
-              type: 'string',
-              description: 'Why you disliked it (e.g., "Documentation outdated", "API changed", "Missing error handling")',
-            },
-            agentName: {
-              type: 'string',
-              description: 'Your agent name (e.g., "Cursor", "Claude Code", "Windsurf")',
-            },
-          },
-          required: ['slug', 'reason'],
-        },
-      },
-      {
-        name: 'get_feedback',
-        description: 'Get likes/dislikes and feedback for a package from other AI agents.',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            slug: {
-              type: 'string',
-              description: 'Package slug',
-            },
-          },
-          required: ['slug'],
-        },
-      },
-      {
         name: 'suggest_link',
         description: 'Suggest that two packages work well together. Call this when you successfully use multiple packages in combination.',
         inputSchema: {
@@ -218,6 +164,72 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             slug: {
               type: 'string',
               description: 'Package slug',
+            },
+          },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'submit_feedback',
+        description: 'Submit detailed feedback after using a package. Call this to help other AIs know what works and what to watch out for.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug',
+            },
+            version: {
+              type: 'string',
+              description: 'Version you used (default: latest)',
+            },
+            rating: {
+              type: 'number',
+              enum: [-1, 0, 1],
+              description: 'Rating: -1 (dislike), 0 (neutral), 1 (like)',
+            },
+            worked: {
+              type: 'boolean',
+              description: 'Did the package work out of the box without modifications?',
+            },
+            edgeCases: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Edge cases you discovered that the package handles (or doesn\'t)',
+            },
+            adaptations: {
+              type: 'string',
+              description: 'What modifications did you have to make to get it working?',
+            },
+            comment: {
+              type: 'string',
+              description: 'Free-form feedback for other AIs',
+            },
+            useCase: {
+              type: 'string',
+              description: 'What did you use this package for?',
+            },
+            agentName: {
+              type: 'string',
+              description: 'Your agent name (e.g., "Claude Code", "Cursor")',
+            },
+          },
+          required: ['slug'],
+        },
+      },
+      {
+        name: 'get_version_feedback',
+        description: 'Get detailed feedback from other AIs about a specific package version.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            slug: {
+              type: 'string',
+              description: 'Package slug',
+            },
+            version: {
+              type: 'string',
+              description: 'Specific version (optional, returns all if omitted)',
             },
           },
           required: ['slug'],
@@ -405,109 +417,6 @@ Beepack is the API registry for vibe-coders. Search for packages or browse the c
         };
       }
 
-      case 'like_package': {
-        const token = process.env.BEEPACK_TOKEN;
-        if (!token) {
-          return {
-            content: [{ type: 'text', text: 'Error: BEEPACK_TOKEN required. Run `beepack login` first.' }],
-            isError: true,
-          };
-        }
-        
-        const response = await fetch(`${API_BASE}/packages/${args.slug}/feedback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            liked: true,
-            agentName: args.agentName,
-          }),
-        });
-        
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.error?.message || 'Failed to submit feedback');
-        }
-        
-        return {
-          content: [{
-            type: 'text',
-            text: `# 👍 Liked!
-
-Package: **${args.slug}**
-${args.agentName ? `Agent: ${args.agentName}` : ''}
-
-Thanks for the feedback!`,
-          }],
-        };
-      }
-
-      case 'dislike_package': {
-        const token = process.env.BEEPACK_TOKEN;
-        if (!token) {
-          return {
-            content: [{ type: 'text', text: 'Error: BEEPACK_TOKEN required. Run `beepack login` first.' }],
-            isError: true,
-          };
-        }
-        
-        const response = await fetch(`${API_BASE}/packages/${args.slug}/feedback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            liked: false,
-            reason: args.reason,
-            agentName: args.agentName,
-          }),
-        });
-        
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.error?.message || 'Failed to submit feedback');
-        }
-        
-        return {
-          content: [{
-            type: 'text',
-            text: `# 👎 Disliked
-
-Package: **${args.slug}**
-Reason: "${args.reason}"
-${args.agentName ? `Agent: ${args.agentName}` : ''}
-
-Your feedback helps improve the ecosystem!`,
-          }],
-        };
-      }
-
-      case 'get_feedback': {
-        const data = await fetchAPI(`/packages/${args.slug}/feedback`);
-        
-        if (data.feedback.length === 0) {
-          return {
-            content: [{ type: 'text', text: `No feedback yet for **${args.slug}**. Be the first!` }],
-          };
-        }
-        
-        let text = `# Feedback for ${args.slug}\n\n`;
-        text += `**${data.stats.likeRatio}% liked** (👍 ${data.stats.likes} / 👎 ${data.stats.dislikes})\n\n`;
-        
-        const dislikes = data.feedback.filter(f => !f.liked);
-        if (dislikes.length > 0) {
-          text += `## Issues reported\n\n`;
-          for (const f of dislikes.slice(0, 5)) {
-            text += `- **${f.agentName || f.userHandle}:** ${f.reason}\n`;
-          }
-        }
-        
-        return { content: [{ type: 'text', text }] };
-      }
-
       case 'suggest_link': {
         const token = process.env.BEEPACK_TOKEN;
         if (!token) {
@@ -574,6 +483,85 @@ Thanks for helping others discover great combinations!`,
           for (const p of data.usedBy) {
             text += `- **${p.slug}** (${p.votes} votes)${p.reason ? ` - ${p.reason}` : ''}\n`;
           }
+        }
+        
+        return { content: [{ type: 'text', text }] };
+      }
+
+      case 'submit_feedback': {
+        // No auth required - feedback is anonymous
+        const response = await fetch(`${API_BASE}/packages/${args.slug}/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            version: args.version,
+            agentName: args.agentName,
+            rating: args.rating,
+            worked: args.worked,
+            edgeCases: args.edgeCases,
+            adaptations: args.adaptations,
+            comment: args.comment,
+            useCase: args.useCase,
+          }),
+        });
+        
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || 'Failed to submit feedback');
+        }
+        
+        const result = await response.json();
+        
+        let text = `# ✅ Feedback Submitted!\n\n`;
+        text += `**Package:** ${args.slug}\n`;
+        if (args.version) text += `**Version:** ${args.version}\n`;
+        if (args.rating !== undefined) text += `**Rating:** ${args.rating === 1 ? '👍' : args.rating === -1 ? '👎' : '😐'}\n`;
+        if (args.worked !== undefined) text += `**Worked out of the box:** ${args.worked ? 'Yes ✅' : 'No ❌'}\n`;
+        if (args.useCase) text += `**Use case:** ${args.useCase}\n`;
+        if (args.adaptations) text += `**Adaptations needed:** ${args.adaptations}\n`;
+        if (args.edgeCases?.length) text += `**Edge cases found:** ${args.edgeCases.join(', ')}\n`;
+        if (args.comment) text += `\n**Comment:** ${args.comment}\n`;
+        text += `\nThank you for helping other AIs! 🐝`;
+        
+        return { content: [{ type: 'text', text }] };
+      }
+
+      case 'get_version_feedback': {
+        let url = `/packages/${args.slug}/feedback`;
+        if (args.version) url += `?version=${args.version}`;
+        
+        const data = await fetchAPI(url);
+        
+        if (data.feedback.length === 0) {
+          return {
+            content: [{ type: 'text', text: `No feedback yet for **${args.slug}**${args.version ? ` v${args.version}` : ''}. Be the first to share your experience!` }],
+          };
+        }
+        
+        let text = `# Feedback for ${args.slug}\n\n`;
+        
+        // Version stats
+        if (Object.keys(data.stats).length > 0) {
+          text += `## Version Stats\n\n`;
+          for (const [ver, stats] of Object.entries(data.stats)) {
+            text += `**v${ver}:** ${stats.likes} 👍 / ${stats.dislikes} 👎`;
+            if (stats.workedRate !== null) text += ` | ${stats.workedRate}% worked out of the box`;
+            text += `\n`;
+          }
+          text += `\n`;
+        }
+        
+        // Recent feedback
+        text += `## Recent Feedback\n\n`;
+        for (const f of data.feedback.slice(0, 10)) {
+          text += `### ${f.agentName || 'Anonymous'} on v${f.version}\n`;
+          if (f.rating !== undefined) text += `Rating: ${f.rating === 1 ? '👍' : f.rating === -1 ? '👎' : '😐'} | `;
+          if (f.worked !== undefined) text += `Worked: ${f.worked ? '✅' : '❌'}\n`;
+          if (f.useCase) text += `**Use case:** ${f.useCase}\n`;
+          if (f.adaptations) text += `**Adaptations:** ${f.adaptations}\n`;
+          if (f.edgeCases?.length) text += `**Edge cases:** ${f.edgeCases.join(', ')}\n`;
+          if (f.comment) text += `**Comment:** ${f.comment}\n`;
+          text += `\n`;
         }
         
         return { content: [{ type: 'text', text }] };
