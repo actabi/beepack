@@ -54,8 +54,8 @@
         .scan-icon { font-size: 32px; }
         .scan-verdict-text { font-size: 1.1rem; font-weight: 600; }
         .scan-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-        .scan-layers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-        @media (max-width: 600px) { .scan-layers { grid-template-columns: 1fr; } }
+        .scan-layers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 900px) { .scan-layers { grid-template-columns: 1fr; } }
         .scan-layer { border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
         .scan-layer h4 { margin: 0 0 4px; font-size: 14px; }
         .scan-layer .layer-verdict { font-size: 13px; font-weight: 500; }
@@ -419,12 +419,33 @@
                     'Verdict: ' + (llmLabel[data.llmVerdict] || data.llmVerdict || 'N/A') + '</div>';
                 layers.appendChild(layer2);
 
+                // Layer 3 - VirusTotal
+                var vtVerdict = data.vtVerdict;
+                var vtScan = data.vtScan;
+                var vtLabel = {clean: 'Clean', suspicious: 'Suspicious', malicious: 'Malicious', skipped: 'Skipped'};
+                var layer3 = el('div', {className: 'scan-layer'});
+                if (vtScan && vtVerdict) {
+                    var vtDetail = vtScan.totalEngines
+                        ? vtScan.malicious + ' malicious, ' + vtScan.suspicious + ' suspicious out of ' + vtScan.totalEngines + ' engines'
+                        : '';
+                    layer3.innerHTML = '<h4>Layer 3 - VirusTotal</h4>' +
+                        '<div>Scanned by 70+ antivirus engines via <a href="https://www.virustotal.com" target="_blank" rel="noopener" style="color:var(--primary)">VirusTotal</a>.</div>' +
+                        (vtDetail ? '<div style="font-size:13px;color:var(--text-muted);margin-top:4px">' + vtDetail + '</div>' : '') +
+                        '<div class="layer-verdict v-' + vtVerdict + '" style="margin-top:8px">' +
+                        'Verdict: ' + (vtLabel[vtVerdict] || vtVerdict) + '</div>';
+                } else {
+                    layer3.innerHTML = '<h4>Layer 3 - VirusTotal</h4>' +
+                        '<div>Scanned by 70+ antivirus engines via <a href="https://www.virustotal.com" target="_blank" rel="noopener" style="color:var(--primary)">VirusTotal</a>.</div>' +
+                        '<div class="layer-verdict" style="margin-top:8px;color:var(--text-muted)">Verdict: Pending</div>';
+                }
+                layers.appendChild(layer3);
+
                 container.appendChild(layers);
 
                 // Community layer note
-                var layer3 = el('div', {style: 'font-size:13px;color:var(--text-muted);margin-bottom:24px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid var(--border)'});
-                layer3.innerHTML = '<strong>Layer 3 - Community Reports</strong><br>Users can report malicious or broken packages. Packages with multiple reports are automatically hidden for review.';
-                container.appendChild(layer3);
+                var layer4 = el('div', {style: 'font-size:13px;color:var(--text-muted);margin-bottom:24px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid var(--border)'});
+                layer4.innerHTML = '<strong>Layer 4 - Community Reports</strong><br>Users can report malicious or broken packages. Packages with multiple reports are automatically hidden for review.';
+                container.appendChild(layer4);
 
                 // Findings
                 var findings = data.findings || [];

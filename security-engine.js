@@ -2,10 +2,11 @@
  * Beepack Security Engine
  * Inspired by ClawHub's moderation engine (MIT license)
  *
- * 3-layer security pipeline:
+ * 4-layer security pipeline:
  * 1. Static deterministic scan (regex-based)
  * 2. LLM evaluation (OpenAI) - async
- * 3. Community reporting with auto-hide
+ * 3. VirusTotal scan - async
+ * 4. Community reporting with auto-hide
  */
 
 // Severity levels
@@ -206,9 +207,111 @@ ${filesContent}`;
 }
 
 /**
+ * Run VirusTotal scan on package files (async)
+ * Bundles all files into a single buffer, submits to VT, polls for results.
+ * @param {Array<{name: string, content: string|Buffer}>} files - Files to scan
+ * @param {string} vtApiKey - VirusTotal API key
+ * @returns {Object} VT scan results
+ */
+export async function runVirusTotalScan(files, vtApiKey) {
+  if (!vtApiKey) return { verdict: 'skipped', reason: 'No VirusTotal API key configured' };
+
+  try {
+    // Bundle files into a single text blob for scanning
+    const bundled = files.map(f => {
+      const content = typeof f.content === 'string' ? f.content : f.content.toString('utf8');
+      return `// === ${f.name} ===\n${content}`;
+    }).join('\n\n');
+
+    const blob = new Blob([bundled], { type: 'application/javascript' });
+
+    // Submit file to VirusTotal
+    const formData = new FormData();
+    formData.append('file', blob, 'package-bundle.js');
+
+    const submitRes = await fetch('https://www.virustotal.com/api/v3/files', {
+      method: 'POST',
+      headers: { 'x-apikey': vtApiKey },
+      body: formData,
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!submitRes.ok) {
+      return { verdict: 'skipped', reason: `VirusTotal submit error: ${submitRes.status}` };
+    }
+
+    const submitData = await submitRes.json();
+    const analysisId = submitData.data?.id;
+    if (!analysisId) return { verdict: 'skipped', reason: 'No analysis ID returned' };
+
+    // Poll for results (max 5 attempts, 15s intervals)
+    let analysisResult = null;
+    for (let i = 0; i < 5; i++) {
+      await new Promise(r => setTimeout(r, 15000));
+
+      const pollRes = await fetch(`https://www.virustotal.com/api/v3/analyses/${analysisId}`, {
+        headers: { 'x-apikey': vtApiKey },
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (!pollRes.ok) continue;
+
+      const pollData = await pollRes.json();
+      if (pollData.data?.attributes?.status === 'completed') {
+        analysisResult = pollData.data.attributes;
+        break;
+      }
+    }
+
+    if (!analysisResult) {
+      return { verdict: 'skipped', reason: 'VirusTotal analysis timed out' };
+    }
+
+    const stats = analysisResult.stats || {};
+    const malicious = stats.malicious || 0;
+    const suspicious = stats.suspicious || 0;
+    const harmless = stats.harmless || 0;
+    const undetected = stats.undetected || 0;
+    const totalEngines = malicious + suspicious + harmless + undetected;
+
+    // Collect flagging engine details
+    const flaggedEngines = [];
+    const results = analysisResult.results || {};
+    for (const [engine, result] of Object.entries(results)) {
+      if (result.category === 'malicious' || result.category === 'suspicious') {
+        flaggedEngines.push({
+          engine,
+          category: result.category,
+          result: result.result || '',
+        });
+      }
+    }
+
+    // Determine verdict
+    let verdict = 'clean';
+    if (malicious >= 3) verdict = 'malicious';
+    else if (malicious >= 1 || suspicious >= 2) verdict = 'suspicious';
+
+    return {
+      verdict,
+      malicious,
+      suspicious,
+      harmless,
+      undetected,
+      totalEngines,
+      flaggedEngines,
+      analysisId,
+      scannedAt: new Date().toISOString(),
+    };
+  } catch (e) {
+    return { verdict: 'skipped', reason: `VirusTotal scan failed: ${e.message}` };
+  }
+}
+
+/**
  * Build final moderation snapshot from all scan results
  */
-export function buildModerationSnapshot(staticScan, llmEval) {
+export function buildModerationSnapshot(staticScan, llmEval, vtScan) {
   const allFindings = [...(staticScan.findings || [])];
 
   // Add LLM findings if available
@@ -224,14 +327,30 @@ export function buildModerationSnapshot(staticScan, llmEval) {
     });
   }
 
+  // Add VT findings if available
+  if (vtScan && vtScan.flaggedEngines) {
+    vtScan.flaggedEngines.forEach(e => {
+      allFindings.push({
+        code: 'VT_' + e.engine.toUpperCase().replace(/[^A-Z0-9]/g, '_'),
+        severity: e.category === 'malicious' ? SEVERITY.CRITICAL : SEVERITY.WARN,
+        description: `${e.engine}: ${e.result || e.category}`,
+        file: 'VirusTotal scan',
+        source: 'virustotal',
+      });
+    });
+  }
+
   // Determine final verdict
   let finalVerdict = 'clean';
 
-  if (staticScan.verdict === 'malicious' || (llmEval && llmEval.verdict === 'malicious')) {
+  const vtMalicious = vtScan && vtScan.verdict === 'malicious';
+  const vtSuspicious = vtScan && vtScan.verdict === 'suspicious';
+
+  if (staticScan.verdict === 'malicious' || (llmEval && llmEval.verdict === 'malicious') || vtMalicious) {
     finalVerdict = 'malicious';
-  } else if (staticScan.verdict === 'suspicious' || (llmEval && llmEval.verdict === 'suspicious')) {
+  } else if (staticScan.verdict === 'suspicious' || (llmEval && llmEval.verdict === 'suspicious') || vtSuspicious) {
     // If LLM says benign with high confidence, downgrade static suspicious
-    if (llmEval && llmEval.verdict === 'benign' && llmEval.confidence > 0.8) {
+    if (llmEval && llmEval.verdict === 'benign' && llmEval.confidence > 0.8 && !vtSuspicious) {
       finalVerdict = 'clean';
     } else {
       finalVerdict = 'suspicious';
@@ -250,10 +369,17 @@ export function buildModerationSnapshot(staticScan, llmEval) {
       confidence: llmEval.confidence,
       summary: llmEval.summary,
     } : null,
+    vtScan: vtScan && vtScan.verdict !== 'skipped' ? {
+      verdict: vtScan.verdict,
+      malicious: vtScan.malicious,
+      suspicious: vtScan.suspicious,
+      totalEngines: vtScan.totalEngines,
+      flaggedEngines: vtScan.flaggedEngines,
+    } : null,
     findings: allFindings,
     totalFindings: allFindings.length,
     moderatedAt: new Date().toISOString(),
-    engineVersion: 'beepack-security-v1',
+    engineVersion: 'beepack-security-v2',
   };
 }
 

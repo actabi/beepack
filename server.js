@@ -15,7 +15,7 @@ import { initEmbeddings, initEmbeddingsTable, generateAllEmbeddings, createSearc
 import { storePackageFiles, getPackageFilesMetadata, getFile, createPackageArchive, initStorage } from './storage.js';
 import { setupRemoteMCP } from './mcp-remote.js';
 import { setupClawHubCompat } from './clawhub-compat.js';
-import { runStaticScan, runLLMEvaluation, buildModerationSnapshot, AUTO_HIDE_THRESHOLD, MAX_REPORTS_PER_USER } from './security-engine.js';
+import { runStaticScan, runLLMEvaluation, runVirusTotalScan, buildModerationSnapshot, AUTO_HIDE_THRESHOLD, MAX_REPORTS_PER_USER } from './security-engine.js';
 
 // Initialize storage
 initStorage();
@@ -170,6 +170,7 @@ db.exec(`
     version TEXT,
     static_verdict TEXT,
     llm_verdict TEXT,
+    vt_verdict TEXT,
     final_verdict TEXT,
     findings TEXT,
     scan_data TEXT,
@@ -235,6 +236,9 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_package_links_to ON package_links(to_package_id);
 
 `);
+
+// Migration: add vt_verdict column if missing
+try { db.exec('ALTER TABLE security_scans ADD COLUMN vt_verdict TEXT'); } catch (e) { /* column already exists */ }
 
 // Initialize embeddings table
 initEmbeddingsTable(db);
@@ -779,37 +783,50 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       'INSERT INTO security_scans (package_id, version, static_verdict, final_verdict, findings, scan_data) VALUES (?, ?, ?, ?, ?, ?)'
     ).run(pkg.id, version, staticScan.verdict, staticScan.verdict, JSON.stringify(staticScan.findings), JSON.stringify(staticScan));
 
-    // LLM evaluation (async, non-blocking - updates scan results later)
+    // Async security evaluations (LLM + VirusTotal, non-blocking)
     const openaiKey = process.env.OPENAI_API_KEY;
-    if (openaiKey) {
+    const vtApiKey = process.env.VIRUSTOTAL_API_KEY;
+    if (openaiKey || vtApiKey) {
       (async () => {
         try {
           const pkgMeta = db.prepare('SELECT * FROM packages WHERE id = ?').get(pkg.id);
-          const llmEval = await runLLMEvaluation({
-            slug: pkgMeta.slug,
-            displayName: pkgMeta.display_name,
-            description: pkgMeta.description,
-            requires: JSON.parse(pkgMeta.requires || '{}'),
-            keywords: JSON.parse(pkgMeta.keywords || '[]'),
-            capabilities: JSON.parse(pkgMeta.capabilities || '[]'),
-          }, filesToScan, openaiKey);
 
-          const snapshot = buildModerationSnapshot(staticScan, llmEval);
+          // Run LLM and VirusTotal in parallel
+          const [llmEval, vtScan] = await Promise.all([
+            openaiKey ? runLLMEvaluation({
+              slug: pkgMeta.slug,
+              displayName: pkgMeta.display_name,
+              description: pkgMeta.description,
+              requires: JSON.parse(pkgMeta.requires || '{}'),
+              keywords: JSON.parse(pkgMeta.keywords || '[]'),
+              capabilities: JSON.parse(pkgMeta.capabilities || '[]'),
+            }, filesToScan, openaiKey) : Promise.resolve(null),
+            vtApiKey ? runVirusTotalScan(filesToScan, vtApiKey) : Promise.resolve(null),
+          ]);
 
-          // Update scan with LLM results
+          const snapshot = buildModerationSnapshot(staticScan, llmEval, vtScan);
+
+          // Update scan with all results
           db.prepare(
-            'UPDATE security_scans SET llm_verdict = ?, final_verdict = ?, scan_data = ? WHERE package_id = ? AND version = ?'
-          ).run(llmEval.verdict, snapshot.verdict, JSON.stringify(snapshot), pkg.id, version);
+            'UPDATE security_scans SET llm_verdict = ?, vt_verdict = ?, final_verdict = ?, findings = ?, scan_data = ? WHERE package_id = ? AND version = ?'
+          ).run(
+            llmEval?.verdict || null,
+            vtScan?.verdict || null,
+            snapshot.verdict,
+            JSON.stringify(snapshot.findings),
+            JSON.stringify(snapshot),
+            pkg.id, version
+          );
 
           // Auto-hide if final verdict is malicious
           if (snapshot.verdict === 'malicious') {
             db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkg.id);
-            console.error(`🚨 Package hidden after LLM evaluation: ${slug}`);
+            console.error(`🚨 Package hidden after async evaluation: ${slug}`);
           }
 
-          console.log(`🔒 Security scan for ${slug}: static=${staticScan.verdict}, llm=${llmEval.verdict}, final=${snapshot.verdict}`);
+          console.log(`🔒 Security scan for ${slug}: static=${staticScan.verdict}, llm=${llmEval?.verdict || 'skipped'}, vt=${vtScan?.verdict || 'skipped'}, final=${snapshot.verdict}`);
         } catch (e) {
-          console.error(`⚠️ LLM security eval failed for ${slug}:`, e.message);
+          console.error(`⚠️ Async security eval failed for ${slug}:`, e.message);
         }
       })();
     }
@@ -941,10 +958,14 @@ app.get('/api/v1/packages/:slug/security', (req, res) => {
 
   if (!scan) return res.json({ verdict: 'unscanned', message: 'No security scan available' });
 
+  const scanData = JSON.parse(scan.scan_data || '{}');
+
   res.json({
     verdict: scan.final_verdict,
     staticVerdict: scan.static_verdict,
     llmVerdict: scan.llm_verdict,
+    vtVerdict: scan.vt_verdict || null,
+    vtScan: scanData.vtScan || null,
     findings: JSON.parse(scan.findings || '[]'),
     scannedAt: scan.created_at,
   });
