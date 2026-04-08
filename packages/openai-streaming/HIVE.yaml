@@ -1,0 +1,36 @@
+name: openai-streaming
+version: 1.0.0
+displayName: OpenAI Streaming Chat
+description: Streaming chat completions, tool/function calling, vision input, abort control, and exponential backoff on rate limits. Zero dependencies.
+keywords:
+  - openai
+  - streaming
+  - chat
+  - gpt
+  - llm
+  - tool-calling
+  - function-calling
+  - vision
+  - sse
+capabilities:
+  - streaming-chat-completions
+  - tool-function-calling
+  - structured-output-parsing
+  - abort-controller-integration
+  - exponential-backoff-rate-limits
+  - token-budget-estimation
+  - vision-image-input
+requires:
+  env:
+    - OPENAI_API_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

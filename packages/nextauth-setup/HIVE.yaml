@@ -1,0 +1,37 @@
+name: nextauth-setup
+version: 1.0.0
+displayName: Auth.js v5 (NextAuth) Setup
+description: Production-ready Auth.js v5 config for Next.js App Router with GitHub, Google, and magic-link providers, Prisma adapter, middleware, and session enrichment
+keywords:
+  - nextauth
+  - auth.js
+  - next.js
+  - authentication
+  - oauth
+  - prisma
+  - session
+  - middleware
+  - magic-link
+capabilities:
+  - build-auth-config
+  - generate-prisma-schema
+  - create-route-handler
+  - create-middleware
+  - enrich-session-callbacks
+requires:
+  env:
+    - NEXTAUTH_SECRET
+    - NEXTAUTH_URL
+  deps:
+    - node >= 18
+    - next-auth >= 5.0.0
+    - @auth/prisma-adapter >= 1.0.0
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
