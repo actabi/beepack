@@ -24,7 +24,6 @@ public/
 # Deployment (sensitive - contains IPs, paths)
 deploy.ps1
 scripts/
-Dockerfile
 docker-compose.yml
 fly.toml
 railway.json
