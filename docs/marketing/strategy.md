@@ -202,7 +202,7 @@ Show HN: Beepack – open-source registry of battle-tested code for AI-assisted 
 - [ ] Set up Discord server or join existing AI dev communities
 
 **Month 1 KPIs:**
-- 25+ packages in registry
+- 30+ packages in registry *(28 already in repo as of April 2026 — target raised from 25)*
 - 200+ GitHub stars
 - 500+ website visits
 - 50+ CLI installs
@@ -284,7 +284,7 @@ Show HN: Beepack – open-source registry of battle-tested code for AI-assisted 
 | GitHub stars | 200 | 500 | 1,000 |
 | Registered users | 50 | 200 | 500 |
 | CLI installs (npm) | 50 | 150 | 300 |
-| Packages in registry | 25 | 50 | 80 |
+| Packages in registry | 30 *(at 28 — exceeded original target of 25)* | 60 | 100 |
 | Community-contributed packages | 0 | 3 | 10 |
 | Website monthly visits | 500 | 2,000 | 5,000 |
 | Twitter/X followers | 100 | 300 | 600 |
