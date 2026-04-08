@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibecoding Tools — Beepack for Vibe Coders</title>
+    <meta name="description" content="Beepack is the essential vibecoding tool. Give your AI pre-debugged integrations via MCP so it stops hallucinating broken OAuth and Stripe code from scratch. Ship faster with battle-tested packages.">
+    <meta name="keywords" content="vibecoding tools, vibe coding packages, vibe coder tools, AI coding tools, tools for AI coding, MCP packages, cursor packages, claude coding tools">
+    <link rel="canonical" href="https://beepack.ai/use-cases/vibecoding-tools.html">
+    <meta property="og:title" content="The Essential Vibecoding Tool — Beepack">
+    <meta property="og:description" content="Give your AI pre-debugged integrations. Stop watching it hallucinate OAuth and Stripe code from scratch — pull the real thing in seconds.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beepack.ai/use-cases/vibecoding-tools.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Essential Vibecoding Tool — Beepack">
+    <meta name="twitter:description" content="Give your AI pre-debugged integrations. Stop watching it hallucinate OAuth and Stripe code from scratch — pull the real thing in seconds.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #ede9fe 0%, #fff 60%); }
+        .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
+        .lp-hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; }
+        .lp-hero .badge { display: inline-block; background: #ddd6fe; color: #4c1d95; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+        .lp-section { padding: 64px 0; }
+        .lp-section h2 { font-size: 2rem; margin-bottom: 12px; }
+        .lp-section .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+        .problem-solution { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        @media (max-width: 768px) { .problem-solution { grid-template-columns: 1fr; } .lp-hero h1 { font-size: 2rem; } }
+        .problem-box, .solution-box { padding: 28px; border-radius: var(--radius); }
+        .problem-box { background: #fef2f2; border: 1px solid #fecaca; }
+        .solution-box { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .problem-box h3 { color: #dc2626; font-size: 1rem; margin-bottom: 16px; }
+        .solution-box h3 { color: #16a34a; font-size: 1rem; margin-bottom: 16px; }
+        .problem-box ul, .solution-box ul { list-style: none; padding: 0; margin: 0; }
+        .problem-box ul li, .solution-box ul li { padding: 6px 0; font-size: 0.9rem; display: flex; gap: 10px; }
+        .problem-box ul li::before { content: "✗"; color: #dc2626; font-weight: 700; flex-shrink: 0; }
+        .solution-box ul li::before { content: "✓"; color: #16a34a; font-weight: 700; flex-shrink: 0; }
+        .compat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        @media (max-width: 768px) { .compat-grid { grid-template-columns: 1fr 1fr; } .compat-grid { gap: 12px; } }
+        .compat-card { text-align: center; padding: 28px 16px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .compat-card .tool-icon { font-size: 2.2rem; margin-bottom: 12px; }
+        .compat-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+        .compat-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+        .mcp-setup { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+        @media (max-width: 768px) { .mcp-setup { grid-template-columns: 1fr; } }
+        .mcp-text h2 { font-size: 1.8rem; margin-bottom: 16px; }
+        .mcp-text p { font-size: 1rem; color: var(--text-muted); margin-bottom: 20px; }
+        .mcp-steps { list-style: none; padding: 0; margin: 0; counter-reset: mcp-steps; }
+        .mcp-steps li { counter-increment: mcp-steps; display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .mcp-steps li::before { content: counter(mcp-steps); background: var(--primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+        .mcp-steps li:last-child { border-bottom: none; }
+        .code-block { background: #1e293b; border-radius: 10px; padding: 24px; }
+        .code-block pre { color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; margin: 0; white-space: pre-wrap; }
+        .code-block .comment { color: #64748b; }
+        .code-block .string { color: #86efac; }
+        .code-block .key { color: #7dd3fc; }
+        .workflow-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 640px) { .workflow-steps { grid-template-columns: 1fr; } .compat-grid { grid-template-columns: 1fr 1fr; } }
+        .workflow-step { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .workflow-step .num { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+        .workflow-step h3 { font-size: 0.95rem; margin-bottom: 8px; }
+        .workflow-step p { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+        .cta-section { background: #ede9fe; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/#packages">Packages</a>
+                <a href="/search.html">Search</a>
+                <a href="/docs/">Docs</a>
+                <a href="/api-docs/">API</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#login" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Sign in with GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="lp-hero">
+        <div class="container">
+            <span class="badge">Vibecoding Tools</span>
+            <h1>The Missing Tool in Every Vibe Coder's Stack</h1>
+            <p>Your AI writes fast. But OAuth, Stripe, and webhook edge cases slow it down. Beepack gives your AI pre-debugged, production-ready integrations to pull — so it stops hallucinating broken code.</p>
+            <div class="hero-actions">
+                <a href="/docs/mcp-integration.html" class="btn btn-primary btn-lg">Add Beepack to Your AI</a>
+                <a href="/search.html" class="btn btn-outline btn-lg">Browse Packages</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem / Solution -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>Why Vibe Coding Breaks Down on Integrations</h2>
+            <p class="section-lead">LLMs are great at writing logic. They're unreliable at handling the edge cases that integrations require.</p>
+            <div class="problem-solution">
+                <div class="problem-box">
+                    <h3>Without Beepack</h3>
+                    <ul>
+                        <li>AI writes OAuth without token refresh — works for 1 hour</li>
+                        <li>Stripe webhook arrives with no signature verification</li>
+                        <li>Rate limiter has no backoff — gets your IP banned</li>
+                        <li>PDF generator breaks on special characters</li>
+                        <li>You spend the afternoon debugging, not shipping</li>
+                    </ul>
+                </div>
+                <div class="solution-box">
+                    <h3>With Beepack</h3>
+                    <ul>
+                        <li>AI pulls <code>github-oauth</code> — refresh tokens, PKCE, all handled</li>
+                        <li>AI pulls <code>stripe-checkout</code> — webhooks verified, idempotency keys included</li>
+                        <li>AI pulls <code>rate-limiter</code> — exponential backoff, circuit breaker, done</li>
+                        <li>AI pulls <code>pdf-invoice</code> — tested on real invoices in production</li>
+                        <li>You ship in the morning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MCP Setup -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <div class="mcp-setup">
+                <div class="mcp-text">
+                    <h2>Connect Beepack to Your AI in 2 Minutes</h2>
+                    <p>Beepack exposes a native MCP server. Add it to your AI tool's config and it will automatically search Beepack when you ask for an integration.</p>
+                    <ol class="mcp-steps">
+                        <li>Get your token at <strong>beepack.ai/auth/github</strong></li>
+                        <li>Add the MCP config to your AI tool (see right)</li>
+                        <li>Ask your AI: "connect my app to Stripe" — it will pull the package</li>
+                        <li>Done. The code is in your project, ready to adapt.</li>
+                    </ol>
+                </div>
+                <div>
+                    <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Remote MCP (recommended — no install required):</p>
+                    <div class="code-block" style="margin-bottom:20px;">
+                        <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"beepack"</span>: {
+      <span class="key">"url"</span>: <span class="string">"https://beepack.ai/mcp/sse?token=YOUR_TOKEN"</span>
+    }
+  }
+}</pre>
+                    </div>
+                    <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Local MCP (via CLI):</p>
+                    <div class="code-block">
+                        <pre>{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"beepack"</span>: {
+      <span class="key">"command"</span>: <span class="string">"beepack"</span>,
+      <span class="key">"args"</span>: [<span class="string">"mcp-server"</span>]
+    }
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compatible tools -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>Works With Your Favorite AI Tools</h2>
+            <p class="section-lead">Beepack is compatible with every major AI coding tool via MCP.</p>
+            <div class="compat-grid">
+                <div class="compat-card">
+                    <div class="tool-icon">⚡</div>
+                    <h3>Cursor</h3>
+                    <p>Add the MCP server to Cursor settings and it searches Beepack automatically.</p>
+                </div>
+                <div class="compat-card">
+                    <div class="tool-icon">🤖</div>
+                    <h3>Claude</h3>
+                    <p>Claude can query and pull packages directly via MCP tools.</p>
+                </div>
+                <div class="compat-card">
+                    <div class="tool-icon">🐙</div>
+                    <h3>Copilot</h3>
+                    <p>GitHub Copilot with MCP support can discover and pull packages.</p>
+                </div>
+                <div class="compat-card">
+                    <div class="tool-icon">🦅</div>
+                    <h3>OpenClaw</h3>
+                    <p>Install the Beepack skill for OpenClaw via ClawHub for native skill access.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Typical vibecoding workflow -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <h2>Typical Vibe Coding Workflow With Beepack</h2>
+            <p class="section-lead">From "I need Stripe" to working checkout in under 5 minutes.</p>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="num">1</div>
+                    <h3>Ask your AI</h3>
+                    <p>Tell Cursor or Claude what integration you need. "Add Stripe checkout with subscription support."</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="num">2</div>
+                    <h3>AI searches Beepack</h3>
+                    <p>Via MCP, the AI searches the registry, finds <code>stripe-checkout</code>, reads the docs and edge cases.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="num">3</div>
+                    <h3>Code lands in your project</h3>
+                    <p>The AI pulls the source code, adapts it to your codebase, and wires it up. Production-ready from day one.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section lp-section">
+        <div class="container" style="text-align:center;">
+            <h2>Add Beepack to Your AI Setup</h2>
+            <p style="color:var(--text-muted);margin-bottom:32px;">It takes 2 minutes. Your AI will never write broken OAuth again.</p>
+            <div class="hero-actions" style="justify-content:center;">
+                <a href="/docs/mcp-integration.html" class="btn btn-primary btn-lg">MCP Setup Guide</a>
+                <a href="/search.html" class="btn btn-outline btn-lg">Browse Packages</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:28px;vertical-align:middle;">
+                    <span class="logo-text">Beepack</span>
+                </div>
+                <p>Open source. Made with ❤️ for vibe coders.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/docs/">Documentation</a>
+                <a href="/api-docs/">API</a>
+                <a href="https://github.com/actabi/beepack" target="_blank">GitHub</a>
+                <a href="/docs/faq.html">FAQ</a>
+                <a href="/use-cases/api-integration-library.html">API Integrations</a>
+                <a href="/use-cases/reusable-code-registry.html">Code Registry</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

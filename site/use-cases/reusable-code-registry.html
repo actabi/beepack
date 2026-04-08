@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reusable Code Registry — Beepack</title>
+    <meta name="description" content="Beepack is the open reusable code registry for developers and AI agents. Publish, discover, and pull production-tested code modules. Stop rewriting the same code — share and reuse it.">
+    <meta name="keywords" content="reusable code registry, code package registry, code snippet registry, code module registry, publish reusable code, npm alternative">
+    <link rel="canonical" href="https://beepack.ai/use-cases/reusable-code-registry.html">
+    <meta property="og:title" content="Reusable Code Registry — Beepack">
+    <meta property="og:description" content="The open registry where developers publish and pull production-tested code modules. Stop rewriting the same integrations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beepack.ai/use-cases/reusable-code-registry.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Reusable Code Registry — Beepack">
+    <meta name="twitter:description" content="The open registry where developers publish and pull production-tested code modules. Stop rewriting the same integrations.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #dcfce7 0%, #fff 60%); }
+        .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
+        .lp-hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; }
+        .lp-hero .badge { display: inline-block; background: #bbf7d0; color: #14532d; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+        .lp-section { padding: 64px 0; }
+        .lp-section h2 { font-size: 2rem; margin-bottom: 12px; }
+        .lp-section .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+        .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } .lp-hero h1 { font-size: 2rem; } }
+        .why-card { padding: 28px 24px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .why-card .icon { font-size: 2rem; margin-bottom: 12px; }
+        .why-card h3 { font-size: 1rem; margin-bottom: 8px; }
+        .why-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+        .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr; } }
+        .how-text h2 { font-size: 1.8rem; margin-bottom: 16px; }
+        .how-text p { font-size: 1rem; color: var(--text-muted); margin-bottom: 24px; }
+        .how-text ul { list-style: none; padding: 0; margin: 0; }
+        .how-text ul li { padding: 8px 0; font-size: 0.95rem; display: flex; align-items: flex-start; gap: 10px; }
+        .how-text ul li::before { content: "✓"; color: #16a34a; font-weight: 700; flex-shrink: 0; }
+        .code-block { background: #1e293b; border-radius: 10px; padding: 28px; }
+        .code-block pre { color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin: 0; white-space: pre-wrap; }
+        .code-block .comment { color: #64748b; }
+        .code-block .key { color: #7dd3fc; }
+        .code-block .value { color: #86efac; }
+        .lifecycle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 40px; position: relative; }
+        @media (max-width: 768px) { .lifecycle { grid-template-columns: 1fr 1fr; gap: 16px; } }
+        .lifecycle-step { text-align: center; padding: 24px 16px; position: relative; }
+        .lifecycle-step:not(:last-child)::after { content: "→"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--text-muted); }
+        @media (max-width: 768px) { .lifecycle-step::after { display: none; } }
+        .lifecycle-icon { font-size: 2rem; margin-bottom: 12px; }
+        .lifecycle-step h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+        .lifecycle-step p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+        .security-badges { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+        .security-badge { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.875rem; font-weight: 500; }
+        .cta-section { background: #dcfce7; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/#packages">Packages</a>
+                <a href="/search.html">Search</a>
+                <a href="/docs/">Docs</a>
+                <a href="/api-docs/">API</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#login" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Sign in with GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="lp-hero">
+        <div class="container">
+            <span class="badge">Reusable Code Registry</span>
+            <h1>The Code Registry Where Good Code Lives Forever</h1>
+            <p>Beepack is the open registry for reusable, production-tested code modules. Developers publish once. Everyone pulls, adapts, and ships — without starting from zero.</p>
+            <div class="hero-actions">
+                <a href="/search.html" class="btn btn-primary btn-lg">Search the Registry</a>
+                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Publish a Package</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why reuse -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>Why a Code Registry, Not Just a Package Manager?</h2>
+            <p class="section-lead">npm gives you runtime dependencies. Beepack gives you source code you own.</p>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="icon">🧬</div>
+                    <h3>Source code, not a dependency</h3>
+                    <p>When you pull from Beepack, you get the actual source files. Modify them, adapt them, ship them — no external runtime dependency added to your project.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon">🔬</div>
+                    <h3>Edge cases already solved</h3>
+                    <p>Every package in the registry has been used in real projects. Community feedback surfaces every edge case, gotcha, and environment-specific quirk.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon">🤖</div>
+                    <h3>AI-native discovery</h3>
+                    <p>The registry is queryable by AI agents via MCP. Your AI assistant can search, evaluate, and pull code without you ever opening a browser.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon">🛡️</div>
+                    <h3>Security scanned on every publish</h3>
+                    <p>Three-layer security pipeline: static analysis, LLM review, and community reports. Malicious packages get blocked before they reach the registry.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon">🌐</div>
+                    <h3>Open and self-hostable</h3>
+                    <p>The registry is open source. Host it internally for your team's private modules, or use the public registry at beepack.ai.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon">💬</div>
+                    <h3>Community feedback included</h3>
+                    <p>Every package carries real feedback from developers who used it. Know before you pull: what works, what doesn't, what to watch out for.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How the registry works -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <div class="how-grid">
+                <div class="how-text">
+                    <h2>Publish Once. Pull Anywhere.</h2>
+                    <p>Every package in the registry is described by a <code>HIVE.yaml</code> manifest. It declares the package's name, capabilities, dependencies, and compatibility — making it machine-readable for AI agents.</p>
+                    <ul>
+                        <li>Declare capabilities so AI agents know what your package does</li>
+                        <li>Specify required environment variables</li>
+                        <li>List compatible AI tools (Cursor, Claude, Copilot)</li>
+                        <li>Version your packages for stable references</li>
+                        <li>Security scan runs automatically on every publish</li>
+                    </ul>
+                </div>
+                <div class="code-block">
+                    <pre><span class="comment"># HIVE.yaml — package manifest</span>
+<span class="key">name</span>: <span class="value">stripe-checkout</span>
+<span class="key">version</span>: <span class="value">1.2.0</span>
+<span class="key">description</span>: <span class="value">Stripe checkout with webhooks</span>
+
+<span class="key">keywords</span>:
+  - <span class="value">stripe</span>
+  - <span class="value">payments</span>
+  - <span class="value">checkout</span>
+
+<span class="key">capabilities</span>:
+  - <span class="value">create_payment_intent</span>
+  - <span class="value">handle_webhook</span>
+  - <span class="value">manage_subscription</span>
+
+<span class="key">requires</span>:
+  <span class="key">env</span>:
+    - <span class="value">STRIPE_SECRET_KEY</span>
+    - <span class="value">STRIPE_WEBHOOK_SECRET</span>
+
+<span class="key">compatible</span>:
+  - <span class="value">cursor</span>
+  - <span class="value">claude</span>
+  - <span class="value">copilot</span>
+  - <span class="value">openclaw</span></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registry lifecycle -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>Registry Lifecycle</h2>
+            <p class="section-lead">From publish to production in four steps.</p>
+            <div class="lifecycle">
+                <div class="lifecycle-step">
+                    <div class="lifecycle-icon">✍️</div>
+                    <h3>Publish</h3>
+                    <p>Developer writes <code>HIVE.yaml</code> and runs <code>beepack publish</code></p>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-icon">🔍</div>
+                    <h3>Scan</h3>
+                    <p>3-layer security pipeline validates the package</p>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-icon">📥</div>
+                    <h3>Pull</h3>
+                    <p>Anyone pulls the source code into their project</p>
+                </div>
+                <div class="lifecycle-step">
+                    <div class="lifecycle-icon">💬</div>
+                    <h3>Feedback</h3>
+                    <p>Users rate the package and report edge cases</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <h2>Registry Security</h2>
+            <p class="section-lead">Three layers of protection before any package reaches you.</p>
+            <div class="security-badges">
+                <div class="security-badge">🔎 Static Analysis — dangerous patterns blocked at publish</div>
+                <div class="security-badge">🤖 LLM Review — AI detects subtle obfuscation</div>
+                <div class="security-badge">🚩 Community Reports — 3 reports auto-quarantines a package</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section lp-section">
+        <div class="container" style="text-align:center;">
+            <h2>Add Your Code to the Registry</h2>
+            <p style="color:var(--text-muted);margin-bottom:32px;">Publish production-tested code once. Let everyone — developers and AIs — pull and reuse it.</p>
+            <div class="hero-actions" style="justify-content:center;">
+                <a href="/docs/getting-started.html" class="btn btn-primary btn-lg">Publish a Package</a>
+                <a href="/search.html" class="btn btn-outline btn-lg">Browse the Registry</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:28px;vertical-align:middle;">
+                    <span class="logo-text">Beepack</span>
+                </div>
+                <p>Open source. Made with ❤️ for vibe coders.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/docs/">Documentation</a>
+                <a href="/api-docs/">API</a>
+                <a href="https://github.com/actabi/beepack" target="_blank">GitHub</a>
+                <a href="/docs/faq.html">FAQ</a>
+                <a href="/use-cases/api-integration-library.html">API Integrations</a>
+                <a href="/use-cases/vibecoding-tools.html">Vibe Coding</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Integration Library — Beepack</title>
+    <meta name="description" content="Beepack is the API integration library for developers and AI agents. Pull production-ready OAuth, Stripe, PDF, webhook, and storage integrations in seconds. No debugging required.">
+    <meta name="keywords" content="API integration library, code integration library, API code snippets, GitHub OAuth integration, Stripe integration code, ready-made API integrations">
+    <link rel="canonical" href="https://beepack.ai/use-cases/api-integration-library.html">
+    <meta property="og:title" content="API Integration Library — Beepack">
+    <meta property="og:description" content="Pull production-ready API integrations in seconds. OAuth, Stripe, PDF, webhooks — already debugged, already tested.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beepack.ai/use-cases/api-integration-library.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="API Integration Library — Beepack">
+    <meta name="twitter:description" content="Pull production-ready API integrations in seconds. OAuth, Stripe, PDF, webhooks — already debugged, already tested.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #fef9c3 0%, #fff 60%); }
+        .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
+        .lp-hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; }
+        .lp-hero .badge { display: inline-block; background: #fef08a; color: #713f12; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+        .lp-section { padding: 64px 0; }
+        .lp-section h2 { font-size: 2rem; margin-bottom: 12px; }
+        .lp-section .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
+        .integration-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .integration-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; }
+        .integration-card .icon { font-size: 2rem; margin-bottom: 12px; }
+        .integration-card h3 { font-size: 1rem; margin: 0 0 6px; }
+        .integration-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0 0 12px; }
+        .integration-card code { font-size: 0.8rem; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+        .steps-horizontal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        @media (max-width: 768px) { .steps-horizontal { grid-template-columns: 1fr; } .lp-hero h1 { font-size: 2rem; } }
+        .step-card { text-align: center; }
+        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.1rem; }
+        .step-card h3 { font-size: 1rem; margin-bottom: 8px; }
+        .step-card pre { text-align: left; font-size: 0.8rem; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+        .comparison-table th, .comparison-table td { padding: 12px 16px; border: 1px solid var(--border); font-size: 0.9rem; }
+        .comparison-table th { background: #f8fafc; font-weight: 600; }
+        .comparison-table .yes { color: #16a34a; font-weight: 600; }
+        .comparison-table .no { color: #dc2626; }
+        .who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        @media (max-width: 640px) { .who-grid { grid-template-columns: 1fr; } .integration-grid { grid-template-columns: 1fr; } }
+        .who-card { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); }
+        .who-card .emoji { font-size: 1.8rem; margin-bottom: 12px; }
+        .who-card h3 { font-size: 1rem; margin-bottom: 6px; }
+        .who-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+        .cta-section { background: #fef9c3; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/#packages">Packages</a>
+                <a href="/search.html">Search</a>
+                <a href="/docs/">Docs</a>
+                <a href="/api-docs/">API</a>
+            </nav>
+            <div class="header-actions">
+                <a href="#login" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Sign in with GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="lp-hero">
+        <div class="container">
+            <span class="badge">API Integration Library</span>
+            <h1>Stop Writing the Same API Integrations Over and Over</h1>
+            <p>Beepack is the open API integration library. Pull production-ready OAuth flows, payment integrations, PDF generators, and webhooks — all already debugged and edge-case hardened.</p>
+            <div class="hero-actions">
+                <a href="/search.html" class="btn btn-primary btn-lg">Browse Integrations</a>
+                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Publish an Integration</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What's in the library -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>What's in the Library</h2>
+            <p class="section-lead">Every integration in Beepack handles the edge cases that trip up first-time implementations.</p>
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="icon">🔐</div>
+                    <h3>Authentication</h3>
+                    <p>OAuth 2.0 with refresh tokens, PKCE, state parameter, and proper token storage.</p>
+                    <code>beepack pull github-oauth</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">💳</div>
+                    <h3>Payments</h3>
+                    <p>Stripe checkout with webhooks, subscription handling, and idempotency keys.</p>
+                    <code>beepack pull stripe-checkout</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">📄</div>
+                    <h3>PDF Generation</h3>
+                    <p>Professional invoices with custom layouts, page breaks, and multi-currency formatting.</p>
+                    <code>beepack pull pdf-invoice</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">📬</div>
+                    <h3>Messaging</h3>
+                    <p>Slack webhooks and Resend email with retry logic, rate limiting, and error handling.</p>
+                    <code>beepack pull slack-webhook</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">☁️</div>
+                    <h3>Storage</h3>
+                    <p>S3-compatible storage with signed URLs, multipart uploads, and streaming.</p>
+                    <code>beepack pull s3-storage</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">⏱️</div>
+                    <h3>Rate Limiting</h3>
+                    <p>Exponential backoff, jitter, circuit breakers — production-ready throttling.</p>
+                    <code>beepack pull rate-limiter</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">🗺️</div>
+                    <h3>Geo &amp; Business Data</h3>
+                    <p>Google Places client, SIRET validator, and CMS detection utilities.</p>
+                    <code>beepack pull google-places-client</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">🤖</div>
+                    <h3>Discord Bots</h3>
+                    <p>Event handling, slash commands, permission management, rate limit awareness.</p>
+                    <code>beepack pull discord-bot</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <h2>Pull an Integration in 30 Seconds</h2>
+            <p class="section-lead">From search to running code in under a minute.</p>
+            <div class="steps-horizontal">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h3>Search</h3>
+                    <p>Describe what you need in natural language</p>
+                    <pre><code>beepack search "stripe checkout"</code></pre>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h3>Pull</h3>
+                    <p>Pull the source code directly into your project</p>
+                    <pre><code>beepack pull stripe-checkout</code></pre>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h3>Ship</h3>
+                    <p>It's source code you own — adapt it, extend it, ship it</p>
+                    <pre><code># Runs in your codebase
+# No runtime dependency</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Beepack vs writing it yourself -->
+    <section class="lp-section">
+        <div class="container">
+            <h2>Why Use a Library Instead of Writing It Yourself?</h2>
+            <p class="section-lead">The first implementation is easy. The edge cases take the rest of the day.</p>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Write from scratch</th>
+                        <th>Beepack integration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Works for the happy path</td>
+                        <td class="yes">✓ Yes</td>
+                        <td class="yes">✓ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>OAuth token refresh handled</td>
+                        <td class="no">✗ Usually not</td>
+                        <td class="yes">✓ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Rate limit retry / backoff</td>
+                        <td class="no">✗ Often skipped</td>
+                        <td class="yes">✓ Built in</td>
+                    </tr>
+                    <tr>
+                        <td>Webhook signature verification</td>
+                        <td class="no">✗ Easy to forget</td>
+                        <td class="yes">✓ Included</td>
+                    </tr>
+                    <tr>
+                        <td>Security scan</td>
+                        <td class="no">✗ Manual or none</td>
+                        <td class="yes">✓ 3-layer scan</td>
+                    </tr>
+                    <tr>
+                        <td>AI-readable with MCP</td>
+                        <td class="no">✗ No</td>
+                        <td class="yes">✓ Native MCP support</td>
+                    </tr>
+                    <tr>
+                        <td>Source code you own</td>
+                        <td class="yes">✓ Yes</td>
+                        <td class="yes">✓ Yes — no lock-in</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Who uses it -->
+    <section class="lp-section" style="background:#f8fafc;">
+        <div class="container">
+            <h2>Who Uses Beepack</h2>
+            <div class="who-grid">
+                <div class="who-card">
+                    <div class="emoji">🤖</div>
+                    <h3>AI Coding Agents</h3>
+                    <p>Cursor, Claude, and Copilot can query Beepack via MCP to pull integrations without hallucinating their own broken version.</p>
+                </div>
+                <div class="who-card">
+                    <div class="emoji">🚀</div>
+                    <h3>Vibe Coders</h3>
+                    <p>Indie hackers and solo developers who want production-quality integrations without spending hours on docs and edge cases.</p>
+                </div>
+                <div class="who-card">
+                    <div class="emoji">🏗️</div>
+                    <h3>Teams</h3>
+                    <p>Engineering teams that want a shared registry of internal utilities, preventing the same integration from being rewritten six times.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section lp-section">
+        <div class="container" style="text-align:center;">
+            <h2>Start Pulling Integrations</h2>
+            <p style="color:var(--text-muted);margin-bottom:32px;">Browse the library, pick what you need, ship in minutes.</p>
+            <div class="hero-actions" style="justify-content:center;">
+                <a href="/search.html" class="btn btn-primary btn-lg">Browse the Library</a>
+                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Publish an Integration</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:28px;vertical-align:middle;">
+                    <span class="logo-text">Beepack</span>
+                </div>
+                <p>Open source. Made with ❤️ for vibe coders.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/docs/">Documentation</a>
+                <a href="/api-docs/">API</a>
+                <a href="https://github.com/actabi/beepack" target="_blank">GitHub</a>
+                <a href="/docs/faq.html">FAQ</a>
+                <a href="/use-cases/reusable-code-registry.html">Code Registry</a>
+                <a href="/use-cases/vibecoding-tools.html">Vibe Coding</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
