@@ -1,0 +1,35 @@
+name: plausible-analytics
+version: 1.0.0
+displayName: Plausible Analytics
+description: Track pageviews and custom events via Plausible's API, manage sites, and query analytics data from both cloud and self-hosted instances
+keywords:
+  - plausible
+  - analytics
+  - privacy
+  - gdpr
+  - pageview
+  - events
+  - self-hosted
+capabilities:
+  - track-pageview
+  - track-event
+  - query-stats
+  - list-sources
+  - list-pages
+  - create-site
+requires:
+  env:
+    - PLAUSIBLE_API_KEY
+    - PLAUSIBLE_SITE_ID
+    - PLAUSIBLE_BASE_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

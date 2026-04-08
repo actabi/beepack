@@ -1,0 +1,36 @@
+name: linear-api
+version: 1.0.0
+displayName: Linear API Client
+description: Create, update, and query Linear issues, teams, and projects via GraphQL; handle Linear webhooks with signature verification
+keywords:
+  - linear
+  - project-management
+  - issues
+  - graphql
+  - webhooks
+  - teams
+capabilities:
+  - create-issue
+  - update-issue
+  - get-issue
+  - list-issues
+  - list-teams
+  - list-projects
+  - search-issues
+  - verify-webhook
+  - create-comment
+requires:
+  env:
+    - LINEAR_API_KEY
+    - LINEAR_WEBHOOK_SECRET
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

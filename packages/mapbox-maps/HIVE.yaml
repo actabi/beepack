@@ -1,0 +1,33 @@
+name: mapbox-maps
+version: 1.0.0
+displayName: Mapbox Maps & Geocoding
+description: Forward and reverse geocoding, place search, directions routing, static map image generation, and isochrone queries via Mapbox REST APIs
+keywords:
+  - mapbox
+  - maps
+  - geocoding
+  - directions
+  - routing
+  - static-maps
+  - geolocation
+capabilities:
+  - forward-geocode
+  - reverse-geocode
+  - search-places
+  - get-directions
+  - static-map-url
+  - isochrone
+requires:
+  env:
+    - MAPBOX_ACCESS_TOKEN
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
