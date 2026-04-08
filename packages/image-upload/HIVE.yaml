@@ -1,0 +1,34 @@
+name: image-upload
+version: 1.0.0
+displayName: Image Upload
+description: Secure image upload pipeline with magic-byte file type validation, EXIF stripping (GPS privacy), dimension checks, presigned S3 URL generation, and Sharp pipeline configuration helpers
+keywords:
+  - image
+  - upload
+  - file-validation
+  - exif
+  - gps-strip
+  - presigned-url
+  - s3
+  - thumbnail
+  - multipart
+  - privacy
+capabilities:
+  - validate-file-type-magic-bytes
+  - strip-exif-metadata
+  - validate-image-dimensions
+  - generate-presigned-upload-url
+  - build-thumbnail-pipeline-config
+  - parse-multipart-form-data
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
