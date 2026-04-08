@@ -1,0 +1,29 @@
+name: resend-email
+version: 1.0.0
+displayName: Resend Email Client
+description: Send transactional emails via Resend API with templates, attachments, and batch sending
+keywords:
+  - resend
+  - email
+  - transactional
+  - smtp
+  - notifications
+capabilities:
+  - send-email
+  - send-batch
+  - send-with-attachments
+  - send-with-template
+requires:
+  env:
+    - RESEND_API_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

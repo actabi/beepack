@@ -1,0 +1,31 @@
+name: stripe-checkout
+version: 1.0.0
+displayName: Stripe Checkout Sessions
+description: Create Stripe Checkout sessions, handle webhooks, and manage subscriptions with proper signature verification
+keywords:
+  - stripe
+  - payments
+  - checkout
+  - subscriptions
+  - webhooks
+  - billing
+capabilities:
+  - create-checkout-session
+  - verify-webhook-signature
+  - manage-subscriptions
+  - handle-payment-events
+requires:
+  env:
+    - STRIPE_SECRET_KEY
+    - STRIPE_WEBHOOK_SECRET
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

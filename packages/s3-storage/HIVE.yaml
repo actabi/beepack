@@ -1,0 +1,35 @@
+name: s3-storage
+version: 1.0.0
+displayName: S3 Compatible Storage
+description: Upload, download, and manage files on S3-compatible storage (AWS S3, Cloudflare R2, MinIO) with presigned URLs
+keywords:
+  - s3
+  - aws
+  - cloudflare-r2
+  - minio
+  - file-upload
+  - storage
+  - presigned-url
+capabilities:
+  - upload-file
+  - download-file
+  - delete-file
+  - list-files
+  - generate-presigned-url
+requires:
+  env:
+    - S3_ACCESS_KEY_ID
+    - S3_SECRET_ACCESS_KEY
+    - S3_BUCKET
+    - S3_REGION
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

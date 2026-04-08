@@ -1,0 +1,31 @@
+name: discord-bot
+version: 1.0.0
+displayName: Discord Bot Client
+description: Send messages, embeds, and manage channels via Discord Bot API with interaction verification
+keywords:
+  - discord
+  - bot
+  - chat
+  - embeds
+  - webhooks
+  - interactions
+capabilities:
+  - send-message
+  - send-embed
+  - send-webhook
+  - verify-interaction
+  - manage-channels
+requires:
+  env:
+    - DISCORD_BOT_TOKEN
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
