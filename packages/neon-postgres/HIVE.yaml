@@ -1,0 +1,36 @@
+name: neon-postgres
+version: 1.0.0
+displayName: Neon Postgres
+description: Neon serverless Postgres via the SQL-over-HTTP API. Parameterized queries, transactions with rollback, CRUD helpers, connection pool config, and migration workflow. Zero dependencies.
+keywords:
+  - neon
+  - postgres
+  - postgresql
+  - serverless
+  - sql
+  - database
+  - http
+  - migrations
+  - transactions
+capabilities:
+  - sql-query
+  - parameterized-queries
+  - transactions-with-rollback
+  - crud-helpers
+  - batch-queries
+  - migration-workflow
+  - connection-pool-config
+requires:
+  env:
+    - DATABASE_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

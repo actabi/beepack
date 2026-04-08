@@ -1,0 +1,33 @@
+name: jwt-auth
+version: 1.0.0
+displayName: JWT Auth (Access + Refresh Tokens)
+description: HMAC-SHA256 JWT generation and verification with refresh token rotation, family tracking, blacklist hook, and HTTP-only cookie helpers. Zero dependencies, native Web Crypto API.
+keywords:
+  - jwt
+  - authentication
+  - access-token
+  - refresh-token
+  - token-rotation
+  - web-crypto
+  - cookies
+  - security
+capabilities:
+  - generate-token-pair
+  - verify-access-token
+  - rotate-refresh-token
+  - blacklist-check-hook
+  - http-only-cookie-helpers
+requires:
+  env:
+    - JWT_SECRET
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

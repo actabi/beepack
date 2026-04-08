@@ -1,0 +1,37 @@
+name: telegram-bot
+version: 1.0.0
+displayName: Telegram Bot Client
+description: Send messages, inline keyboards, files, and photos via the Telegram Bot API. Includes webhook setup, signature verification, command routing, and group chat handling.
+keywords:
+  - telegram
+  - bot
+  - chat
+  - messaging
+  - webhook
+  - inline-keyboard
+  - commands
+capabilities:
+  - send-message
+  - send-markdown
+  - send-html
+  - send-photo
+  - send-file
+  - inline-keyboard
+  - webhook-setup
+  - webhook-verify
+  - command-routing
+  - group-chat
+requires:
+  env:
+    - TELEGRAM_BOT_TOKEN
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

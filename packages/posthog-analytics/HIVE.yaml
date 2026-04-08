@@ -1,0 +1,36 @@
+name: posthog-analytics
+version: 1.0.0
+displayName: PostHog Analytics
+description: Event capture with user identification, feature flag evaluation, session recording opt-in, group analytics for B2B, and Next.js middleware integration. Zero dependencies — uses native fetch.
+keywords:
+  - posthog
+  - analytics
+  - feature-flags
+  - session-recording
+  - group-analytics
+  - product-analytics
+  - b2b
+  - nextjs
+  - middleware
+capabilities:
+  - capture-events
+  - identify-users
+  - evaluate-feature-flags
+  - session-recording-opt-in
+  - group-analytics
+  - nextjs-middleware
+requires:
+  env:
+    - POSTHOG_API_KEY
+    - POSTHOG_HOST
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

@@ -1,0 +1,36 @@
+name: notion-api
+version: 1.0.0
+displayName: Notion API Client
+description: Database CRUD, page creation with blocks, recursive block fetching, and rich text serialization for the Notion API. Zero dependencies.
+keywords:
+  - notion
+  - database
+  - cms
+  - blocks
+  - rich-text
+  - pages
+  - knowledge-base
+capabilities:
+  - database-query
+  - database-create-page
+  - database-update-page
+  - page-create
+  - blocks-fetch-recursive
+  - blocks-append
+  - rich-text-serialize
+  - rich-text-deserialize
+  - file-image-block-handling
+requires:
+  env:
+    - NOTION_API_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
