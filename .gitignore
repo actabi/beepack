@@ -31,7 +31,7 @@ render.yaml
 
 # Internal docs
 POUR_GUILLAUME.md
-/docs/
+/docs/internal/
 
 # Dev scripts
 start.bat
