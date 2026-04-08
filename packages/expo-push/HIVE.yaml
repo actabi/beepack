@@ -1,0 +1,27 @@
+name: expo-push
+version: 1.0.0
+displayName: Expo Push Notifications
+description: Send push notifications via Expo's push service, validate Expo push tokens, check delivery receipts, and handle common error types
+keywords:
+  - expo
+  - push-notifications
+  - mobile
+  - react-native
+  - notifications
+capabilities:
+  - send-notification
+  - send-batch
+  - get-receipts
+  - validate-token
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

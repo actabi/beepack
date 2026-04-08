@@ -1,0 +1,32 @@
+name: github-actions-notify
+version: 1.0.0
+displayName: GitHub Actions Notifier
+description: Parse GitHub Actions workflow webhooks, format rich deployment/build status notifications, and verify GitHub webhook signatures
+keywords:
+  - github
+  - github-actions
+  - webhooks
+  - cicd
+  - deployment
+  - notifications
+  - devops
+capabilities:
+  - verify-webhook
+  - parse-workflow-event
+  - parse-deployment-event
+  - format-notification
+  - parse-check-run
+requires:
+  env:
+    - GITHUB_WEBHOOK_SECRET
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

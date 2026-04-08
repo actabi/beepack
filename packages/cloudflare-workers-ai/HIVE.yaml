@@ -1,0 +1,35 @@
+name: cloudflare-workers-ai
+version: 1.0.0
+displayName: Cloudflare Workers AI
+description: Run AI inference at the edge with Cloudflare Workers AI - text generation, embeddings, speech-to-text, image generation, and text classification via REST API
+keywords:
+  - cloudflare
+  - workers-ai
+  - llm
+  - embeddings
+  - whisper
+  - stable-diffusion
+  - edge-ai
+  - inference
+capabilities:
+  - text-generation
+  - text-embedding
+  - speech-to-text
+  - image-generation
+  - text-classification
+  - summarization
+requires:
+  env:
+    - CLOUDFLARE_ACCOUNT_ID
+    - CLOUDFLARE_API_TOKEN
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
