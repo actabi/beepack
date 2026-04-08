@@ -25,7 +25,7 @@ requires:
   deps:
     - node >= 18
     - next-auth >= 5.0.0
-    - @auth/prisma-adapter >= 1.0.0
+    - "@auth/prisma-adapter" >= 1.0.0
 compatible:
   - cursor
   - copilot

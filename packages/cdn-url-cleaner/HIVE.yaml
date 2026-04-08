@@ -1,4 +1,5 @@
 name: cdn-url-cleaner
+displayName: CDN URL Cleaner
 version: 1.0.0
 description: Extract original high-quality images from CDN-transformed URLs (Wix, Shopify, WordPress, Squarespace)
 

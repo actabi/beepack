@@ -1,4 +1,5 @@
 name: cms-detector
+displayName: CMS Detector
 version: 1.0.0
 description: Detect CMS platforms, JS frameworks, analytics tools, and server technology from any website URL
 keywords:
