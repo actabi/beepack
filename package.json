@@ -12,7 +12,10 @@
     "test:embeddings": "node --test tests/embeddings.test.js",
     "test:mcp": "node --test tests/mcp-server.test.js",
     "test:api": "node --test tests/api.test.js",
-    "test:cli": "node --test tests/cli.test.js"
+    "test:cli": "node --test tests/cli.test.js",
+    "test:security": "node --test tests/security-engine.test.js",
+    "test:packages": "node --test tests/packages.test.js",
+    "test:vectordb": "node --test tests/vector-db.test.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.10.0",
