@@ -237,8 +237,11 @@ beepack/
 - [x] ClawHub compatibility (OpenClaw integration)
 - [x] Like/dislike system for suggestions
 - [x] Automatic security scan (3-layer pipeline: static + LLM + community reports)
+- [x] 43 packages (13 original + 30 from roadmap across 3 tiers)
 - [ ] Forks and pull requests
 - [ ] CI test badges
+
+See [ROADMAP.md](./ROADMAP.md) for the full 3-month plan.
 
 ## Contributing
 

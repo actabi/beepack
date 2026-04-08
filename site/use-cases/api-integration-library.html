@@ -16,7 +16,7 @@
     <meta name="twitter:description" content="Pull production-ready API integrations in seconds. OAuth, Stripe, PDF, webhooks — already debugged, already tested.">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #fef9c3 0%, #fff 60%); }
         .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
@@ -30,18 +30,18 @@
         .integration-card .icon { font-size: 2rem; margin-bottom: 12px; }
         .integration-card h3 { font-size: 1rem; margin: 0 0 6px; }
         .integration-card p { font-size: 0.875rem; color: var(--text-muted); margin: 0 0 12px; }
-        .integration-card code { font-size: 0.8rem; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+        .integration-card code { font-size: 0.8rem; background: var(--background-alt); padding: 2px 8px; border-radius: 4px; font-family: 'Monaco', 'Menlo', monospace; }
         .steps-horizontal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
         @media (max-width: 768px) { .steps-horizontal { grid-template-columns: 1fr; } .lp-hero h1 { font-size: 2rem; } }
         .step-card { text-align: center; }
-        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.1rem; }
+        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.1rem; }
         .step-card h3 { font-size: 1rem; margin-bottom: 8px; }
         .step-card pre { text-align: left; font-size: 0.8rem; }
         .comparison-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
         .comparison-table th, .comparison-table td { padding: 12px 16px; border: 1px solid var(--border); font-size: 0.9rem; }
-        .comparison-table th { background: #f8fafc; font-weight: 600; }
-        .comparison-table .yes { color: #16a34a; font-weight: 600; }
-        .comparison-table .no { color: #dc2626; }
+        .comparison-table th { background: var(--background-alt); font-weight: 600; }
+        .comparison-table .yes { color: var(--success); font-weight: 600; }
+        .comparison-table .no { color: var(--danger); }
         .who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         @media (max-width: 640px) { .who-grid { grid-template-columns: 1fr; } .integration-grid { grid-template-columns: 1fr; } }
         .who-card { padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); }
@@ -146,7 +146,7 @@
     </section>
 
     <!-- How it works -->
-    <section class="lp-section" style="background:#f8fafc;">
+    <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
             <h2>Pull an Integration in 30 Seconds</h2>
             <p class="section-lead">From search to running code in under a minute.</p>
@@ -229,7 +229,7 @@
     </section>
 
     <!-- Who uses it -->
-    <section class="lp-section" style="background:#f8fafc;">
+    <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
             <h2>Who Uses Beepack</h2>
             <div class="who-grid">

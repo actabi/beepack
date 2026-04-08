@@ -16,7 +16,7 @@
     <meta name="twitter:description" content="The open registry where developers publish and pull production-tested code modules. Stop rewriting the same integrations.">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #dcfce7 0%, #fff 60%); }
         .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
@@ -37,9 +37,9 @@
         .how-text p { font-size: 1rem; color: var(--text-muted); margin-bottom: 24px; }
         .how-text ul { list-style: none; padding: 0; margin: 0; }
         .how-text ul li { padding: 8px 0; font-size: 0.95rem; display: flex; align-items: flex-start; gap: 10px; }
-        .how-text ul li::before { content: "✓"; color: #16a34a; font-weight: 700; flex-shrink: 0; }
-        .code-block { background: #1e293b; border-radius: 10px; padding: 28px; }
-        .code-block pre { color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin: 0; white-space: pre-wrap; }
+        .how-text ul li::before { content: "✓"; color: var(--success); font-weight: 700; flex-shrink: 0; }
+        .code-block { background: var(--secondary); border-radius: var(--radius); padding: 28px; }
+        .code-block pre { color: #e5e7eb; font-family: 'Monaco', 'Menlo', monospace; font-size: 0.85rem; margin: 0; white-space: pre-wrap; }
         .code-block .comment { color: #64748b; }
         .code-block .key { color: #7dd3fc; }
         .code-block .value { color: #86efac; }
@@ -133,7 +133,7 @@
     </section>
 
     <!-- How the registry works -->
-    <section class="lp-section" style="background:#f8fafc;">
+    <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
             <div class="how-grid">
                 <div class="how-text">
@@ -209,7 +209,7 @@
     </section>
 
     <!-- Security -->
-    <section class="lp-section" style="background:#f8fafc;">
+    <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
             <h2>Registry Security</h2>
             <p class="section-lead">Three layers of protection before any package reaches you.</p>

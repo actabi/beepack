@@ -16,6 +16,10 @@
 | [CLI Reference](./cli-reference.md) | Full reference for every `beepack` command |
 | [MCP Integration](./mcp-integration.md) | Let your AI assistant use Beepack automatically |
 | [FAQ](./faq.md) | Common questions and troubleshooting |
+| [Bundles](./bundles.md) | Install and create curated package collections |
+| [Suggestions](./suggestions.md) | Propose improvements to existing packages |
+| [ClawHub Integration](./clawhub-integration.md) | Use Beepack from OpenClaw agents via the ClawHub API |
+| [Security Pipeline](./security-pipeline.md) | How the 3-layer security pipeline works |
 
 ---
 
