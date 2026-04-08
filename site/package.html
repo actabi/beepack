@@ -6,7 +6,14 @@
     <title>Package - Beepack</title>
     <meta name="description" content="Production-ready code package on Beepack — the API integration library for vibe coders. Pull battle-tested source code into your project.">
     <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://beepack.ai/package.html">
+    <meta property="og:title" content="Package — Beepack">
+    <meta property="og:description" content="Production-ready code package on Beepack. Pull battle-tested source code into your project.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beepack.ai/package.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Package — Beepack">
+    <meta name="twitter:description" content="Production-ready code package on Beepack. Pull battle-tested source code into your project.">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -141,7 +148,15 @@
                 const res = await fetch('/api/v1/packages/' + slug);
                 if (!res.ok) throw new Error();
                 const pkg = await res.json();
-                document.title = pkg.displayName + ' - Beepack';
+                document.title = pkg.displayName + ' — Beepack';
+                const pageUrl = 'https://beepack.ai/package.html?slug=' + slug;
+                document.querySelector('link[rel="canonical"]').href = pageUrl;
+                document.querySelector('meta[property="og:title"]').content = pkg.displayName + ' — Beepack';
+                document.querySelector('meta[property="og:description"]').content = pkg.description;
+                document.querySelector('meta[property="og:url"]').content = pageUrl;
+                document.querySelector('meta[name="twitter:title"]').content = pkg.displayName + ' — Beepack';
+                document.querySelector('meta[name="twitter:description"]').content = pkg.description;
+                document.querySelector('meta[name="description"]').content = pkg.description;
 
                 const root = document.getElementById('pkg-root');
                 root.innerHTML = '';
