@@ -1,0 +1,35 @@
+name: react-email-templates
+version: 1.0.0
+displayName: React Email Templates
+description: Source-code generators for production-ready React Email components — welcome, password reset, payment receipt, team invitation, and notification digest. Returns complete component file strings ready to copy into your project.
+keywords:
+  - react-email
+  - email
+  - templates
+  - transactional
+  - welcome
+  - password-reset
+  - payment-receipt
+  - team-invitation
+  - notification-digest
+  - jsx
+capabilities:
+  - generate-welcome-email
+  - generate-password-reset-email
+  - generate-payment-receipt-email
+  - generate-team-invitation-email
+  - generate-notification-digest-email
+  - generate-inline-css-helper
+  - generate-plain-text-fallback
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none

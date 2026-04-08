@@ -1,0 +1,33 @@
+name: cron-scheduler
+version: 1.0.0
+displayName: Cron Scheduler
+description: Cron expression parser/validator, next-run-time calculator, Vercel Cron config generator, route handler source generator, and QStash publish helper for durable scheduled jobs
+keywords:
+  - cron
+  - scheduler
+  - vercel-cron
+  - qstash
+  - upstash
+  - idempotency
+  - cron-expression
+  - scheduled-jobs
+capabilities:
+  - cron-expression-validation
+  - cron-expression-parsing
+  - next-run-time-calculation
+  - vercel-cron-config-generation
+  - cron-route-handler-generation
+  - qstash-publish-helper
+  - idempotency-key-generation
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
