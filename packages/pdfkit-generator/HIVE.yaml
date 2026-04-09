@@ -1,5 +1,5 @@
 name: pdfkit-generator
-version: 1.0.0
+version: 0.8.7
 displayName: PDF Generator
 description: Generate PDF documents with text, tables, headers, and footers using zero dependencies
 keywords:

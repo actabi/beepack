@@ -1,5 +1,5 @@
 name: cloudinary-upload
-version: 1.0.0
+version: 2.9.0
 displayName: Cloudinary Image Upload
 description: Upload, transform, and manage images and videos via the Cloudinary API
 keywords:

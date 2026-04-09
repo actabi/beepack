@@ -1,5 +1,5 @@
 name: knex-query-builder
-version: 1.0.0
+version: 3.2.9
 displayName: SQL Query Builder
 description: Build parameterized SQL queries with a fluent API for PostgreSQL, MySQL, and SQLite
 keywords:

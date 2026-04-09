@@ -1,5 +1,5 @@
 name: datadog-metrics
-version: 1.0.0
+version: 5.96.0
 displayName: Datadog Metrics
 description: Submit custom metrics, create monitors, and query dashboards via the Datadog API
 keywords:

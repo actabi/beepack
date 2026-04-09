@@ -1,5 +1,5 @@
 name: sheetjs-excel
-version: 1.0.0
+version: 0.18.5
 displayName: Excel/CSV Parser
 description: Parse and generate CSV data with auto-delimiter detection and JSON conversion
 keywords:

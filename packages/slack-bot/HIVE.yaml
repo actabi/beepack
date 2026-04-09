@@ -1,5 +1,5 @@
 name: slack-bot
-version: 1.0.0
+version: 4.7.0
 displayName: Slack Bot
 description: Send messages, manage channels, and handle Slack interactions via the Slack Web API
 keywords:

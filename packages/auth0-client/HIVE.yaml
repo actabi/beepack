@@ -1,5 +1,5 @@
 name: auth0-client
-version: 1.0.0
+version: 5.5.0
 displayName: Auth0 Authentication
 description: Manage users, handle authentication flows, and verify JWTs using the Auth0 Management and Authentication APIs
 keywords:

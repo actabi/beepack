@@ -1,5 +1,5 @@
 name: firebase-admin
-version: 1.0.0
+version: 13.7.0
 displayName: Firebase Admin SDK
 description: Manage Firebase Auth users, Firestore documents, and send push notifications via FCM using the Firebase Admin REST API
 keywords:

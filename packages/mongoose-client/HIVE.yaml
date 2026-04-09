@@ -1,5 +1,5 @@
 name: mongoose-client
-version: 1.0.0
+version: 9.4.1
 displayName: MongoDB REST Client
 description: Query and manage MongoDB collections via the Atlas Data API with a Mongoose-inspired interface
 keywords:

@@ -1,5 +1,5 @@
 name: elasticsearch-client
-version: 1.0.0
+version: 9.3.4
 displayName: Elasticsearch Client
 description: Search, index, and manage Elasticsearch documents using the REST API with zero dependencies
 keywords:

@@ -1,5 +1,5 @@
 name: github-octokit
-version: 1.0.0
+version: 5.0.5
 displayName: GitHub API (Octokit)
 description: Interact with GitHub repos, issues, PRs, and actions using the GitHub REST API v3
 keywords:

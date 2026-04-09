@@ -1,5 +1,5 @@
 name: puppeteer-scraper
-version: 1.0.0
+version: 24.40.0
 displayName: Puppeteer Browser Automation
 description: Automate Chrome via DevTools Protocol for page management and browser inspection
 keywords:

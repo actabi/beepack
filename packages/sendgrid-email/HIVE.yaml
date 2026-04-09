@@ -1,5 +1,5 @@
 name: sendgrid-email
-version: 1.0.0
+version: 8.1.6
 displayName: SendGrid Email
 description: Send transactional emails, manage contacts, and use dynamic templates via the SendGrid v3 API
 keywords:

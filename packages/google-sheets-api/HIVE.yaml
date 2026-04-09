@@ -1,5 +1,5 @@
 name: google-sheets-api
-version: 1.0.0
+version: 171.4.0
 displayName: Google Sheets API
 description: Read, write, and manage Google Sheets spreadsheets using the Sheets API v4
 keywords:

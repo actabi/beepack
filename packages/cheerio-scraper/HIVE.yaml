@@ -1,5 +1,5 @@
 name: cheerio-scraper
-version: 1.0.0
+version: 1.2.0
 displayName: Cheerio Web Scraper
 description: Fetch and parse HTML pages to extract structured data using CSS selectors
 keywords:

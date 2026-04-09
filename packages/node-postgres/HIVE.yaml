@@ -1,5 +1,5 @@
 name: node-postgres
-version: 1.0.0
+version: 7.14.0
 displayName: PostgreSQL Client
 description: Connect to PostgreSQL via HTTP endpoints like Neon serverless or Supabase for queries and transactions
 keywords:
