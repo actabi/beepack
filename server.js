@@ -437,157 +437,8 @@ app.get('/api/v1/stats', (req, res) => {
 
 // ============== AUTHENTICATED ROUTES ==============
 
-// Publish a package (create or update)
-app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
-  const { slug, displayName, description, keywords, capabilities, compatible, requires, version, readme, sourceCode, hiveYaml, repository_url } = req.body;
-  
-  // Validate required fields
-  if (!slug || !displayName || !version) {
-    return res.status(400).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'slug, displayName, and version are required',
-      },
-    });
-  }
-  
-  // Validate slug format
-  if (!/^[a-z0-9-]+$/.test(slug)) {
-    return res.status(400).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Slug must be lowercase alphanumeric with hyphens only',
-      },
-    });
-  }
-  
-  // Check if package exists
-  const existing = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
-  
-  if (existing) {
-    // Check ownership
-    if (existing.owner_id !== req.user.id) {
-      return res.status(403).json({
-        error: {
-          code: 'FORBIDDEN',
-          message: 'You do not own this package',
-        },
-      });
-    }
-    
-    // Update package
-    db.prepare(`
-      UPDATE packages SET
-        display_name = ?,
-        description = ?,
-        readme = ?,
-        keywords = ?,
-        capabilities = ?,
-        compatible = ?,
-        requires = ?,
-        latest_version = ?,
-        repository_url = COALESCE(?, repository_url),
-        version_count = version_count + 1,
-        updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `).run(
-      displayName,
-      description || '',
-      readme || '',
-      JSON.stringify(keywords || []),
-      JSON.stringify(capabilities || []),
-      JSON.stringify(compatible || []),
-      JSON.stringify(requires || {}),
-      version,
-      repository_url || null,
-      existing.id
-    );
-    
-    // Add version
-    db.prepare(`
-      INSERT INTO package_versions (package_id, version, hive_yaml, source_code, created_by)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(existing.id, version, hiveYaml || '', sourceCode || '', req.user.id);
-    
-    res.json({ success: true, action: 'updated', slug });
-  } else {
-    // Create new package
-    const result = db.prepare(`
-      INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, readme, keywords, capabilities, compatible, requires, latest_version, version_count, repository_url)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
-    `).run(
-      slug,
-      displayName,
-      req.user.id,
-      req.user.login,
-      req.user.avatarUrl,
-      description || '',
-      readme || '',
-      JSON.stringify(keywords || []),
-      JSON.stringify(capabilities || []),
-      JSON.stringify(compatible || []),
-      JSON.stringify(requires || {}),
-      version,
-      repository_url || null
-    );
-    
-    // Add version
-    db.prepare(`
-      INSERT INTO package_versions (package_id, version, hive_yaml, source_code, created_by)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(result.lastInsertRowid, version, hiveYaml || '', sourceCode || '', req.user.id);
-    
-    res.json({ success: true, action: 'created', slug });
-  }
-});
-
-// Update package metadata (partial)
-app.patch('/api/v1/packages/:slug', authMiddleware, requireAuth, (req, res) => {
-  const { slug } = req.params;
-  const pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
-  if (!pkg) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: `Package '${slug}' not found` } });
-  }
-  if (pkg.owner_id !== req.user.id) {
-    return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'You do not own this package' } });
-  }
-
-  const allowed = ['displayName', 'description', 'repository_url', 'homepage_url', 'keywords', 'capabilities', 'compatible', 'requires'];
-  const updates = [];
-  const values = [];
-
-  const fieldMap = {
-    displayName: 'display_name',
-    description: 'description',
-    repository_url: 'repository_url',
-    homepage_url: 'homepage_url',
-    keywords: 'keywords',
-    capabilities: 'capabilities',
-    compatible: 'compatible',
-    requires: 'requires',
-  };
-
-  for (const key of allowed) {
-    if (req.body[key] !== undefined) {
-      const col = fieldMap[key];
-      const val = ['keywords', 'capabilities', 'compatible', 'requires'].includes(key)
-        ? JSON.stringify(req.body[key])
-        : req.body[key];
-      updates.push(`${col} = ?`);
-      values.push(val);
-    }
-  }
-
-  if (updates.length === 0) {
-    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'No valid fields to update' } });
-  }
-
-  updates.push('updated_at = CURRENT_TIMESTAMP');
-  values.push(pkg.id);
-
-  db.prepare(`UPDATE packages SET ${updates.join(', ')} WHERE id = ?`).run(...values);
-  res.json({ success: true, slug });
-});
+// Package publishing is handled exclusively via POST /api/v1/packages/:slug/upload (multipart)
+// which includes security scanning, file validation, rate limiting, and all protections.
 
 // ============== FILE UPLOAD/DOWNLOAD ROUTES ==============
 
@@ -1430,6 +1281,379 @@ app.get('/api/v1/packages/:slug/links', (req, res) => {
   `).all(pkg.id, pkg.id, pkg.id);
 
   res.json({ links });
+});
+
+// ============== ADMIN ROUTES ==============
+
+// Middleware: require admin role
+function requireAdmin(req, res, next) {
+  const user = db.prepare('SELECT role FROM users WHERE id = ?').get(req.user.id);
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Admin access required' } });
+  }
+  next();
+}
+
+// GitHub discovery - find popular repos and auto-publish as Beepack packages
+app.post('/api/v1/admin/discover', authMiddleware, requireAuth, requireAdmin, async (req, res) => {
+  const ghToken = process.env.GH_TOKEN;
+  const openaiKey = process.env.OPENAI_API_KEY;
+
+  if (!ghToken || !openaiKey) {
+    return res.status(500).json({ error: { code: 'CONFIG_ERROR', message: 'Server missing GH_TOKEN or OPENAI_API_KEY' } });
+  }
+
+  const maxPackages = Math.min(parseInt(req.body.limit || '10', 10), 50);
+  const categoryFilter = req.body.category || null;
+
+  // Categories to search
+  const CATEGORIES = [
+    { q: 'oauth authentication login', topic: 'auth' },
+    { q: 'stripe payments checkout billing', topic: 'payments' },
+    { q: 'email smtp transactional', topic: 'email' },
+    { q: 'database orm query builder', topic: 'database' },
+    { q: 'file upload storage s3 cloud', topic: 'storage' },
+    { q: 'openai llm ai embeddings', topic: 'ai-llm' },
+    { q: 'monitoring metrics logging observability', topic: 'monitoring' },
+    { q: 'api client sdk rest graphql', topic: 'api-utils' },
+    { q: 'devops ci cd deploy docker', topic: 'devops' },
+    { q: 'testing jest vitest mock', topic: 'testing' },
+    { q: 'validation schema zod joi', topic: 'validation' },
+    { q: 'image processing resize sharp', topic: 'image' },
+    { q: 'pdf generate parse', topic: 'pdf' },
+    { q: 'websocket realtime socket', topic: 'realtime' },
+    { q: 'cache redis memcached', topic: 'caching' },
+    { q: 'search elasticsearch algolia', topic: 'search' },
+    { q: 'queue jobs background worker', topic: 'queue' },
+    { q: 'webhook verify signature', topic: 'webhooks' },
+    { q: 'csv excel spreadsheet parse', topic: 'spreadsheets' },
+    { q: 'markdown parse render', topic: 'markdown' },
+    { q: 'date time timezone moment', topic: 'date-time' },
+    { q: 'cli command line terminal', topic: 'cli-tools' },
+    { q: 'seo meta sitemap', topic: 'seo' },
+    { q: 'cms headless content', topic: 'cms' },
+    { q: 'ecommerce cart checkout', topic: 'e-commerce' },
+    { q: 'i18n internationalization translation', topic: 'i18n' },
+    { q: 'charts graphs visualization', topic: 'charts' },
+    { q: 'maps geolocation geocoding', topic: 'maps' },
+    { q: 'notifications push mobile', topic: 'notifications' },
+    { q: 'scraping crawler puppeteer', topic: 'scraping' },
+  ];
+
+  // Pick 3 daily categories or filter by requested category
+  let categories;
+  if (categoryFilter) {
+    categories = CATEGORIES.filter(c => c.topic === categoryFilter);
+    if (categories.length === 0) {
+      return res.status(400).json({ error: { code: 'INVALID_CATEGORY', message: `Unknown category. Available: ${CATEGORIES.map(c => c.topic).join(', ')}` } });
+    }
+  } else {
+    const day = Math.floor(Date.now() / 86400000);
+    categories = [0, 1, 2].map(i => CATEGORIES[(day * 3 + i) % CATEGORIES.length]);
+  }
+
+  // Helper: GitHub API call
+  async function ghApi(path) {
+    const r = await fetch(`https://api.github.com${path}`, {
+      headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github+json', 'User-Agent': 'Beepack-Discovery/1.0' },
+    });
+    if (!r.ok) throw new Error(`GitHub API ${r.status}: ${path}`);
+    return r.json();
+  }
+
+  // Helper: repo name to slug
+  function repoToSlug(repo) {
+    return repo.name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').replace(/\.js$|\.ts$|-js$|-ts$|-node$/, '');
+  }
+
+  // Helper: generate package code via LLM
+  async function generatePackageCode(repo, version, readmeSource) {
+    const prompt = `You are generating a standalone Beepack package from a popular GitHub repo.
+
+REPO: ${repo.fullName}
+DESCRIPTION: ${repo.description}
+STARS: ${repo.stars}
+LICENSE: ${repo.license}
+URL: ${repo.url}
+VERSION: ${version}
+TOPICS: ${repo.topics.join(', ')}
+
+SOURCE README (first 3000 chars):
+${readmeSource.slice(0, 3000)}
+
+Generate THREE files. Respond in JSON with keys: hiveYaml, indexJs, readmeMd
+
+1. HIVE.yaml - Valid YAML with:
+   - name: "${repoToSlug(repo)}"
+   - version: "${version}"
+   - displayName: human-readable title (2-4 words, NOT just the repo name)
+   - description: one-line English description of what this does
+   - keywords: 3-6 relevant keywords
+   - capabilities: 3-6 specific things this code can do (snake_case)
+   - requires.env: list of env var names needed (e.g. API_KEY)
+   - compatible: ["cursor", "copilot", "claude", "windsurf", "openclaw"]
+   - repository: "${repo.url}"
+   - source: { repo: "${repo.fullName}", url: "${repo.url}", stars: ${repo.stars}, license: "${repo.license}" }
+
+2. index.js - Standalone ESM module:
+   - Zero npm dependencies, use native fetch
+   - Wrap the 2-3 most common use cases of this library
+   - Full JSDoc with @param and @returns
+   - Proper error handling
+   - Export named functions (not default)
+   - MINIMUM 80 lines of real, working code
+   - The code should be a lightweight standalone client that talks to the same API/service the original library wraps
+   - Do NOT just re-export or import the original package
+
+3. README.md - Documentation:
+   - Title with package name
+   - Source section: link to GitHub, author, stars, license
+   - What it does (2-3 sentences)
+   - Environment variables needed
+   - Installation: \`beepack pull ${repoToSlug(repo)}\`
+   - 3+ usage examples with code blocks
+   - API reference for exported functions
+   - MINIMUM 40 lines
+
+Return ONLY valid JSON: {"hiveYaml": "...", "indexJs": "...", "readmeMd": "..."}`;
+
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${openaiKey}` },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.3,
+        response_format: { type: 'json_object' },
+      }),
+      signal: AbortSignal.timeout(60000),
+    });
+    if (!r.ok) throw new Error(`LLM API error: ${r.status}`);
+    const data = await r.json();
+    return JSON.parse(data.choices[0].message.content);
+  }
+
+  // Return immediately, process in background
+  res.json({ success: true, message: `Discovery started for categories: ${categories.map(c => c.topic).join(', ')}. Max ${maxPackages} packages.` });
+
+  // Background processing
+  (async () => {
+    const results = { published: 0, skipped: 0, failed: 0, details: [] };
+
+    try {
+      // 1. Search GitHub
+      let allRepos = [];
+      for (const cat of categories) {
+        try {
+          const q = encodeURIComponent(`${cat.q} language:javascript language:typescript stars:>100`);
+          const data = await ghApi(`/search/repositories?q=${q}&sort=stars&order=desc&per_page=30`);
+          const repos = (data.items || []).map(r => ({
+            owner: r.owner.login, name: r.name, fullName: r.full_name,
+            description: r.description || '', stars: r.stargazers_count,
+            license: r.license?.spdx_id || 'Unknown', url: r.html_url,
+            topics: r.topics || [], topic: cat.topic,
+          }));
+          allRepos.push(...repos);
+          console.log(`[discover] ${cat.topic}: ${repos.length} repos found`);
+        } catch (e) {
+          console.error(`[discover] ${cat.topic}: search failed - ${e.message}`);
+        }
+      }
+
+      // Deduplicate
+      const seen = new Set();
+      allRepos = allRepos.filter(r => {
+        if (seen.has(r.fullName)) return false;
+        seen.add(r.fullName);
+        return true;
+      });
+
+      // Filter out existing packages
+      const existing = new Set(db.prepare('SELECT slug FROM packages').all().map(p => p.slug));
+      const newRepos = allRepos.filter(r => !existing.has(repoToSlug(r)));
+      const toProcess = newRepos.slice(0, maxPackages);
+
+      console.log(`[discover] ${allRepos.length} repos, ${newRepos.length} new, processing ${toProcess.length}`);
+
+      // 2. Process each repo
+      for (let i = 0; i < toProcess.length; i++) {
+        const repo = toProcess[i];
+        const slug = repoToSlug(repo);
+        const prefix = `[discover] ${i + 1}/${toProcess.length} ${repo.fullName}`;
+
+        try {
+          // Get version
+          let version;
+          try {
+            const rel = await ghApi(`/repos/${repo.owner}/${repo.name}/releases/latest`);
+            version = rel.tag_name?.replace(/^v/, '') || null;
+          } catch {
+            try {
+              const tags = await ghApi(`/repos/${repo.owner}/${repo.name}/tags?per_page=1`);
+              version = tags[0]?.name?.replace(/^v/, '') || null;
+            } catch { version = null; }
+          }
+          version = version || '1.0.0';
+
+          // Get README
+          let readmeSource = '';
+          try {
+            const rdm = await ghApi(`/repos/${repo.owner}/${repo.name}/readme`);
+            readmeSource = Buffer.from(rdm.content, 'base64').toString('utf8');
+          } catch { /* no readme */ }
+
+          // Generate code
+          console.log(`${prefix} v${version} -> generating...`);
+          const files = await generatePackageCode(repo, version, readmeSource);
+
+          if (!files.hiveYaml || !files.indexJs || !files.readmeMd) {
+            throw new Error('Missing files in generated content');
+          }
+
+          // Parse HIVE.yaml
+          const yaml = await import('yaml');
+          const hiveContent = yaml.parse(files.hiveYaml);
+
+          // Create package in DB
+          const result = db.prepare(`
+            INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, keywords, capabilities, compatible, requires, repository_url, latest_version, version_count)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+          `).run(
+            slug,
+            hiveContent.displayName || hiveContent.name || slug,
+            req.user.id, req.user.login, req.user.avatarUrl,
+            hiveContent.description || repo.description || '',
+            JSON.stringify(hiveContent.keywords || []),
+            JSON.stringify(hiveContent.capabilities || []),
+            JSON.stringify(hiveContent.compatible || ['cursor', 'copilot', 'claude', 'windsurf', 'openclaw']),
+            JSON.stringify(hiveContent.requires || {}),
+            repo.url, version
+          );
+
+          const pkgId = result.lastInsertRowid;
+
+          // Store files on disk
+          const fileBuffers = [
+            { originalname: 'HIVE.yaml', buffer: Buffer.from(files.hiveYaml), mimetype: 'text/yaml' },
+            { originalname: 'index.js', buffer: Buffer.from(files.indexJs), mimetype: 'text/javascript' },
+            { originalname: 'README.md', buffer: Buffer.from(files.readmeMd), mimetype: 'text/markdown' },
+          ];
+          storePackageFiles(db, pkgId, slug, version, fileBuffers);
+
+          // Update readme
+          db.prepare('UPDATE packages SET readme = ? WHERE id = ?').run(files.readmeMd, pkgId);
+
+          // Add version record
+          db.prepare('INSERT INTO package_versions (package_id, version, hive_yaml, created_by) VALUES (?, ?, ?, ?)').run(pkgId, version, files.hiveYaml, req.user.id);
+
+          // Security scan
+          const filesToScan = fileBuffers.map(f => ({ name: f.originalname, content: f.buffer.toString('utf8') }));
+          const staticScan = runStaticScan(filesToScan);
+
+          db.prepare(
+            'INSERT INTO security_scans (package_id, version, static_verdict, final_verdict, findings, scan_data) VALUES (?, ?, ?, ?, ?, ?)'
+          ).run(pkgId, version, staticScan.verdict, staticScan.verdict, JSON.stringify(staticScan.findings), JSON.stringify(staticScan));
+
+          if (staticScan.verdict === 'malicious') {
+            db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkgId);
+            console.log(`${prefix} -> MALICIOUS, hidden`);
+          } else {
+            console.log(`${prefix} v${version} -> OK (security: ${staticScan.verdict})`);
+          }
+
+          // Embedding (non-blocking)
+          if (isEmbeddingsEnabled()) {
+            const pkgData = db.prepare('SELECT * FROM packages WHERE id = ?').get(pkgId);
+            generateEmbedding(packageToText(pkgData)).then(emb => storeEmbedding(db, pkgId, emb, pkgData)).catch(() => {});
+          }
+
+          results.published++;
+          await new Promise(r => setTimeout(r, 2000));
+        } catch (e) {
+          const msg = e.message || String(e);
+          if (msg.includes('UNIQUE constraint')) {
+            console.log(`${prefix} -> SKIP (already exists)`);
+            results.skipped++;
+          } else {
+            console.error(`${prefix} -> FAIL: ${msg}`);
+            results.failed++;
+          }
+        }
+      }
+    } catch (e) {
+      console.error('[discover] Fatal error:', e.message);
+    }
+
+    console.log(`[discover] Done: ${results.published} published, ${results.skipped} skipped, ${results.failed} failed`);
+  })();
+});
+
+// Backfill security scans for packages that were never scanned
+app.post('/api/v1/admin/security-backfill', authMiddleware, requireAuth, requireAdmin, async (req, res) => {
+  const unscanned = db.prepare(`
+    SELECT p.id, p.slug, p.display_name, p.description, p.latest_version,
+           p.keywords, p.capabilities, p.requires
+    FROM packages p
+    LEFT JOIN security_scans ss ON ss.package_id = p.id
+    WHERE ss.id IS NULL
+    ORDER BY p.slug
+  `).all();
+
+  if (unscanned.length === 0) {
+    return res.json({ success: true, message: 'All packages already scanned', scanned: 0 });
+  }
+
+  res.json({ success: true, message: `Security backfill started for ${unscanned.length} packages` });
+
+  // Background processing
+  (async () => {
+    let scanned = 0, failed = 0;
+    const STORAGE_DIR = process.env.STORAGE_DIR || './storage';
+
+    for (const pkg of unscanned) {
+      const version = pkg.latest_version;
+      const pkgDir = join(STORAGE_DIR, pkg.slug, version);
+
+      if (!existsSync(pkgDir)) {
+        console.log(`[security-backfill] skip ${pkg.slug} - no files`);
+        failed++;
+        continue;
+      }
+
+      try {
+        const { readdirSync, readFileSync, statSync } = await import('fs');
+        const files = [];
+        for (const name of readdirSync(pkgDir)) {
+          const fullPath = join(pkgDir, name);
+          if (statSync(fullPath).isFile()) {
+            files.push({ name, content: readFileSync(fullPath, 'utf8') });
+          }
+        }
+
+        if (files.length === 0) { failed++; continue; }
+
+        const staticScan = runStaticScan(files);
+
+        db.prepare(
+          'INSERT INTO security_scans (package_id, version, static_verdict, final_verdict, findings, scan_data) VALUES (?, ?, ?, ?, ?, ?)'
+        ).run(pkg.id, version, staticScan.verdict, staticScan.verdict, JSON.stringify(staticScan.findings), JSON.stringify(staticScan));
+
+        if (staticScan.verdict === 'malicious') {
+          db.prepare('UPDATE packages SET moderation_status = ? WHERE id = ?').run('hidden', pkg.id);
+          console.log(`[security-backfill] ${pkg.slug} -> MALICIOUS, hidden`);
+        } else {
+          const icon = staticScan.verdict === 'clean' ? '✓' : '!';
+          console.log(`[security-backfill] ${icon} ${pkg.slug} -> ${staticScan.verdict}`);
+        }
+        scanned++;
+      } catch (e) {
+        console.error(`[security-backfill] ${pkg.slug} error: ${e.message}`);
+        failed++;
+      }
+    }
+
+    console.log(`[security-backfill] Done: ${scanned} scanned, ${failed} failed`);
+  })();
 });
 
 // Redirect /packages/:slug and /bundles/:slug

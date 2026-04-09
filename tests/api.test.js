@@ -160,15 +160,13 @@ describe('REST API Endpoints', () => {
       assert.strictEqual(response.status, 401);
     });
 
-    test('POST /api/v1/packages should return 401 without token', async () => {
+    test('POST /api/v1/packages/:slug/upload should return 401 without token', async () => {
       if (!await isServerRunning()) return;
 
-      const response = await fetch(`${API_BASE}/packages`, {
+      const response = await fetch(`${API_BASE}/packages/test/upload`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: 'test', displayName: 'Test', version: '1.0.0' }),
       });
-      
+
       assert.strictEqual(response.status, 401);
     });
   });
