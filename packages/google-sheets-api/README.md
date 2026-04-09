@@ -40,4 +40,4 @@ await appendRows(token, "spreadsheet-id", "Sheet1!A:B", [["Bob", "25"], ["Charli
 
 ## Source
 
-Based on [google-api-nodejs-client](https://github.com/googleapis/google-api-nodejs-client) (12k+ stars).
+Based on [googleapis/google-api-nodejs-client](https://github.com/googleapis/google-api-nodejs-client) by **Google APIs** — 12,123+ stars on GitHub.

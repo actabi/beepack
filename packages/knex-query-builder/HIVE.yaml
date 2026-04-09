@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/knex/knex
+  repo: knex/knex
+  stars: 20262
+  license: MIT

@@ -52,4 +52,4 @@ const data = await cacheWith(redis, "api:users", async () => {
 
 ## Source
 
-Based on [ioredis](https://github.com/redis/ioredis) (15k+ stars).
+Based on [redis/ioredis](https://github.com/redis/ioredis) by **Redis** — 15,235+ stars on GitHub.

@@ -439,7 +439,7 @@ app.get('/api/v1/stats', (req, res) => {
 
 // Publish a package (create or update)
 app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
-  const { slug, displayName, description, keywords, capabilities, compatible, requires, version, readme, sourceCode, hiveYaml } = req.body;
+  const { slug, displayName, description, keywords, capabilities, compatible, requires, version, readme, sourceCode, hiveYaml, repository_url } = req.body;
   
   // Validate required fields
   if (!slug || !displayName || !version) {
@@ -486,6 +486,7 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
         compatible = ?,
         requires = ?,
         latest_version = ?,
+        repository_url = COALESCE(?, repository_url),
         version_count = version_count + 1,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
@@ -498,6 +499,7 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
       JSON.stringify(compatible || []),
       JSON.stringify(requires || {}),
       version,
+      repository_url || null,
       existing.id
     );
     
@@ -511,8 +513,8 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
   } else {
     // Create new package
     const result = db.prepare(`
-      INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, readme, keywords, capabilities, compatible, requires, latest_version, version_count)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, readme, keywords, capabilities, compatible, requires, latest_version, version_count, repository_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
     `).run(
       slug,
       displayName,
@@ -525,7 +527,8 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
       JSON.stringify(capabilities || []),
       JSON.stringify(compatible || []),
       JSON.stringify(requires || {}),
-      version
+      version,
+      repository_url || null
     );
     
     // Add version
@@ -536,6 +539,54 @@ app.post('/api/v1/packages', authMiddleware, requireAuth, (req, res) => {
     
     res.json({ success: true, action: 'created', slug });
   }
+});
+
+// Update package metadata (partial)
+app.patch('/api/v1/packages/:slug', authMiddleware, requireAuth, (req, res) => {
+  const { slug } = req.params;
+  const pkg = db.prepare('SELECT * FROM packages WHERE slug = ?').get(slug);
+  if (!pkg) {
+    return res.status(404).json({ error: { code: 'NOT_FOUND', message: `Package '${slug}' not found` } });
+  }
+  if (pkg.owner_id !== req.user.id) {
+    return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'You do not own this package' } });
+  }
+
+  const allowed = ['displayName', 'description', 'repository_url', 'homepage_url', 'keywords', 'capabilities', 'compatible', 'requires'];
+  const updates = [];
+  const values = [];
+
+  const fieldMap = {
+    displayName: 'display_name',
+    description: 'description',
+    repository_url: 'repository_url',
+    homepage_url: 'homepage_url',
+    keywords: 'keywords',
+    capabilities: 'capabilities',
+    compatible: 'compatible',
+    requires: 'requires',
+  };
+
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) {
+      const col = fieldMap[key];
+      const val = ['keywords', 'capabilities', 'compatible', 'requires'].includes(key)
+        ? JSON.stringify(req.body[key])
+        : req.body[key];
+      updates.push(`${col} = ?`);
+      values.push(val);
+    }
+  }
+
+  if (updates.length === 0) {
+    return res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'No valid fields to update' } });
+  }
+
+  updates.push('updated_at = CURRENT_TIMESTAMP');
+  values.push(pkg.id);
+
+  db.prepare(`UPDATE packages SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+  res.json({ success: true, slug });
 });
 
 // ============== FILE UPLOAD/DOWNLOAD ROUTES ==============
@@ -743,6 +794,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
         requires = ?,
         repository_url = COALESCE(?, repository_url),
         latest_version = ?,
+        repository_url = COALESCE(?, repository_url),
         version_count = version_count + 1,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
@@ -756,6 +808,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       JSON.stringify(hiveContent.requires || {}),
       repoUrl,
       version,
+      hiveContent.source?.url || null,
       pkg.id
     );
 

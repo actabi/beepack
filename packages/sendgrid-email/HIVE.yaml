@@ -24,3 +24,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/sendgrid/sendgrid-nodejs
+  repo: sendgrid/sendgrid-nodejs
+  stars: 3050
+  license: MIT

@@ -54,4 +54,4 @@ await sendPushNotification("my-project", token, {
 
 ## Source
 
-Based on [firebase-admin-node](https://github.com/firebase/firebase-admin-node) (1.7k+ stars).
+Based on [firebase/firebase-admin-node](https://github.com/firebase/firebase-admin-node) by **Firebase (Google)** — 1,727+ stars on GitHub.

@@ -25,3 +25,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/spotify/web-api
+  repo: spotify/web-api
+  stars: 971
+  license: NOASSERTION

@@ -43,4 +43,4 @@ const url = buildOAuth2Url({
 
 ## Source
 
-Inspired by [passport](https://github.com/jaredhanson/passport) (23k+ stars).
+Based on [jaredhanson/passport](https://github.com/jaredhanson/passport) by **Jared Hanson** — 23,523+ stars on GitHub.

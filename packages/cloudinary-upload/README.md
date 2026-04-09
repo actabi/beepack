@@ -54,4 +54,4 @@ await destroy(config, "avatars/user-123");
 
 ## Source
 
-Based on [cloudinary_npm](https://github.com/cloudinary/cloudinary_npm) (660+ stars).
+Based on [cloudinary/cloudinary_npm](https://github.com/cloudinary/cloudinary_npm) by **Cloudinary** — 662+ stars on GitHub.

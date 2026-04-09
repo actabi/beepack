@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/jaredhanson/passport
+  repo: jaredhanson/passport
+  stars: 23523
+  license: MIT

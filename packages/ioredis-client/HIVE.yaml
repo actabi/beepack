@@ -24,3 +24,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/redis/ioredis
+  repo: redis/ioredis
+  stars: 15235
+  license: MIT

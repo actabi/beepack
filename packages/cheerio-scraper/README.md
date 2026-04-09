@@ -40,4 +40,4 @@ const rows = extractTable(html, 0);
 
 ## Source
 
-Inspired by [cheerio](https://github.com/cheeriojs/cheerio) (30k+ stars).
+Based on [cheeriojs/cheerio](https://github.com/cheeriojs/cheerio) by **Cheerio** — 30,260+ stars on GitHub.

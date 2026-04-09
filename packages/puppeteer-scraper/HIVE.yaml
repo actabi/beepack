@@ -28,3 +28,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/puppeteer/puppeteer
+  repo: puppeteer/puppeteer
+  stars: 94051
+  license: Apache-2.0

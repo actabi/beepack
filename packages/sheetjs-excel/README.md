@@ -32,4 +32,4 @@ const data = autoParse(fileContent);
 
 ## Source
 
-Inspired by [SheetJS](https://github.com/SheetJS/sheetjs) (36k+ stars).
+Based on [SheetJS/sheetjs](https://github.com/SheetJS/sheetjs) by **SheetJS** — 36,238+ stars on GitHub.

@@ -25,3 +25,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/cloudinary/cloudinary_npm
+  repo: cloudinary/cloudinary_npm
+  stars: 662
+  license: MIT

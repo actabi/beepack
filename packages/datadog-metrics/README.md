@@ -45,4 +45,4 @@ await createMonitor(apiKey, appKey, {
 
 ## Source
 
-Based on [dd-trace-js](https://github.com/DataDog/dd-trace-js) (790+ stars).
+Based on [DataDog/dd-trace-js](https://github.com/DataDog/dd-trace-js) by **Datadog** — 790+ stars on GitHub.

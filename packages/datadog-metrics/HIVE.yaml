@@ -25,3 +25,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/DataDog/dd-trace-js
+  repo: DataDog/dd-trace-js
+  stars: 790
+  license: BSD-3-Clause

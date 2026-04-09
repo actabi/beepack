@@ -43,4 +43,4 @@ await triggerWorkflow(token, "myorg", "myrepo", "deploy.yml", "main", { environm
 
 ## Source
 
-Based on [octokit.js](https://github.com/octokit/octokit.js) (7.7k+ stars).
+Based on [octokit/octokit.js](https://github.com/octokit/octokit.js) by **Octokit** — 7,734+ stars on GitHub.

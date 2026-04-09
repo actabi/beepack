@@ -51,4 +51,4 @@ const user = await lookupUserByEmail(token, "alice@company.com");
 
 ## Source
 
-Based on [bolt-js](https://github.com/slackapi/bolt-js) (2.9k+ stars).
+Based on [slackapi/bolt-js](https://github.com/slackapi/bolt-js) by **Slack** — 2,899+ stars on GitHub.

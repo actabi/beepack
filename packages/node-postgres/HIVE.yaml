@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/brianc/node-postgres
+  repo: brianc/node-postgres
+  stars: 13110
+  license: MIT

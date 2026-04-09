@@ -45,4 +45,4 @@ const tracks = await getArtistTopTracks(token, "4tZwfgrHOc3mvqYlEYSvVi");
 
 ## Source
 
-Based on [Spotify Web API](https://github.com/spotify/web-api) documentation.
+Based on [spotify/web-api](https://github.com/spotify/web-api) by **Spotify** — 971+ stars on GitHub.

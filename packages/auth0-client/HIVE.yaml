@@ -25,3 +25,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/auth0/node-auth0
+  repo: auth0/node-auth0
+  stars: 677
+  license: MIT

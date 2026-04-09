@@ -35,4 +35,4 @@ const pdf = createPdf()
 
 ## Source
 
-Inspired by [pdfkit](https://github.com/pdfkit/pdfkit) (2.9k+ stars).
+Based on [pdfkit/pdfkit](https://github.com/pdfkit/pdfkit) by **PDFKit** — 2,939+ stars on GitHub.

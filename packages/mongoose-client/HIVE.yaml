@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/Automattic/mongoose
+  repo: Automattic/mongoose
+  stars: 27469
+  license: MIT

@@ -29,3 +29,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/googleapis/google-api-nodejs-client
+  repo: googleapis/google-api-nodejs-client
+  stars: 12123
+  license: Apache-2.0

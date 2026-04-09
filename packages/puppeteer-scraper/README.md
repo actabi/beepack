@@ -39,4 +39,4 @@ const info = await getBrowserVersion("http://localhost:9222");
 
 ## Source
 
-Inspired by [puppeteer](https://github.com/puppeteer/puppeteer) (94k+ stars).
+Based on [puppeteer/puppeteer](https://github.com/puppeteer/puppeteer) by **Google Chrome** — 94,051+ stars on GitHub.

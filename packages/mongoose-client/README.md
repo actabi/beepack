@@ -47,4 +47,4 @@ const results = await users.aggregate([
 
 ## Source
 
-Inspired by [mongoose](https://github.com/Automattic/mongoose) (27k+ stars).
+Based on [Automattic/mongoose](https://github.com/Automattic/mongoose) by **Automattic** — 27,469+ stars on GitHub.

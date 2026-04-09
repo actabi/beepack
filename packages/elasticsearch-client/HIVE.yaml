@@ -24,3 +24,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/elastic/elasticsearch-js
+  repo: elastic/elasticsearch-js
+  stars: 5302
+  license: Apache-2.0

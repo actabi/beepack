@@ -49,4 +49,4 @@ const user = await createUser(domain, token, {
 
 ## Source
 
-Based on [node-auth0](https://github.com/auth0/node-auth0) (680+ stars).
+Based on [auth0/node-auth0](https://github.com/auth0/node-auth0) by **Auth0** — 677+ stars on GitHub.

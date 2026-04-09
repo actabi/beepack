@@ -24,3 +24,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/firebase/firebase-admin-node
+  repo: firebase/firebase-admin-node
+  stars: 1727
+  license: Apache-2.0

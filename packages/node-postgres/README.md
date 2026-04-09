@@ -46,4 +46,4 @@ await db.transaction(async (tx) => {
 
 ## Source
 
-Based on [node-postgres](https://github.com/brianc/node-postgres) (13k+ stars).
+Based on [brianc/node-postgres](https://github.com/brianc/node-postgres) by **Brian Carlson** — 13,110+ stars on GitHub.

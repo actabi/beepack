@@ -24,3 +24,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/slackapi/bolt-js
+  repo: slackapi/bolt-js
+  stars: 2899
+  license: MIT

@@ -36,4 +36,4 @@ const { sql, params } = query("orders")
 
 ## Source
 
-Inspired by [knex](https://github.com/knex/knex) (20k+ stars).
+Based on [knex/knex](https://github.com/knex/knex) by **Knex.js** — 20,262+ stars on GitHub.

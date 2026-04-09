@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/SheetJS/sheetjs
+  repo: SheetJS/sheetjs
+  stars: 36238
+  license: Apache-2.0

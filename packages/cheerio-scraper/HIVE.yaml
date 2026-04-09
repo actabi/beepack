@@ -30,3 +30,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/cheeriojs/cheerio
+  repo: cheeriojs/cheerio
+  stars: 30260
+  license: MIT

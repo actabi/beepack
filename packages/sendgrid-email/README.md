@@ -56,4 +56,4 @@ await sendBulk(process.env.SENDGRID_API_KEY, {
 
 ## Source
 
-Based on [sendgrid-nodejs](https://github.com/sendgrid/sendgrid-nodejs) (3k+ stars).
+Based on [sendgrid/sendgrid-nodejs](https://github.com/sendgrid/sendgrid-nodejs) by **Twilio SendGrid** — 3,050+ stars on GitHub.

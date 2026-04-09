@@ -54,4 +54,4 @@ const results = await es.search("products", {
 
 ## Source
 
-Based on [elasticsearch-js](https://github.com/elastic/elasticsearch-js) (5.3k+ stars).
+Based on [elastic/elasticsearch-js](https://github.com/elastic/elasticsearch-js) by **Elastic** — 5,302+ stars on GitHub.

@@ -29,3 +29,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/pdfkit/pdfkit
+  repo: pdfkit/pdfkit
+  stars: 2939
+  license: MIT

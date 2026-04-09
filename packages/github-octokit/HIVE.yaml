@@ -25,3 +25,6 @@ module: esm
 dependencies: none
 source:
   url: https://github.com/octokit/octokit.js
+  repo: octokit/octokit.js
+  stars: 7734
+  license: MIT
