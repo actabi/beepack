@@ -1,0 +1,35 @@
+name: svix-webhooks
+version: 1.0.0
+displayName: Svix Webhooks
+description: Enterprise-ready webhooks service. Send, receive, and verify webhooks with automatic retries and signature verification.
+keywords:
+  - webhooks
+  - svix
+  - signature-verification
+  - retry
+  - events
+  - api
+capabilities:
+  - send-webhooks
+  - receive-webhooks
+  - verify-signatures
+  - automatic-retries
+  - event-types
+  - endpoint-management
+requires:
+  env:
+    - SVIX_API_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/svix/svix-webhooks
+stars: 3156
+license: MIT

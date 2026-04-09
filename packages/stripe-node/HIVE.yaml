@@ -1,0 +1,35 @@
+name: stripe-node
+version: 1.0.0
+displayName: Stripe Node.js SDK
+description: Official Node.js library for the Stripe API. TypeScript native, full API coverage for payments, subscriptions, invoices, and more.
+keywords:
+  - stripe
+  - payments
+  - billing
+  - subscriptions
+  - invoices
+  - checkout
+capabilities:
+  - create-payment-intent
+  - create-checkout-session
+  - manage-subscriptions
+  - handle-webhooks
+  - create-customers
+requires:
+  env:
+    - STRIPE_SECRET_KEY
+    - STRIPE_WEBHOOK_SECRET
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/stripe/stripe-node
+stars: 4384
+license: MIT

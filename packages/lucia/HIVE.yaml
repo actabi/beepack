@@ -1,0 +1,30 @@
+name: lucia
+version: 1.0.0
+displayName: Lucia Auth
+description: Authentication, simple and clean. Minimalist session-based auth library for full control over your authentication flow.
+keywords:
+  - auth
+  - session
+  - minimalist
+  - typescript
+  - authentication
+capabilities:
+  - session-management
+  - user-creation
+  - password-hashing
+  - session-validation
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/lucia-auth/lucia
+stars: 10454
+license: 0BSD

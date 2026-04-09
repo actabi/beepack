@@ -1,0 +1,35 @@
+name: uploadthing
+version: 1.0.0
+displayName: UploadThing
+description: File uploads for modern web devs. Typesafe, simple file upload solution for Next.js and React applications.
+keywords:
+  - upload
+  - files
+  - nextjs
+  - react
+  - typesafe
+  - storage
+capabilities:
+  - file-upload
+  - image-upload
+  - file-validation
+  - presigned-urls
+  - upload-callbacks
+requires:
+  env:
+    - UPLOADTHING_SECRET
+    - UPLOADTHING_APP_ID
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/pingdotgg/uploadthing
+stars: 5086
+license: MIT

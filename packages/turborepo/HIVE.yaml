@@ -1,0 +1,33 @@
+name: turborepo
+version: 1.0.0
+displayName: Turborepo
+description: Build system optimized for JavaScript and TypeScript monorepos. Intelligent caching, parallelization, and incremental builds.
+keywords:
+  - monorepo
+  - build-system
+  - caching
+  - turbo
+  - ci-cd
+  - typescript
+capabilities:
+  - task-caching
+  - parallel-execution
+  - incremental-builds
+  - remote-caching
+  - pipeline-definition
+  - workspace-management
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/vercel/turborepo
+stars: 30149
+license: MIT

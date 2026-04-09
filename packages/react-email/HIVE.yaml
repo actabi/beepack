@@ -1,0 +1,31 @@
+name: react-email
+version: 1.0.0
+displayName: React Email
+description: Build and send emails using React components. Beautiful transactional emails with JSX instead of HTML tables.
+keywords:
+  - email
+  - react
+  - transactional
+  - templates
+  - jsx
+  - html-email
+capabilities:
+  - render-email-html
+  - react-components
+  - email-preview
+  - responsive-templates
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/resend/react-email
+stars: 18364
+license: MIT

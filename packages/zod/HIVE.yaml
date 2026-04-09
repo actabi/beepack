@@ -1,0 +1,33 @@
+name: zod
+version: 1.0.0
+displayName: Zod
+description: TypeScript-first schema validation with static type inference. The standard validation library used everywhere (tRPC, React Hook Form, etc.).
+keywords:
+  - validation
+  - schema
+  - typescript
+  - type-inference
+  - parsing
+  - zod
+capabilities:
+  - schema-validation
+  - type-inference
+  - parsing
+  - error-formatting
+  - transforms
+  - refinements
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/colinhacks/zod
+stars: 42339
+license: MIT

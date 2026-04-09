@@ -1,0 +1,37 @@
+name: nodemailer
+version: 1.0.0
+displayName: Nodemailer
+description: Send e-mails with Node.js — easy as cake! The standard for sending emails. Supports SMTP, OAuth2, attachments, and more.
+keywords:
+  - email
+  - smtp
+  - nodemailer
+  - send-email
+  - attachments
+  - oauth2
+capabilities:
+  - send-email-smtp
+  - oauth2-auth
+  - attachments
+  - html-email
+  - embedded-images
+requires:
+  env:
+    - SMTP_HOST
+    - SMTP_PORT
+    - SMTP_USER
+    - SMTP_PASS
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/nodemailer/nodemailer
+stars: 17530
+license: MIT

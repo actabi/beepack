@@ -1,0 +1,36 @@
+name: bullmq
+version: 1.0.0
+displayName: BullMQ
+description: Message queue and batch processing for Node.js based on Redis. Background jobs, rate limiting, scheduling, and retries.
+keywords:
+  - queue
+  - redis
+  - jobs
+  - background
+  - workers
+  - scheduling
+  - rate-limiting
+capabilities:
+  - job-queues
+  - delayed-jobs
+  - rate-limiting
+  - job-scheduling
+  - retries
+  - concurrency-control
+requires:
+  env:
+    - REDIS_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/taskforcesh/bullmq
+stars: 8699
+license: MIT

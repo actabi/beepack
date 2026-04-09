@@ -1,0 +1,36 @@
+name: posthog
+version: 1.0.0
+displayName: PostHog
+description: All-in-one platform for product analytics, session replay, feature flags, experiments, and error tracking. Self-hostable.
+keywords:
+  - analytics
+  - product-analytics
+  - feature-flags
+  - session-replay
+  - experiments
+  - ab-testing
+capabilities:
+  - event-capture
+  - feature-flags
+  - session-recording
+  - ab-experiments
+  - user-identification
+  - group-analytics
+requires:
+  env:
+    - POSTHOG_API_KEY
+    - POSTHOG_HOST
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/PostHog/posthog
+stars: 32474
+license: Custom

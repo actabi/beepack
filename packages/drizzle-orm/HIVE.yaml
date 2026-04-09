@@ -1,0 +1,37 @@
+name: drizzle-orm
+version: 1.0.0
+displayName: Drizzle ORM
+description: Lightweight TypeScript ORM with SQL-like syntax. Zero dependencies, performant, and close to raw SQL.
+keywords:
+  - orm
+  - database
+  - drizzle
+  - typescript
+  - sql
+  - postgresql
+  - mysql
+  - sqlite
+capabilities:
+  - sql-like-queries
+  - schema-definition
+  - migrations
+  - relations
+  - transactions
+  - prepared-statements
+requires:
+  env:
+    - DATABASE_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/drizzle-team/drizzle-orm
+stars: 33754
+license: Apache-2.0

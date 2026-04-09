@@ -1,0 +1,37 @@
+name: prisma
+version: 1.0.0
+displayName: Prisma ORM
+description: Next-generation ORM for Node.js and TypeScript. Declarative schema, auto migrations, and typesafe client for PostgreSQL, MySQL, SQLite, MongoDB.
+keywords:
+  - orm
+  - database
+  - prisma
+  - postgresql
+  - mysql
+  - sqlite
+  - mongodb
+  - typescript
+capabilities:
+  - schema-management
+  - auto-migrations
+  - typesafe-queries
+  - relations
+  - transactions
+  - raw-sql
+requires:
+  env:
+    - DATABASE_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/prisma/prisma
+stars: 45723
+license: Apache-2.0

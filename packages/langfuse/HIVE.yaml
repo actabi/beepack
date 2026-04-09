@@ -1,0 +1,38 @@
+name: langfuse
+version: 1.0.0
+displayName: Langfuse
+description: Open source LLM engineering platform. Observability, metrics, evals, and prompt management for AI applications.
+keywords:
+  - llm
+  - observability
+  - tracing
+  - metrics
+  - evals
+  - prompt-management
+  - ai
+capabilities:
+  - trace-llm-calls
+  - track-costs
+  - evaluate-outputs
+  - manage-prompts
+  - score-generations
+  - session-tracking
+requires:
+  env:
+    - LANGFUSE_SECRET_KEY
+    - LANGFUSE_PUBLIC_KEY
+    - LANGFUSE_HOST
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/langfuse/langfuse
+stars: 24607
+license: Custom

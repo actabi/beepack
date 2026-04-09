@@ -1,0 +1,34 @@
+name: tus-js-client
+version: 1.0.0
+displayName: tus.js Resumable Upload Client
+description: A pure JavaScript client for the tus resumable upload protocol. Uploads resume after network interruptions.
+keywords:
+  - upload
+  - resumable
+  - tus
+  - files
+  - large-files
+  - streaming
+capabilities:
+  - resumable-upload
+  - chunk-upload
+  - progress-tracking
+  - upload-resume
+  - parallel-uploads
+requires:
+  env:
+    - TUS_ENDPOINT
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/tus/tus-js-client
+stars: 2558
+license: MIT

@@ -1,0 +1,33 @@
+name: trpc
+version: 1.0.0
+displayName: tRPC
+description: End-to-end typesafe APIs made easy. The client knows the server types. Perfect for full-stack TypeScript monorepos.
+keywords:
+  - trpc
+  - api
+  - typesafe
+  - rpc
+  - typescript
+  - fullstack
+capabilities:
+  - typesafe-api
+  - query-mutation
+  - subscriptions
+  - middleware
+  - input-validation
+  - error-handling
+requires:
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/trpc/trpc
+stars: 39946
+license: MIT

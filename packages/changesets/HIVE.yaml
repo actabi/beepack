@@ -1,0 +1,35 @@
+name: changesets
+version: 1.0.0
+displayName: Changesets
+description: Manage versioning and changelogs with a focus on monorepos. Automate releases and npm publishing.
+keywords:
+  - versioning
+  - changelog
+  - monorepo
+  - releases
+  - npm
+  - semver
+capabilities:
+  - version-management
+  - changelog-generation
+  - monorepo-releases
+  - npm-publishing
+  - pr-bot
+  - release-plans
+requires:
+  env:
+    - NPM_TOKEN
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/changesets/changesets
+stars: 11652
+license: MIT

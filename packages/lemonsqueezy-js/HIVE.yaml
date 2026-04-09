@@ -1,0 +1,34 @@
+name: lemonsqueezy-js
+version: 1.0.0
+displayName: Lemon Squeezy JS SDK
+description: Official JavaScript SDK for Lemon Squeezy. Simple payment integration for SaaS and digital products.
+keywords:
+  - lemonsqueezy
+  - payments
+  - saas
+  - digital-products
+  - subscriptions
+capabilities:
+  - create-checkout
+  - manage-subscriptions
+  - handle-webhooks
+  - list-products
+  - manage-licenses
+requires:
+  env:
+    - LEMONSQUEEZY_API_KEY
+    - LEMONSQUEEZY_STORE_ID
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/lmsqueezy/lemonsqueezy.js
+stars: 524
+license: MIT

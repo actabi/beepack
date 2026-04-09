@@ -1,0 +1,36 @@
+name: inngest-js
+version: 1.0.0
+displayName: Inngest
+description: Developer platform for building reliable workflows with zero infrastructure. Serverless alternative to BullMQ, no Redis needed.
+keywords:
+  - workflows
+  - serverless
+  - background-jobs
+  - events
+  - scheduling
+  - inngest
+capabilities:
+  - event-driven-functions
+  - scheduled-tasks
+  - step-functions
+  - retry-logic
+  - fan-out
+  - throttling
+requires:
+  env:
+    - INNGEST_EVENT_KEY
+    - INNGEST_SIGNING_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/inngest/inngest-js
+stars: 912
+license: GPL-3.0

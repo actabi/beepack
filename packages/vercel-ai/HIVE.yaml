@@ -1,0 +1,37 @@
+name: vercel-ai
+version: 1.0.0
+displayName: Vercel AI SDK
+description: The AI Toolkit for TypeScript. Streaming, tool calling, agents. Supports OpenAI, Anthropic, Google, and more LLM providers.
+keywords:
+  - ai
+  - llm
+  - streaming
+  - openai
+  - anthropic
+  - google
+  - agents
+  - tools
+capabilities:
+  - llm-streaming
+  - tool-calling
+  - agent-framework
+  - multi-provider
+  - server-components
+  - structured-output
+requires:
+  env:
+    - OPENAI_API_KEY
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+repository: https://github.com/vercel/ai
+stars: 23339
+license: Custom
