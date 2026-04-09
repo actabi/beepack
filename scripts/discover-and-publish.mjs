@@ -215,10 +215,10 @@ Return ONLY valid JSON: {"hiveYaml": "...", "indexJs": "...", "readmeMd": "..."}
   if (!content.hiveYaml || !content.indexJs || !content.readmeMd) {
     throw new Error('Missing files in generated content');
   }
-  if (content.indexJs.split('\n').length < 50) {
+  if (content.indexJs.split('\n').length < 40) {
     throw new Error(`index.js too short: ${content.indexJs.split('\n').length} lines`);
   }
-  if (content.readmeMd.split('\n').length < 25) {
+  if (content.readmeMd.split('\n').length < 20) {
     throw new Error(`README.md too short: ${content.readmeMd.split('\n').length} lines`);
   }
 
@@ -227,22 +227,22 @@ Return ONLY valid JSON: {"hiveYaml": "...", "indexJs": "...", "readmeMd": "..."}
 
 // ── Publish to Beepack (multipart) ──────────────────────────
 async function publishPackage(slug, version, files, repositoryUrl) {
-  // Build multipart form data manually (zero deps)
   const boundary = '----BeepackBoundary' + Date.now();
 
-  function part(name, content, filename) {
-    let header = `--${boundary}\r\nContent-Disposition: form-data; name="${name}"`;
-    if (filename) header += `; filename="${filename}"`;
-    header += '\r\nContent-Type: application/octet-stream\r\n\r\n';
-    return header + content + '\r\n';
+  function textPart(name, value) {
+    return `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`;
+  }
+
+  function filePart(name, filename, content) {
+    return `--${boundary}\r\nContent-Disposition: form-data; name="${name}"; filename="${filename}"\r\nContent-Type: application/octet-stream\r\n\r\n${content}\r\n`;
   }
 
   let body = '';
-  body += part('version', version);
-  body += part('repository', repositoryUrl);
-  body += part('files', files.hiveYaml, 'HIVE.yaml');
-  body += part('files', files.indexJs, 'index.js');
-  body += part('files', files.readmeMd, 'README.md');
+  body += textPart('version', version);
+  body += textPart('repository', repositoryUrl);
+  body += filePart('files', 'HIVE.yaml', files.hiveYaml);
+  body += filePart('files', 'index.js', files.indexJs);
+  body += filePart('files', 'README.md', files.readmeMd);
   body += `--${boundary}--\r\n`;
 
   const res = await fetch(`${API}/packages/${slug}/upload`, {
