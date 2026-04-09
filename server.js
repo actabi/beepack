@@ -700,9 +700,10 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       }
     } else {
       // Create new package
+      const repositoryUrl = req.body.repository || hiveContent.repository || null;
       const result = db.prepare(`
-        INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, keywords, capabilities, compatible, requires, latest_version, version_count)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        INSERT INTO packages (slug, display_name, owner_id, owner_handle, owner_avatar, description, keywords, capabilities, compatible, requires, repository_url, latest_version, version_count)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
       `).run(
         slug,
         hiveContent.displayName || hiveContent.name,
@@ -714,6 +715,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
         JSON.stringify(hiveContent.capabilities || []),
         JSON.stringify(hiveContent.compatible || []),
         JSON.stringify(hiveContent.requires || {}),
+        repositoryUrl,
         version
       );
       pkg = { id: result.lastInsertRowid };
@@ -726,6 +728,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
     const readmeFile = files.find(f => f.originalname.toLowerCase() === 'readme.md');
     const readme = readmeFile ? readmeFile.buffer.toString('utf8') : '';
 
+    const repoUrl = req.body.repository || hiveContent.repository || null;
     db.prepare(`
       UPDATE packages SET
         display_name = ?,
@@ -735,6 +738,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
         capabilities = ?,
         compatible = ?,
         requires = ?,
+        repository_url = COALESCE(?, repository_url),
         latest_version = ?,
         version_count = version_count + 1,
         updated_at = CURRENT_TIMESTAMP
@@ -747,6 +751,7 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       JSON.stringify(hiveContent.capabilities || []),
       JSON.stringify(hiveContent.compatible || []),
       JSON.stringify(hiveContent.requires || {}),
+      repoUrl,
       version,
       pkg.id
     );

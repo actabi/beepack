@@ -638,6 +638,7 @@ export async function publish(options) {
     
     form.append('version', hiveConfig.version);
     form.append('changelog', options.changelog || '');
+    if (hiveConfig.repository) form.append('repository', hiveConfig.repository);
     
     for (const file of files) {
       form.append('files', readFileSync(file.fullPath), {

@@ -18,6 +18,9 @@ requires:
   env:
     - API_KEY
 
+# Source repository (shown on package page)
+repository: https://github.com/your-org/your-repo
+
 # Compatible runtimes
 compatible:
   - cursor
