@@ -1,0 +1,23 @@
+name: turso-db
+version: 1.0.0
+description: Zero-dependency wrapper for Turso/libSQL HTTP API — execute SQL statements and batch queries over HTTP.
+github: tursodatabase/libsql-client-ts
+github_stars: 550
+category: database
+tags:
+  - turso
+  - libsql
+  - sqlite
+  - database
+  - sql
+env:
+  - name: TURSO_DATABASE_URL
+    required: true
+    description: Turso database HTTP URL
+  - name: TURSO_AUTH_TOKEN
+    required: true
+    description: Turso authentication token
+exports:
+  - createClient
+  - execute
+  - batch

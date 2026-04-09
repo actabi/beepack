@@ -1,0 +1,14 @@
+name: mailgun-email
+version: 1.0.0
+description: Zero-dependency wrapper for the Mailgun email API — send emails, use templates, track events, and validate addresses.
+category: email
+tags:
+  - mailgun
+  - email
+  - transactional-email
+  - api
+env:
+  - MAILGUN_API_KEY
+  - MAILGUN_DOMAIN
+github: mailgun/mailgun.js
+license: MIT

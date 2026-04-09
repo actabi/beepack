@@ -1,0 +1,14 @@
+name: clerk-auth
+version: 1.0.0
+description: Zero-dependency server-side wrapper for the Clerk Backend API — manage users, sessions, and token verification.
+category: auth
+tags:
+  - clerk
+  - authentication
+  - users
+  - sessions
+  - api
+env:
+  - CLERK_SECRET_KEY
+github: clerk/javascript
+license: MIT

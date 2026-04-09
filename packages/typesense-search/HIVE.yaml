@@ -1,0 +1,26 @@
+name: typesense-search
+version: 1.0.0
+description: Zero-dependency wrapper for the Typesense search engine API
+github: typesense/typesense-js
+stars: 552
+category: search
+tags:
+  - typesense
+  - search
+  - full-text-search
+  - indexing
+  - search-engine
+env:
+  - name: TYPESENSE_HOST
+    description: Typesense server host (e.g. xyz.a1.typesense.net)
+    required: true
+  - name: TYPESENSE_API_KEY
+    description: Typesense API key
+    required: true
+exports:
+  - search
+  - createCollection
+  - indexDocument
+  - indexDocuments
+  - deleteDocument
+  - getCollection

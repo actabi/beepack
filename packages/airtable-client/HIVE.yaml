@@ -1,0 +1,15 @@
+name: airtable-client
+version: 1.0.0
+description: Zero-dependency wrapper for the Airtable API — list, get, create, update, and delete records.
+category: database
+tags:
+  - airtable
+  - database
+  - spreadsheet
+  - api
+  - crud
+env:
+  - AIRTABLE_API_KEY
+  - AIRTABLE_BASE_ID
+github: Airtable/airtable.js
+license: MIT

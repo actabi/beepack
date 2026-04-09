@@ -1,0 +1,15 @@
+name: huggingface-inference
+version: 1.0.0
+description: Zero-dependency wrapper for the Hugging Face Inference API — text generation, classification, image classification, feature extraction, and summarization.
+category: ai
+tags:
+  - huggingface
+  - inference
+  - machine-learning
+  - nlp
+  - ai
+  - api
+env:
+  - HUGGINGFACE_TOKEN
+github: huggingface/huggingface.js
+license: MIT

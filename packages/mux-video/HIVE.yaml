@@ -1,0 +1,16 @@
+name: mux-video
+version: 1.0.0
+displayName: Mux Video API
+description: Upload, manage, and stream video assets with the Mux Video API
+keywords: [mux, video, streaming, upload, hls, playback]
+capabilities: [create-asset, get-asset, list-assets, create-upload, create-playback-id]
+requires:
+  env:
+    - MUX_TOKEN_ID
+    - MUX_TOKEN_SECRET
+  deps:
+    - node >= 18
+compatible: [cursor, copilot, claude, windsurf]
+language: javascript
+module: esm
+dependencies: none

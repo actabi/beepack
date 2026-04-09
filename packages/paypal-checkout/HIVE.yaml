@@ -1,0 +1,33 @@
+name: paypal-checkout
+version: 1.0.0
+description: Zero-dependency server-side wrapper for PayPal Orders API — create, capture, and retrieve orders
+author: beepack
+license: MIT
+category: payments
+tags:
+  - paypal
+  - payments
+  - checkout
+  - orders
+  - ecommerce
+  - oauth2
+sourceUrl: https://github.com/paypal/paypal-js
+env:
+  - name: PAYPAL_CLIENT_ID
+    required: true
+    description: PayPal REST API client ID
+  - name: PAYPAL_CLIENT_SECRET
+    required: true
+    description: PayPal REST API client secret
+  - name: PAYPAL_MODE
+    required: false
+    description: "sandbox or live (default: sandbox)"
+exports:
+  - name: generateAccessToken
+    description: Obtain an OAuth2 access token from PayPal
+  - name: createOrder
+    description: Create a new PayPal checkout order
+  - name: captureOrder
+    description: Capture payment for an approved order
+  - name: getOrder
+    description: Retrieve details of an existing order

@@ -1,0 +1,21 @@
+name: replicate-ai
+version: 1.0.0
+description: Zero-dependency wrapper for the Replicate AI model inference API — run models, get predictions, and browse the model catalog.
+github: replicate/replicate-javascript
+stars: 595
+category: ai
+tags:
+  - ai
+  - machine-learning
+  - replicate
+  - inference
+  - api
+env:
+  - name: REPLICATE_API_TOKEN
+    description: API token for authenticating with Replicate
+    required: true
+exports:
+  - runModel
+  - getModel
+  - getPrediction
+  - listModels

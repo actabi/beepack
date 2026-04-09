@@ -1,0 +1,25 @@
+name: meilisearch-search
+version: 1.0.0
+description: Zero-dependency wrapper for the Meilisearch search engine API — search, index, and manage documents.
+github: meilisearch/meilisearch-js
+stars: 860
+category: search
+tags:
+  - search
+  - meilisearch
+  - full-text-search
+  - indexing
+  - api
+env:
+  - name: MEILISEARCH_HOST
+    description: Base URL of the Meilisearch instance (e.g. http://localhost:7700)
+    required: true
+  - name: MEILISEARCH_API_KEY
+    description: API key for authenticating with Meilisearch
+    required: true
+exports:
+  - search
+  - addDocuments
+  - deleteDocuments
+  - createIndex
+  - getIndex

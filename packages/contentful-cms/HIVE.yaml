@@ -1,0 +1,15 @@
+name: contentful-cms
+version: 1.0.0
+description: Zero-dependency wrapper for Contentful Delivery API — fetch entries, assets, content types, and search content.
+category: cms
+tags:
+  - contentful
+  - cms
+  - headless-cms
+  - content-delivery
+  - api
+env:
+  - CONTENTFUL_SPACE_ID
+  - CONTENTFUL_ACCESS_TOKEN
+github: contentful/contentful.js
+license: MIT

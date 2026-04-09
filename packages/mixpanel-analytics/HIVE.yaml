@@ -1,0 +1,13 @@
+name: mixpanel-analytics
+version: 1.0.0
+description: Zero-dependency wrapper for the Mixpanel tracking API — track events, identify users, set properties, and batch ingest.
+category: analytics
+tags:
+  - mixpanel
+  - analytics
+  - event-tracking
+  - api
+env:
+  - MIXPANEL_TOKEN
+github: mixpanel/mixpanel-node
+license: MIT
