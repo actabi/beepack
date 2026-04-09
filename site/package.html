@@ -289,16 +289,6 @@
                 cardAuthor.appendChild(authorDiv);
                 sidebar.appendChild(cardAuthor);
 
-                // Repository
-                if (pkg.repositoryUrl) {
-                    var cardRepo = el('div', {className: 'side-card'});
-                    cardRepo.appendChild(el('h4', {textContent: 'Source'}));
-                    var repoLink = el('a', {href: pkg.repositoryUrl, target: '_blank', rel: 'noopener', style: 'font-size:14px;color:var(--primary);text-decoration:none;word-break:break-all'});
-                    repoLink.textContent = pkg.repositoryUrl.replace(/^https?:\/\/(www\.)?/, '');
-                    cardRepo.appendChild(repoLink);
-                    sidebar.appendChild(cardRepo);
-                }
-
                 // Compatible
                 var cardCompat = el('div', {className: 'side-card'});
                 cardCompat.appendChild(el('h4', {textContent: 'Compatible with'}));
