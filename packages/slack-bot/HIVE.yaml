@@ -1,0 +1,26 @@
+name: slack-bot
+version: 1.0.0
+displayName: Slack Bot
+description: Send messages, manage channels, and handle Slack interactions via the Slack Web API
+keywords:
+  - slack
+  - bot
+  - messaging
+  - notifications
+  - team-communication
+capabilities:
+  - send-messages
+  - manage-channels
+  - upload-files
+  - interactive-messages
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/slackapi/bolt-js

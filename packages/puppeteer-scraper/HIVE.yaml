@@ -1,0 +1,30 @@
+name: puppeteer-scraper
+version: 1.0.0
+displayName: Puppeteer Browser Automation
+description: Automate Chrome via DevTools Protocol for page management and browser inspection
+keywords:
+  - puppeteer
+  - browser
+  - automation
+  - chrome
+  - devtools
+capabilities:
+  - manage-tabs
+  - browser-info
+  - devtools-protocol
+requires:
+  env:
+    - CHROME_WS_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/puppeteer/puppeteer

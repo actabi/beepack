@@ -1,0 +1,27 @@
+name: github-octokit
+version: 1.0.0
+displayName: GitHub API (Octokit)
+description: Interact with GitHub repos, issues, PRs, and actions using the GitHub REST API v3
+keywords:
+  - github
+  - api
+  - octokit
+  - repos
+  - issues
+  - pull-requests
+capabilities:
+  - manage-repos
+  - create-issues
+  - manage-prs
+  - trigger-workflows
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/octokit/octokit.js

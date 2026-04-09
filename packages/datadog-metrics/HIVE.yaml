@@ -1,0 +1,27 @@
+name: datadog-metrics
+version: 1.0.0
+displayName: Datadog Metrics
+description: Submit custom metrics, create monitors, and query dashboards via the Datadog API
+keywords:
+  - datadog
+  - monitoring
+  - metrics
+  - apm
+  - alerts
+  - observability
+capabilities:
+  - submit-metrics
+  - create-monitors
+  - query-metrics
+  - manage-dashboards
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/DataDog/dd-trace-js

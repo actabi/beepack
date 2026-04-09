@@ -1,0 +1,26 @@
+name: elasticsearch-client
+version: 1.0.0
+displayName: Elasticsearch Client
+description: Search, index, and manage Elasticsearch documents using the REST API with zero dependencies
+keywords:
+  - elasticsearch
+  - search
+  - indexing
+  - full-text
+  - analytics
+capabilities:
+  - index-documents
+  - search-query
+  - bulk-operations
+  - manage-indices
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/elastic/elasticsearch-js

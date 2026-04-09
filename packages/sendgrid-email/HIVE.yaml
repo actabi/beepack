@@ -1,0 +1,26 @@
+name: sendgrid-email
+version: 1.0.0
+displayName: SendGrid Email
+description: Send transactional emails, manage contacts, and use dynamic templates via the SendGrid v3 API
+keywords:
+  - sendgrid
+  - email
+  - transactional
+  - templates
+  - marketing
+capabilities:
+  - send-email
+  - dynamic-templates
+  - manage-contacts
+  - email-validation
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/sendgrid/sendgrid-nodejs

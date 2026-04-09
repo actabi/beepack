@@ -1,0 +1,27 @@
+name: cloudinary-upload
+version: 1.0.0
+displayName: Cloudinary Image Upload
+description: Upload, transform, and manage images and videos via the Cloudinary API
+keywords:
+  - cloudinary
+  - image
+  - upload
+  - transform
+  - cdn
+  - media
+capabilities:
+  - upload-images
+  - transform-images
+  - manage-assets
+  - generate-urls
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/cloudinary/cloudinary_npm

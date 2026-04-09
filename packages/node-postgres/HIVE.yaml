@@ -1,0 +1,32 @@
+name: node-postgres
+version: 1.0.0
+displayName: PostgreSQL Client
+description: Connect to PostgreSQL via HTTP endpoints like Neon serverless or Supabase for queries and transactions
+keywords:
+  - postgresql
+  - postgres
+  - database
+  - sql
+  - neon
+  - supabase
+capabilities:
+  - query
+  - transactions
+  - parameterized-queries
+  - insert-find
+requires:
+  env:
+    - DATABASE_URL
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/brianc/node-postgres

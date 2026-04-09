@@ -1,0 +1,32 @@
+name: knex-query-builder
+version: 1.0.0
+displayName: SQL Query Builder
+description: Build parameterized SQL queries with a fluent API for PostgreSQL, MySQL, and SQLite
+keywords:
+  - sql
+  - query-builder
+  - postgresql
+  - mysql
+  - sqlite
+  - knex
+capabilities:
+  - build-queries
+  - select-insert-update-delete
+  - joins
+  - parameterized
+requires:
+  env:
+    []
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/knex/knex

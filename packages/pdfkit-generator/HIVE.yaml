@@ -1,0 +1,31 @@
+name: pdfkit-generator
+version: 1.0.0
+displayName: PDF Generator
+description: Generate PDF documents with text, tables, headers, and footers using zero dependencies
+keywords:
+  - pdf
+  - generator
+  - document
+  - report
+  - invoice
+capabilities:
+  - generate-pdfs
+  - add-text
+  - create-tables
+  - multi-page
+requires:
+  env:
+    []
+  deps:
+    - node >= 18
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/pdfkit/pdfkit

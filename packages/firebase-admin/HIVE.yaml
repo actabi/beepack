@@ -1,0 +1,26 @@
+name: firebase-admin
+version: 1.0.0
+displayName: Firebase Admin SDK
+description: Manage Firebase Auth users, Firestore documents, and send push notifications via FCM using the Firebase Admin REST API
+keywords:
+  - firebase
+  - auth
+  - firestore
+  - fcm
+  - push-notifications
+  - google-cloud
+capabilities:
+  - manage-users
+  - read-write-firestore
+  - send-push-notifications
+compatible:
+  - cursor
+  - copilot
+  - claude
+  - openclaw
+  - windsurf
+language: javascript
+module: esm
+dependencies: none
+source:
+  url: https://github.com/firebase/firebase-admin-node
