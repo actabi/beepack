@@ -605,15 +605,18 @@ app.post('/api/v1/packages/:slug/upload', publishLimiter, authMiddleware, requir
       } catch (e) { /* GitHub API unavailable - allow publish */ }
     }
 
-    // Check daily publish limit (20 per day)
-    const today = new Date().toISOString().split('T')[0];
-    const publishCount = db.prepare(
-      "SELECT COUNT(*) as count FROM package_versions WHERE created_by = ? AND created_at >= ?"
-    ).get(req.user.id, today + ' 00:00:00');
-    if (publishCount.count >= 20) {
-      return res.status(429).json({
-        error: { code: 'DAILY_LIMIT', message: 'You have reached the daily publish limit (20 per day). Try again tomorrow.' },
-      });
+    // Check daily publish limit (20 per day, bypassed for admins)
+    const userRole = db.prepare('SELECT role FROM users WHERE id = ?').get(req.user.id);
+    if (!userRole || userRole.role !== 'admin') {
+      const today = new Date().toISOString().split('T')[0];
+      const publishCount = db.prepare(
+        "SELECT COUNT(*) as count FROM package_versions WHERE created_by = ? AND created_at >= ?"
+      ).get(req.user.id, today + ' 00:00:00');
+      if (publishCount.count >= 20) {
+        return res.status(429).json({
+          error: { code: 'DAILY_LIMIT', message: 'You have reached the daily publish limit (20 per day). Try again tomorrow.' },
+        });
+      }
     }
 
     // Validate file sizes (10MB per file max)
