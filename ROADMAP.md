@@ -1,6 +1,8 @@
 # Beepack 3-Month Roadmap
 
-**Updated:** April 2026
+> **ARCHIVED (2026-04-20).** This roadmap predates the pivot and is no longer the active plan. After a 4-agent competitive review, 37 generic packages were pruned to focus on the defensible niche: APIs where frontier LLMs still fail (French/regulatory, domain heuristics, recent breaking-change zones). The 5 remaining packages are siret-utils, cdn-url-cleaner, cms-detector, nextauth-setup, linear-api. Next milestones: validate with 5 real users before adding any new package; ship SKILL.md-compatible manifests; reposition landing copy around French/regulatory. This file is kept for historical reference.
+
+**Updated:** April 2026 (archived 2026-04-20)
 
 Beepack is an open-source registry of battle-tested, AI-ready code packages for AI-assisted development. Think npm, but curated for vibecoding workflows — every package ships with type safety, tests, and MCP/ClawHub compatibility out of the box.
 

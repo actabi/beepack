@@ -12,9 +12,6 @@ import { cleanCdnImageUrl, deduplicateCleanedUrls } from '../packages/cdn-url-cl
 // -- siret-utils --
 import { validateSiretLuhn, formatSiret, formatSiren, stripSiretFormatting } from '../packages/siret-utils/index.js';
 
-// -- google-places-client --
-import { computeAggregate } from '../packages/google-places-client/index.js';
-
 describe('cdn-url-cleaner', () => {
 
   describe('cleanCdnImageUrl', () => {
@@ -169,55 +166,6 @@ describe('siret-utils', () => {
 
     test('should handle already-clean input', () => {
       assert.strictEqual(stripSiretFormatting('73282932000074'), '73282932000074');
-    });
-  });
-});
-
-describe('google-places-client', () => {
-
-  describe('computeAggregate', () => {
-    test('should compute weighted average for multiple establishments', () => {
-      const establishments = [
-        { rating: 4.5, userRatingCount: 100 },
-        { rating: 3.5, userRatingCount: 200 },
-      ];
-      const { avgRating, totalCount } = computeAggregate(establishments);
-
-      // (4.5*100 + 3.5*200) / 300 = 1150/300 = 3.833... => 3.8
-      assert.strictEqual(avgRating, 3.8);
-      assert.strictEqual(totalCount, 300);
-    });
-
-    test('should handle single establishment', () => {
-      const { avgRating, totalCount } = computeAggregate([
-        { rating: 4.2, userRatingCount: 50 },
-      ]);
-      assert.strictEqual(avgRating, 4.2);
-      assert.strictEqual(totalCount, 50);
-    });
-
-    test('should return undefined avgRating when no valid data', () => {
-      const { avgRating, totalCount } = computeAggregate([]);
-      assert.strictEqual(avgRating, undefined);
-      assert.strictEqual(totalCount, 0);
-    });
-
-    test('should skip establishments missing rating or count', () => {
-      const { avgRating, totalCount } = computeAggregate([
-        { rating: 4.0 },
-        { userRatingCount: 10 },
-        { rating: 5.0, userRatingCount: 0 },
-      ]);
-      assert.strictEqual(avgRating, undefined);
-      assert.strictEqual(totalCount, 0);
-    });
-
-    test('should round to 1 decimal place', () => {
-      const { avgRating } = computeAggregate([
-        { rating: 4.3, userRatingCount: 1 },
-        { rating: 4.7, userRatingCount: 1 },
-      ]);
-      assert.strictEqual(avgRating, 4.5);
     });
   });
 });

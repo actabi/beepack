@@ -100,7 +100,7 @@ Download a package's source files as a zip archive.
 ```bash
 curl -X POST https://beepack.ai/api/clawhub/v1/download \
   -H "Content-Type: application/json" \
-  -d '{"slug": "stripe-checkout", "version": "2.1.0"}'
+  -d '{"slug": "siret-utils", "version": "2.1.0"}'
 ```
 
 Returns a `302` redirect to a signed download URL. The archive unpacks to the standard package directory layout.
@@ -114,12 +114,12 @@ Resolve a package slug to its full metadata and latest version.
 ```bash
 curl -X POST https://beepack.ai/api/clawhub/v1/resolve \
   -H "Content-Type: application/json" \
-  -d '{"slug": "stripe-checkout"}'
+  -d '{"slug": "siret-utils"}'
 ```
 
 ```json
 {
-  "slug": "stripe-checkout",
+  "slug": "siret-utils",
   "version": "2.1.0",
   "displayName": "Stripe Checkout",
   "description": "...",
@@ -139,7 +139,7 @@ Resolve multiple slugs in one request. Useful for bundle resolution or pre-fetch
 ```bash
 curl -X POST https://beepack.ai/api/clawhub/v1/bulk-sync \
   -H "Content-Type: application/json" \
-  -d '{"slugs": ["stripe-checkout", "resend-transactional", "clerk-session-verify"]}'
+  -d '{"slugs": ["siret-utils", "resend-transactional", "clerk-session-verify"]}'
 ```
 
 Returns an array of resolved package objects in the same order as the input. Unknown slugs return `null` in position.
@@ -158,7 +158,7 @@ curl "https://beepack.ai/api/clawhub/v1/search?q=stripe+webhook&limit=5"
 {
   "results": [
     { "slug": "stripe-webhooks", "score": 0.97, "version": "1.4.2", ... },
-    { "slug": "stripe-checkout", "score": 0.81, "version": "2.1.0", ... }
+    { "slug": "siret-utils", "score": 0.81, "version": "2.1.0", ... }
   ],
   "total": 2
 }

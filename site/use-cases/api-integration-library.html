@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Integration Library — Beepack</title>
-    <meta name="description" content="Beepack is the API integration library for developers and AI agents. Pull production-ready OAuth, Stripe, PDF, webhook, and storage integrations in seconds. No debugging required.">
-    <meta name="keywords" content="API integration library, code integration library, API code snippets, GitHub OAuth integration, Stripe integration code, ready-made API integrations">
+    <title>French &amp; Niche API Integration Library - Beepack</title>
+    <meta name="description" content="A focused library of API integrations where frontier LLMs still hallucinate: French regulatory (SIRET/SIREN), domain heuristics, and SDK breaking-change zones. Copy-paste, not npm install.">
+    <meta name="keywords" content="french api integrations, SIRET library, siren validator, french regulatory api, INSEE api, niche api integrations, llm hallucination code">
     <link rel="canonical" href="https://beepack.ai/use-cases/api-integration-library.html">
-    <meta property="og:title" content="API Integration Library — Beepack">
-    <meta property="og:description" content="Pull production-ready API integrations in seconds. OAuth, Stripe, PDF, webhooks — already debugged, already tested.">
+    <meta property="og:title" content="French &amp; Niche API Integration Library - Beepack">
+    <meta property="og:description" content="Focused integrations for APIs LLMs still get wrong. French regulatory, domain heuristics, breaking-change zones.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beepack.ai/use-cases/api-integration-library.html">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="API Integration Library — Beepack">
-    <meta name="twitter:description" content="Pull production-ready API integrations in seconds. OAuth, Stripe, PDF, webhooks — already debugged, already tested.">
+    <meta name="twitter:title" content="French &amp; Niche API Integration Library - Beepack">
+    <meta name="twitter:description" content="Focused integrations for APIs LLMs still get wrong. French regulatory, domain heuristics, breaking-change zones.">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .lp-hero { padding: 80px 0 60px; text-align: center; background: linear-gradient(135deg, #fef9c3 0%, #fff 60%); }
-        .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 700px; margin: 0 auto 20px; }
-        .lp-hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; }
+        .lp-hero h1 { font-size: 2.8rem; line-height: 1.2; max-width: 760px; margin: 0 auto 20px; }
+        .lp-hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 620px; margin: 0 auto 32px; }
         .lp-hero .badge { display: inline-block; background: #fef08a; color: #713f12; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
         .lp-section { padding: 64px 0; }
         .lp-section h2 { font-size: 2rem; margin-bottom: 12px; }
-        .lp-section .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
-        .integration-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .lp-section .section-lead { font-size: 1.1rem; color: var(--text-muted); max-width: 680px; margin-bottom: 40px; }
+        .integration-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .integration-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; }
         .integration-card .icon { font-size: 2rem; margin-bottom: 12px; }
         .integration-card h3 { font-size: 1rem; margin: 0 0 6px; }
@@ -52,7 +52,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="/" class="logo">
@@ -61,209 +60,180 @@
             </a>
             <nav class="nav">
                 <a href="/explore.html">Explore</a>
+                <a href="/#packages">Packages</a>
                 <a href="/docs/">Docs</a>
                 <a href="/api-docs/">API</a>
             </nav>
-            <div class="header-actions">
-                <a href="#login" class="btn btn-outline">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    Sign in with GitHub
-                </a>
-            </div>
         </div>
     </header>
 
-    <!-- Hero -->
     <section class="lp-hero">
         <div class="container">
-            <span class="badge">API Integration Library</span>
-            <h1>Stop Writing the Same API Integrations Over and Over</h1>
-            <p>Beepack is the open API integration library. Pull production-ready OAuth flows, payment integrations, PDF generators, and webhooks — all already debugged and edge-case hardened.</p>
+            <span class="badge">Focused API Integration Library</span>
+            <h1>The integrations your LLM still can't write from scratch</h1>
+            <p>A narrow library for APIs poorly represented in LLM training data. French regulatory (SIRET/SIREN, INSEE), CDN heuristics, and breaking-change zones like Auth.js v4→v5. For Stripe, OAuth, or OpenAI - just ask your LLM directly.</p>
             <div class="hero-actions">
-                <a href="/explore.html" class="btn btn-primary btn-lg">Browse Integrations</a>
-                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Publish an Integration</a>
+                <a href="/#packages" class="btn btn-primary btn-lg">See the 5 packages</a>
+                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Suggest a niche API</a>
             </div>
         </div>
     </section>
 
-    <!-- What's in the library -->
     <section class="lp-section">
         <div class="container">
-            <h2>What's in the Library</h2>
-            <p class="section-lead">Every integration in Beepack handles the edge cases that trip up first-time implementations.</p>
+            <h2>What's actually in the library</h2>
+            <p class="section-lead">Each package exists because a frontier LLM reliably hallucinates this API. We do not duplicate what Claude or GPT already generate well.</p>
             <div class="integration-grid">
                 <div class="integration-card">
-                    <div class="icon">🔐</div>
-                    <h3>Authentication</h3>
-                    <p>OAuth 2.0 with refresh tokens, PKCE, state parameter, and proper token storage.</p>
-                    <code>beepack pull github-oauth</code>
+                    <div class="icon">🏢</div>
+                    <h3>SIRET / SIREN validation</h3>
+                    <p>Luhn checksum for 14-digit SIRET and 9-digit SIREN, with proper formatting. French-only, zero deps.</p>
+                    <code>beepack pull siret-utils</code>
                 </div>
                 <div class="integration-card">
-                    <div class="icon">💳</div>
-                    <h3>Payments</h3>
-                    <p>Stripe checkout with webhooks, subscription handling, and idempotency keys.</p>
-                    <code>beepack pull stripe-checkout</code>
+                    <div class="icon">🧹</div>
+                    <h3>CDN URL cleaner</h3>
+                    <p>Extract the original image behind Wix, Shopify, WordPress, Squarespace transformed URLs. Domain heuristics LLMs don't know.</p>
+                    <code>beepack pull cdn-url-cleaner</code>
                 </div>
                 <div class="integration-card">
-                    <div class="icon">📄</div>
-                    <h3>PDF Generation</h3>
-                    <p>Professional invoices with custom layouts, page breaks, and multi-currency formatting.</p>
-                    <code>beepack pull pdf-invoice</code>
+                    <div class="icon">🌐</div>
+                    <h3>CMS detector</h3>
+                    <p>Identify CMS, JS framework, analytics, and server stack from any URL. Heuristic signatures, not just headers.</p>
+                    <code>beepack pull cms-detector</code>
                 </div>
                 <div class="integration-card">
-                    <div class="icon">📬</div>
-                    <h3>Messaging</h3>
-                    <p>Slack webhooks and Resend email with retry logic, rate limiting, and error handling.</p>
-                    <code>beepack pull slack-webhook</code>
+                    <div class="icon">🔒</div>
+                    <h3>Auth.js v5 (NextAuth) setup</h3>
+                    <p>Production config for the v5 rewrite LLMs still emit v4 patterns for. GitHub, Google, magic-link, App Router.</p>
+                    <code>beepack pull nextauth-setup</code>
                 </div>
                 <div class="integration-card">
-                    <div class="icon">☁️</div>
-                    <h3>Storage</h3>
-                    <p>S3-compatible storage with signed URLs, multipart uploads, and streaming.</p>
-                    <code>beepack pull s3-storage</code>
+                    <div class="icon">📋</div>
+                    <h3>Linear API client</h3>
+                    <p>GraphQL issue CRUD, webhooks, projects, comments. Recent schema changes LLMs get wrong.</p>
+                    <code>beepack pull linear-api</code>
                 </div>
-                <div class="integration-card">
-                    <div class="icon">⏱️</div>
-                    <h3>Rate Limiting</h3>
-                    <p>Exponential backoff, jitter, circuit breakers — production-ready throttling.</p>
-                    <code>beepack pull rate-limiter</code>
-                </div>
-                <div class="integration-card">
-                    <div class="icon">🗺️</div>
-                    <h3>Geo &amp; Business Data</h3>
-                    <p>Google Places client, SIRET validator, and CMS detection utilities.</p>
-                    <code>beepack pull google-places-client</code>
-                </div>
-                <div class="integration-card">
-                    <div class="icon">🤖</div>
-                    <h3>Discord Bots</h3>
-                    <p>Event handling, slash commands, permission management, rate limit awareness.</p>
-                    <code>beepack pull discord-bot</code>
+                <div class="integration-card" style="border-style:dashed;opacity:0.8;">
+                    <div class="icon">🇫🇷</div>
+                    <h3>Coming next (post-validation)</h3>
+                    <p>URSSAF, Pappers, FranceConnect, Chorus Pro, DSN, YouSign, Qonto, Pennylane.</p>
+                    <code>beepack suggest urssaf-api</code>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How it works -->
     <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
-            <h2>Pull an Integration in 30 Seconds</h2>
-            <p class="section-lead">From search to running code in under a minute.</p>
+            <h2>Pull an integration in 30 seconds</h2>
+            <p class="section-lead">Source code lands in your project. No runtime dependency.</p>
             <div class="steps-horizontal">
                 <div class="step-card">
                     <div class="step-num">1</div>
                     <h3>Search</h3>
                     <p>Describe what you need in natural language</p>
-                    <pre><code>beepack search "stripe checkout"</code></pre>
+                    <pre><code>beepack search "siret validator"</code></pre>
                 </div>
                 <div class="step-card">
                     <div class="step-num">2</div>
                     <h3>Pull</h3>
-                    <p>Pull the source code directly into your project</p>
-                    <pre><code>beepack pull stripe-checkout</code></pre>
+                    <p>Source code copied into your project</p>
+                    <pre><code>beepack pull siret-utils</code></pre>
                 </div>
                 <div class="step-card">
                     <div class="step-num">3</div>
-                    <h3>Ship</h3>
-                    <p>It's source code you own — adapt it, extend it, ship it</p>
-                    <pre><code># Runs in your codebase
-# No runtime dependency</code></pre>
+                    <h3>Own &amp; ship</h3>
+                    <p>It's your code now - adapt, extend, delete</p>
+                    <pre><code># no runtime dep added
+# no lock-in</code></pre>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Why Beepack vs writing it yourself -->
     <section class="lp-section">
         <div class="container">
-            <h2>Why Use a Library Instead of Writing It Yourself?</h2>
-            <p class="section-lead">The first implementation is easy. The edge cases take the rest of the day.</p>
+            <h2>Why this, instead of just asking Claude?</h2>
+            <p class="section-lead">For 90% of APIs, frontier LLMs do fine. This library only covers the other 10%.</p>
             <table class="comparison-table">
                 <thead>
                     <tr>
-                        <th>Feature</th>
-                        <th>Write from scratch</th>
-                        <th>Beepack integration</th>
+                        <th>Scenario</th>
+                        <th>Ask Claude directly</th>
+                        <th>Use Beepack</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Works for the happy path</td>
-                        <td class="yes">✓ Yes</td>
-                        <td class="yes">✓ Yes</td>
+                        <td>Stripe checkout handler</td>
+                        <td class="yes">✓ Claude does fine</td>
+                        <td class="no">✗ We don't cover this</td>
                     </tr>
                     <tr>
-                        <td>OAuth token refresh handled</td>
-                        <td class="no">✗ Usually not</td>
-                        <td class="yes">✓ Yes</td>
+                        <td>Standard OAuth flow</td>
+                        <td class="yes">✓ Claude does fine</td>
+                        <td class="no">✗ We don't cover this</td>
                     </tr>
                     <tr>
-                        <td>Rate limit retry / backoff</td>
-                        <td class="no">✗ Often skipped</td>
-                        <td class="yes">✓ Built in</td>
+                        <td>SIRET Luhn validation</td>
+                        <td class="no">✗ Often wrong digit weights</td>
+                        <td class="yes">✓ Tested Luhn impl</td>
                     </tr>
                     <tr>
-                        <td>Webhook signature verification</td>
-                        <td class="no">✗ Easy to forget</td>
-                        <td class="yes">✓ Included</td>
+                        <td>Auth.js v5 (v4→v5 migration)</td>
+                        <td class="no">✗ Still emits v4 patterns</td>
+                        <td class="yes">✓ v5-native</td>
                     </tr>
                     <tr>
-                        <td>Security scan</td>
-                        <td class="no">✗ Manual or none</td>
-                        <td class="yes">✓ 3-layer scan</td>
+                        <td>Wix / Shopify CDN URL parsing</td>
+                        <td class="no">✗ Hallucinates paths</td>
+                        <td class="yes">✓ Domain heuristics</td>
                     </tr>
                     <tr>
-                        <td>AI-readable with MCP</td>
-                        <td class="no">✗ No</td>
-                        <td class="yes">✓ Native MCP support</td>
-                    </tr>
-                    <tr>
-                        <td>Source code you own</td>
-                        <td class="yes">✓ Yes</td>
-                        <td class="yes">✓ Yes — no lock-in</td>
+                        <td>French regulatory (URSSAF, Pappers)</td>
+                        <td class="no">✗ Invents endpoints</td>
+                        <td class="yes">✓ On the niche roadmap</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </section>
 
-    <!-- Who uses it -->
     <section class="lp-section" style="background:var(--background-alt);">
         <div class="container">
-            <h2>Who Uses Beepack</h2>
+            <h2>Who this is for</h2>
             <div class="who-grid">
                 <div class="who-card">
+                    <div class="emoji">🇫🇷</div>
+                    <h3>French solo devs &amp; indie hackers</h3>
+                    <p>You're building for the French market - SIRET, TVA, URSSAF, DSN. LLMs don't know these well. We do.</p>
+                </div>
+                <div class="who-card">
                     <div class="emoji">🤖</div>
-                    <h3>AI Coding Agents</h3>
-                    <p>Cursor, Claude, and Copilot can query Beepack via MCP to pull integrations without hallucinating their own broken version.</p>
+                    <h3>AI agents on niche APIs</h3>
+                    <p>Claude or GPT hallucinates an obscure API? Point them at Beepack via MCP for the subset we cover.</p>
                 </div>
                 <div class="who-card">
-                    <div class="emoji">🚀</div>
-                    <h3>Vibe Coders</h3>
-                    <p>Indie hackers and solo developers who want production-quality integrations without spending hours on docs and edge cases.</p>
-                </div>
-                <div class="who-card">
-                    <div class="emoji">🏗️</div>
-                    <h3>Teams</h3>
-                    <p>Engineering teams that want a shared registry of internal utilities, preventing the same integration from being rewritten six times.</p>
+                    <div class="emoji">🔧</div>
+                    <h3>Teams wrangling breaking changes</h3>
+                    <p>Auth.js v4→v5, Linear GraphQL churn - the places where training data is stale and the docs lag.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
     <section class="cta-section lp-section">
         <div class="container" style="text-align:center;">
-            <h2>Start Pulling Integrations</h2>
-            <p style="color:var(--text-muted);margin-bottom:32px;">Browse the library, pick what you need, ship in minutes.</p>
+            <h2>Hit an API your LLM hallucinated?</h2>
+            <p style="color:var(--text-muted);margin-bottom:32px;">That's the signal we build for. Send the API and what Claude got wrong - we'll prioritize it.</p>
             <div class="hero-actions" style="justify-content:center;">
-                <a href="/explore.html" class="btn btn-primary btn-lg">Browse the Library</a>
-                <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Publish an Integration</a>
+                <a href="/docs/getting-started.html" class="btn btn-primary btn-lg">Suggest a niche API</a>
+                <a href="/#packages" class="btn btn-outline btn-lg">Browse the 5 packages</a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -271,7 +241,7 @@
                     <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:28px;vertical-align:middle;">
                     <span class="logo-text">Beepack</span>
                 </div>
-                <p>Open source. Made with ❤️ for vibe coders.</p>
+                <p>Open source. Focused on the niches frontier LLMs still miss.</p>
             </div>
             <div class="footer-links">
                 <a href="/docs/">Documentation</a>

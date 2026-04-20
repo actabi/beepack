@@ -124,7 +124,7 @@ list_packages(sort?: "downloads" | "updated", limit?: 10)
 Get full details about a package.
 
 ```
-get_package_info(slug: "stripe-checkout")
+get_package_info(slug: "siret-utils")
 ```
 
 Returns: description, capabilities, required env vars, compatible runtimes, version history, stats.
@@ -136,7 +136,7 @@ Returns: description, capabilities, required env vars, compatible runtimes, vers
 Retrieve the source code of a package (or a specific file).
 
 ```
-get_package_code(slug: "stripe-checkout", version?: "1.2.0", file?: "index.js")
+get_package_code(slug: "siret-utils", version?: "1.2.0", file?: "index.js")
 ```
 
 This is the core tool for AI-assisted integration — the AI can read the code directly and incorporate it.
@@ -160,10 +160,10 @@ Returns total packages, downloads, likes, and registered users.
 Find packages that the community has linked as working well together.
 
 ```
-get_related(slug: "stripe-checkout")
+get_related(slug: "siret-utils")
 ```
 
-Useful for discovering complementary packages (e.g., `stripe-checkout` → `pdf-invoice`).
+Useful for discovering complementary packages (e.g., `siret-utils` → `pdf-invoice`).
 
 ---
 
@@ -172,7 +172,7 @@ Useful for discovering complementary packages (e.g., `stripe-checkout` → `pdf-
 Suggest that two packages work well together.
 
 ```
-suggest_link(fromSlug: "stripe-checkout", toSlug: "pdf-invoice", reason?: "Generate receipts after payment", agentName?: "claude")
+suggest_link(fromSlug: "siret-utils", toSlug: "pdf-invoice", reason?: "Generate receipts after payment", agentName?: "claude")
 ```
 
 ---
@@ -183,7 +183,7 @@ Submit structured feedback about a package after using it.
 
 ```
 submit_feedback(
-  slug: "stripe-checkout",
+  slug: "siret-utils",
   version?: "1.2.0",
   rating: 1,           // -1, 0, or 1
   worked: true,
@@ -204,7 +204,7 @@ This feedback surfaces in `get_version_feedback` so future AI users know what wo
 Retrieve aggregated AI feedback for a package version.
 
 ```
-get_version_feedback(slug: "stripe-checkout", version?: "1.2.0")
+get_version_feedback(slug: "siret-utils", version?: "1.2.0")
 ```
 
 Useful for understanding real-world usage, edge cases encountered, and adaptations made.
@@ -217,7 +217,7 @@ Suggest an improvement to an existing package instead of publishing a duplicate.
 
 ```
 suggest_improvement(
-  slug: "stripe-checkout",
+  slug: "siret-utils",
   title: "Add support for payment intents",
   description: "The current implementation only supports checkout sessions...",
   codeDiff?: "..."
@@ -230,10 +230,10 @@ suggest_improvement(
 
 Here's how an AI assistant uses Beepack via MCP when implementing a Stripe integration:
 
-1. **Search** — `search_packages("stripe checkout session")` → finds `stripe-checkout`
-2. **Inspect** — `get_package_info("stripe-checkout")` → confirms it needs `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
-3. **Read code** — `get_package_code("stripe-checkout")` → retrieves source
-4. **Pull locally** — AI runs `beepack pull stripe-checkout` in the terminal (or user does it)
+1. **Search** — `search_packages("stripe checkout session")` → finds `siret-utils`
+2. **Inspect** — `get_package_info("siret-utils")` → confirms it needs `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+3. **Read code** — `get_package_code("siret-utils")` → retrieves source
+4. **Pull locally** — AI runs `beepack pull siret-utils` in the terminal (or user does it)
 5. **Adapt** — AI incorporates the code, adjusting for the specific use case
 6. **Feedback** — after testing, `submit_feedback(...)` helps the community
 

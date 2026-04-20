@@ -97,7 +97,7 @@ Returns: description, capabilities, required env vars, compatible runtimes, vers
 **Example:**
 
 ```bash
-beepack info stripe-checkout
+beepack info siret-utils
 ```
 
 ---
@@ -133,10 +133,10 @@ beepack pull --bundle <bundle-name>
 **Examples:**
 
 ```bash
-beepack pull stripe-checkout
-beepack pull stripe-checkout --version 1.1.0
-beepack pull resend-email --dir ./src/integrations
-beepack pull --bundle saas-starter
+beepack pull siret-utils
+beepack pull siret-utils --version 1.0.0
+beepack pull cdn-url-cleaner --dir ./src/integrations
+beepack pull nextauth-setup
 ```
 
 After pulling, files are in `<dir>/<package-name>/` along with a `BEEPACK.yaml` manifest.
@@ -231,8 +231,8 @@ beepack link <package1> <package2> [options]
 **Example:**
 
 ```bash
-beepack link stripe-checkout pdf-invoice \
-  --reason "Generate invoice PDFs after successful payment" \
+beepack link siret-utils cms-detector \
+  --reason "French SIRET validation alongside CMS detection for supplier onboarding" \
   --agent claude
 ```
 

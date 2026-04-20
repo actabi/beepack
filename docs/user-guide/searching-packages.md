@@ -7,9 +7,9 @@ Beepack supports natural language search backed by keyword matching and optional
 ## Basic Search
 
 ```bash
-beepack search "stripe checkout"
-beepack search "oauth github"
-beepack search "rate limiting"
+beepack search "french siret validator"
+beepack search "cdn image url cleanup"
+beepack search "auth.js v5"
 ```
 
 Results show package name, description, stats (likes/dislikes/downloads), and a relevance score.
@@ -17,14 +17,14 @@ Results show package name, description, stats (likes/dislikes/downloads), and a 
 **Example output:**
 
 ```
-stripe-checkout   1.2.0  ★ 42  ↓ 1,840
-  Complete Stripe checkout with webhook signature verification, subscription management,
-  and idempotency support. Handles replay attacks and network failures.
+siret-utils   1.0.0
+  Validate and format French business IDs (SIRET/SIREN) with the Luhn algorithm.
+  Zero dependencies.
   [score: 0.94]
 
-stripe-subscriptions  0.9.1  ★ 18  ↓ 621
-  Manage Stripe subscription lifecycle, trial periods, and billing portal.
-  [score: 0.71]
+cms-detector  1.0.0
+  Detect CMS platforms, JS frameworks, analytics tools, and server tech from any URL.
+  [score: 0.52]
 ```
 
 ---
@@ -40,15 +40,15 @@ beepack search "stripe" --capabilities "verify-webhook-signature"
 beepack search "auth" --capabilities "oauth,token-refresh"
 ```
 
-Common capabilities: `create-checkout-session`, `verify-webhook-signature`, `send-email`, `upload-file`, `rate-limit`, `token-refresh`, `parse-pdf`, `send-message`.
+Common capabilities in the current catalog: `validate_siret`, `format_siret`, `format_siren`, `clean_cdn_url`, `detect_cms`, `detect_framework`, `configure_authjs_v5`, `linear_issue_crud`.
 
 ### By Compatible Runtime
 
 Find packages validated for a specific AI runtime:
 
 ```bash
-beepack search "pdf" --compatible claude
-beepack search "storage" --compatible cursor
+beepack search "siret" --compatible claude
+beepack search "auth.js" --compatible cursor
 ```
 
 Supported values: `cursor`, `copilot`, `claude`, `openclaw`, `windsurf`.
@@ -64,7 +64,7 @@ Default limit is 10.
 ### Combining Filters
 
 ```bash
-beepack search "webhooks" --capabilities "verify-signature" --compatible claude --limit 3
+beepack search "french business" --capabilities "validate_siret" --compatible claude --limit 3
 ```
 
 ---
@@ -96,7 +96,7 @@ beepack list --limit 20
 Before pulling a package, get the full picture:
 
 ```bash
-beepack info stripe-checkout
+beepack info siret-utils
 ```
 
 This shows:
@@ -111,25 +111,24 @@ This shows:
 **Example:**
 
 ```
-stripe-checkout  v1.2.0
+siret-utils  v1.0.0
 by actabi
 
-Complete Stripe checkout session management with webhook verification...
+Validate and format French business IDs (SIRET/SIREN) with the Luhn algorithm.
 
 Capabilities:
-  • create-checkout-session
-  • verify-webhook-signature
-  • manage-subscriptions
-  • handle-payment-events
+  - validate_siret
+  - format_siret
+  - format_siren
+  - strip_siret_formatting
 
 Required env vars:
-  • STRIPE_SECRET_KEY
-  • STRIPE_WEBHOOK_SECRET
+  (none - zero dependencies)
 
 Compatible: cursor, copilot, claude, openclaw
-Downloads: 1,840   Likes: 42   Dislikes: 2
+Downloads: 0   Likes: 0   Dislikes: 0
 
-Versions: 1.2.0, 1.1.0, 1.0.0
+Versions: 1.0.0
 ```
 
 ---
@@ -147,7 +146,7 @@ beepack bundles
 Pull all packages in a bundle:
 
 ```bash
-beepack pull --bundle saas-starter
+beepack pull --bundle fr-business-starter
 ```
 
 ---
@@ -158,7 +157,7 @@ After pulling a package, check what other packages the community has found work 
 
 ```bash
 # Via MCP tool (if connected)
-# get_related("stripe-checkout") → suggests pdf-invoice, resend-email
+# get_related("siret-utils") -> suggests cms-detector for supplier onboarding flows
 ```
 
 ---
@@ -176,7 +175,7 @@ Results are ranked by a combined relevance score. The `--sort` flag only applies
 
 ## Tips
 
-- **Be specific** — `"stripe webhook signature verification"` finds better results than `"stripe"`
+- **Be specific** - `"validate french SIRET with Luhn checksum"` finds better results than `"validate"`
 - **Use capability filters** when you know exactly what you need the code to do
 - **Check `beepack info`** before pulling — verify the required env vars match what you have
 - **Check the security tab** on the web to see scan results for sensitive integrations

@@ -237,7 +237,7 @@ beepack/
 - [x] ClawHub compatibility (OpenClaw integration)
 - [x] Like/dislike system for suggestions
 - [x] Automatic security scan (3-layer pipeline: static + LLM + community reports)
-- [x] 43 packages (13 original + 30 from roadmap across 3 tiers)
+- [x] 5 packages (pivoted 2026-04-20 - narrow focus on APIs where frontier LLMs still fail: French/regulatory, domain heuristics, breaking-change zones)
 - [ ] Forks and pull requests
 - [ ] CI test badges
 

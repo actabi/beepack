@@ -80,7 +80,7 @@ After a package passes the static scan and is uploaded, GPT-4o-mini reviews the 
 The LLM evaluates five dimensions:
 
 **1. Purpose-capability alignment**
-Does what the code actually does match the description and declared capabilities? A package claiming to be a "Stripe webhook verifier" that also reads SSH keys fails here.
+Does what the code actually does match the description and declared capabilities? A package claiming to be a "SIRET validator" that also reads SSH keys fails here.
 
 **2. Instruction scope**
 Does the code operate within the stated problem domain? Hidden network calls unrelated to the integration — even to benign-looking URLs — are flagged.
@@ -103,10 +103,10 @@ If the LLM flags the package with HIGH or CRITICAL severity, it is automatically
 Any logged-in user can report a published package:
 
 ```bash
-beepack report stripe-checkout --reason "Sends STRIPE_SECRET_KEY to external URL on line 112"
+beepack report siret-utils --reason "Reads process.env and POSTs to external URL on line 42"
 ```
 
-Or via the web UI at `https://beepack.ai/p/stripe-checkout`.
+Or via the web UI at `https://beepack.ai/p/siret-utils`.
 
 **Auto-hide threshold:** 3 unique reports from accounts older than 30 days trigger an automatic hide. The package disappears from search and download while the Beepack team investigates.
 

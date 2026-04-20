@@ -8,11 +8,11 @@ Common questions about Beepack.
 
 ### What is Beepack?
 
-Beepack is a registry of battle-tested source code for common but tricky integrations — OAuth flows, webhook signature verification, payment processing, file storage, email delivery, and more. Instead of spending hours debugging edge cases, pull proven code from the community.
+Beepack is a narrow registry of source code for APIs where frontier LLMs still hallucinate - French regulatory (SIRET/SIREN), CDN/domain heuristics, and breaking-change zones like Auth.js v4→v5. For commodity integrations (Stripe, OAuth, OpenAI), just ask your LLM directly - it does fine. That's deliberately out of scope.
 
 ### Is Beepack a package manager like npm?
 
-No. Beepack distributes **source code**, not compiled packages. When you `beepack pull stripe-checkout`, you get the actual `.js` files in your project directory. There is no runtime dependency on Beepack — the code is yours to read, adapt, and ship.
+No. Beepack distributes **source code**, not compiled packages. When you `beepack pull siret-utils`, you get the actual `.js` files in your project directory. There is no runtime dependency on Beepack - the code is yours to read, adapt, and ship.
 
 ### Is it free to use?
 
@@ -20,7 +20,7 @@ Yes. Browsing and pulling packages is free and anonymous. Publishing requires a 
 
 ### What kinds of packages are on Beepack?
 
-Integration code: Stripe checkout/webhooks, OAuth flows, email sending, S3 storage, PDF generation, Slack/Discord messaging, rate limiting, and more. Packages solve specific integration problems that have tricky edge cases.
+Only the niches where frontier LLMs reliably fail today: French/regulatory APIs (siret-utils, roadmap: urssaf, pappers, franceconnect), domain heuristics (cdn-url-cleaner, cms-detector), and breaking-change zones (nextauth-setup for Auth.js v5, linear-api for recent GraphQL changes). If a frontier LLM zero-shots an API well, we don't duplicate that - we'd just be adding bloat.
 
 ---
 
@@ -50,7 +50,7 @@ That said, always review code before running it in production. The security scan
 ### How do I pull a specific version?
 
 ```bash
-beepack pull stripe-checkout --version 1.1.0
+beepack pull siret-utils --version 1.1.0
 ```
 
 ### Where does pulled code go?
@@ -58,7 +58,7 @@ beepack pull stripe-checkout --version 1.1.0
 By default, `./packages/<package-name>/`. Customize with `--dir`:
 
 ```bash
-beepack pull stripe-checkout --dir ./src/integrations
+beepack pull siret-utils --dir ./src/integrations
 ```
 
 ### Can I update a pulled package?
@@ -66,7 +66,7 @@ beepack pull stripe-checkout --dir ./src/integrations
 Pull the new version into the same directory:
 
 ```bash
-beepack pull stripe-checkout --version 1.2.0 --dir ./packages
+beepack pull siret-utils --version 1.2.0 --dir ./packages
 ```
 
 This overwrites the existing files. Review the diff before committing.

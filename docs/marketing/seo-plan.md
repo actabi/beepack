@@ -1,5 +1,7 @@
 # Beepack SEO Plan
 
+> **ARCHIVED (2026-04-20).** This SEO plan was written against the pre-pivot positioning (broad API integration library). After the pivot to a narrow French/regulatory + LLM-hallucination niche, the target keyword clusters are obsolete. New SEO work should target: "french SIRET validator", "INSEE API", "Auth.js v5 NextAuth setup", "CDN url cleaner Wix Shopify", "llm hallucination API", and French-language terms. Do not execute against the plan below without reconfirming the niche keywords first.
+
 ## Overview
 
 Beepack targets developers and AI agents who need production-ready integrations without spending hours debugging edge cases. SEO strategy focuses on high-intent keywords across three clusters: tool-type terms, workflow terms, and integration-specific terms.

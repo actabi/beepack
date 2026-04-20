@@ -1,8 +1,8 @@
 # Beepack User Guide
 
-**Beepack** is a registry of battle-tested code for complex integrations. Instead of spending hours debugging OAuth flows, webhook signature verification, or API rate limiting, pull proven code from the community and get moving.
+**Beepack** is a narrow registry of source code for APIs where frontier LLMs still hallucinate: French regulatory (SIRET/SIREN), CDN/domain heuristics, and breaking-change zones like Auth.js v4→v5. For commodity integrations - Stripe, OAuth, OpenAI - just ask your LLM directly.
 
-> "Don't recode. Reuse."
+> "For the 10% where the LLM still gets it wrong."
 
 ---
 
@@ -25,18 +25,18 @@
 
 ## What is Beepack?
 
-Beepack is a package registry purpose-built for sharing **source code** (not compiled libraries) for common but tricky integrations. Each package is:
+Beepack is a narrow registry sharing **source code** (not compiled libraries) for integrations where frontier LLMs still reliably fail. Each package is:
 
-- **Production-ready** — edge cases handled, not just happy paths
-- **Source code** — pull it, read it, adapt it, own it
-- **Security-scanned** — 3-layer pipeline (static analysis, LLM review, VirusTotal)
-- **AI-friendly** — searchable by AI assistants via MCP
+- **Niche by design** - only APIs where training data is thin, regional, or recently broken
+- **Source code** - pull it, read it, adapt it, own it (no runtime dep)
+- **Security-scanned** - 3-layer pipeline (static analysis, LLM review, community reports)
+- **AI-friendly** - searchable by AI assistants via MCP
 
 ### Who is it for?
 
-- **Developers** who want to skip the yak-shaving on integrations
-- **AI assistants** (Claude, Copilot, Cursor, etc.) looking for proven patterns before writing from scratch
-- **Teams** who want a shared library of internal utilities
+- **French indie hackers and solo devs** building on SIRET/TVA/URSSAF/FranceConnect territory
+- **AI assistants** (Claude, Copilot, Cursor) that need a reliable source for the niches they hallucinate
+- **Teams** dealing with recent SDK breaking changes (Auth.js v5, Linear GraphQL churn)
 
 ---
 
@@ -49,11 +49,11 @@ npm install -g @actabi/beepack
 # Authenticate with GitHub
 beepack login
 
-# Search for a package
-beepack search "stripe checkout"
+# Search for a package in our niche
+beepack search "french siret validator"
 
 # Pull the code into your project
-beepack pull stripe-checkout
+beepack pull siret-utils
 ```
 
-The source code lands in `./packages/stripe-checkout/`. Read it, adapt it, ship it.
+The source code lands in `./packages/siret-utils/`. Read it, adapt it, ship it.

@@ -1,8 +1,10 @@
 # Beepack Package Roadmap
 
+> **Status: ARCHIVED (2026-04-20).** This roadmap predates the pivot and lists 30+ packages that have been pruned. Kept for historical reference only. The current direction is narrow: French/regulatory APIs and niches where frontier LLMs still fail. See AGENTS.md and the project memory for the active plan.
+>
 > **Owner:** Compass (PM) — [BEE-12](/BEE/issues/BEE-12)
-> **Last updated:** 2026-04-08
-> **Status:** Draft v1
+> **Last updated:** 2026-04-08 (archived 2026-04-20)
+> **Status:** Archived / superseded
 
 ---
 

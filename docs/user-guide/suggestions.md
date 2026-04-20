@@ -20,37 +20,37 @@ Good candidates for suggestions:
 ## Submitting a Suggestion
 
 ```bash
-beepack suggest stripe-checkout
+beepack suggest siret-utils
 ```
 
 This opens an interactive prompt:
 
 ```
-Title: Add idempotency key support to checkout session creation
-Description: Retrying a failed request without an idempotency key creates
-duplicate sessions. This diff adds the Idempotency-Key header using a
-hash of the cart ID and timestamp.
+Title: Accept SIREN input alongside 14-digit SIRET in validateSiretLuhn
+Description: Some INSEE callers return 9-digit SIREN. validateSiretLuhn
+currently rejects them. This diff adds an optional mode that accepts
+both lengths and validates Luhn accordingly.
 
 Attach a diff? (y/n): y
-Diff file path: ./idempotency.patch
+Diff file path: ./siren-support.patch
 ```
 
 Or pass everything as flags:
 
 ```bash
-beepack suggest stripe-checkout \
-  --title "Add idempotency key support" \
-  --description "Retrying without an idempotency key creates duplicate sessions..." \
-  --diff ./idempotency.patch
+beepack suggest siret-utils \
+  --title "Accept SIREN alongside SIRET" \
+  --description "validateSiretLuhn should optionally accept 9-digit SIREN..." \
+  --diff ./siren-support.patch
 ```
 
 Via MCP:
 
 ```
 suggest_improvement(
-  slug: "stripe-checkout",
-  title: "Add idempotency key support",
-  description: "Retrying without an idempotency key creates duplicate sessions...",
+  slug: "siret-utils",
+  title: "Accept SIREN alongside SIRET",
+  description: "validateSiretLuhn should optionally accept 9-digit SIREN...",
   codeDiff: "--- a/index.js\n+++ b/index.js\n..."
 )
 ```
@@ -93,8 +93,8 @@ new version
 Any logged-in user can vote on an open suggestion:
 
 ```bash
-beepack suggest:vote stripe-checkout <suggestion-id> --like
-beepack suggest:vote stripe-checkout <suggestion-id> --dislike
+beepack suggest:vote siret-utils <suggestion-id> --like
+beepack suggest:vote siret-utils <suggestion-id> --dislike
 ```
 
 Vote counts are visible on the suggestion. Authors use them to prioritise — high-like suggestions signal real demand. There is no automatic merge threshold; the author always makes the final call.
@@ -112,13 +112,13 @@ beepack suggestions --mine
 View a specific suggestion:
 
 ```bash
-beepack suggestions stripe-checkout
+beepack suggestions siret-utils
 ```
 
 Accept and apply:
 
 ```bash
-beepack suggest:accept stripe-checkout <suggestion-id>
+beepack suggest:accept siret-utils <suggestion-id>
 # Applies the diff to a working branch, then:
 beepack publish
 ```
@@ -126,8 +126,8 @@ beepack publish
 Decline with a reason:
 
 ```bash
-beepack suggest:decline stripe-checkout <suggestion-id> \
-  --reason "Idempotency is the caller's responsibility per Stripe docs"
+beepack suggest:decline siret-utils <suggestion-id> \
+  --reason "SIREN validation belongs in a separate helper to keep this package focused"
 ```
 
 The submitter receives a notification when you respond.
@@ -137,10 +137,10 @@ The submitter receives a notification when you respond.
 ## Viewing Suggestions on a Package
 
 ```bash
-beepack info stripe-checkout --suggestions
+beepack info siret-utils --suggestions
 ```
 
-Or browse at `https://beepack.ai/p/stripe-checkout/suggestions`.
+Or browse at `https://beepack.ai/p/siret-utils/suggestions`.
 
 ---
 

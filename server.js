@@ -229,6 +229,15 @@ db.exec(`
     UNIQUE(bundle_id, package_id)
   );
 
+  CREATE TABLE IF NOT EXISTS ratings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    package_id INTEGER REFERENCES packages(id),
+    user_id INTEGER REFERENCES users(id),
+    liked INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(package_id, user_id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_packages_slug ON packages(slug);
   CREATE INDEX IF NOT EXISTS idx_packages_owner ON packages(owner_id);
   CREATE INDEX IF NOT EXISTS idx_packages_status ON packages(moderation_status);

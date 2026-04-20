@@ -57,7 +57,7 @@ beepack whoami
 Search in natural language:
 
 ```bash
-beepack search "stripe webhook verification"
+beepack search "french siret validator"
 ```
 
 Or browse popular packages:
@@ -69,7 +69,7 @@ beepack list
 Get full details on a package before pulling:
 
 ```bash
-beepack info stripe-checkout
+beepack info siret-utils
 ```
 
 ---
@@ -79,19 +79,19 @@ beepack info stripe-checkout
 Pull source code into your project:
 
 ```bash
-beepack pull stripe-checkout
+beepack pull siret-utils
 ```
 
-By default, files land in `./packages/stripe-checkout/`. A `BEEPACK.yaml` manifest is created in that directory tracking the package name and version.
+By default, files land in `./packages/siret-utils/`. A `BEEPACK.yaml` manifest is created in that directory tracking the package name and version.
 
 **Options:**
 
 ```bash
 # Pull a specific version
-beepack pull stripe-checkout --version 1.2.0
+beepack pull siret-utils --version 1.2.0
 
 # Pull into a custom directory
-beepack pull stripe-checkout --dir ./src/integrations
+beepack pull siret-utils --dir ./src/integrations
 ```
 
 The pulled code is plain source — read it, understand it, adapt it to your needs. There is no runtime dependency on Beepack.

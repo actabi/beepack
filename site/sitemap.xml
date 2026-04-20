@@ -6,24 +6,9 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://beepack.ai/search.html</loc>
+    <loc>https://beepack.ai/explore.html</loc>
     <priority>0.9</priority>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/use-cases/api-integration-library.html</loc>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/use-cases/reusable-code-registry.html</loc>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/use-cases/vibecoding-tools.html</loc>
-    <priority>0.9</priority>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://beepack.ai/docs/</loc>
@@ -61,53 +46,18 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://beepack.ai/packages/github-oauth</loc>
+    <loc>https://beepack.ai/packages/siret-utils</loc>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://beepack.ai/packages/stripe-checkout</loc>
+    <loc>https://beepack.ai/packages/cdn-url-cleaner</loc>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://beepack.ai/packages/pdf-invoice</loc>
+    <loc>https://beepack.ai/packages/cms-detector</loc>
     <priority>0.8</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/slack-webhook</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/rate-limiter</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/resend-email</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/supabase-client</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/openai-streaming</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/anthropic-claude</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/google-oauth</loc>
-    <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
@@ -116,93 +66,8 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://beepack.ai/packages/twilio-sms</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/upstash-redis</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/webhook-validator</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/sentry-setup</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/image-upload</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/jwt-auth</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/neon-postgres</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/notion-api</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/posthog-analytics</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/telegram-bot</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/discord-bot</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/s3-storage</loc>
-    <priority>0.6</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/cdn-url-cleaner</loc>
-    <priority>0.5</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/cms-detector</loc>
-    <priority>0.5</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/google-places-client</loc>
-    <priority>0.5</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/listmonk-client</loc>
-    <priority>0.5</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/siret-utils</loc>
-    <priority>0.5</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://beepack.ai/packages/vercel-og</loc>
-    <priority>0.6</priority>
+    <loc>https://beepack.ai/packages/linear-api</loc>
+    <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
 </urlset>

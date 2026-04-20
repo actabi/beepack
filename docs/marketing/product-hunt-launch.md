@@ -1,6 +1,8 @@
-# Beepack — Product Hunt Launch Kit
+# Beepack - Product Hunt Launch Kit
 
-> Target launch: Tuesday, May 5, 2026 (12:00 AM PT)
+> **ARCHIVED (2026-04-20).** This launch kit predates the pivot to the French/regulatory niche. The tagline, positioning, and talking points below all reference the broad "npm for vibecoding / 43 packages" narrative that no longer holds. Do not launch against this kit. A new launch should wait until the 5-user validation phase is complete and the niche positioning has received organic traction.
+
+> Target launch: Tuesday, May 5, 2026 (12:00 AM PT) - **postponed pending validation**
 
 ---
 
