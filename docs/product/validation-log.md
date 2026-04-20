@@ -176,6 +176,49 @@
 
 ---
 
+## Batch 2 - Reddit leads (2026-04-20 via reddit-scan.py)
+
+HN filter too strict (14-day auto-archive). Added Reddit scan (posts stay active months). Scanner at `scripts/reddit-scan.py`. Keep only actionable leads - filtering out self-promo and generic "AI bad" threads.
+
+### Lead R1 - singh_taranjeet | PARTIAL MATCH (nextauth mentioned)
+- **Source:** https://www.reddit.com/r/ClaudeAI/comments/1seujth/claude_code_was_making_me_reexplain_my_entire/
+- **Date:** 2026-04-07 (~13 days)
+- **Sub:** r/ClaudeAI
+- **Pain:** "Every time I started a Claude Code session... 'Ok so this project uses Next.js 14, PostgreSQL with Prisma, we auth with NextAuth, tokens expire after 24 hours...' Claude wakes up with complete amnesia every single time."
+- **Our package:** `nextauth-setup` (indirect - he's complaining about context re-loading, not auth.js per se)
+- **Draft reply:**
+
+  > The NextAuth piece specifically is a good candidate for vendoring the source into the repo itself - Claude can read the file and the context is durable across sessions. This is what beepack does for auth.js v5: https://beepack.ai/package.html?slug=nextauth-setup. Pull it into `/lib/auth`, the agent stops re-discovering it every session.
+
+- **Posted at:** _[fill in]_
+- **Reply from dev:** _[fill in]_
+- **Pulled?** _[fill in]_
+
+---
+
+### Lead R2 - Big_Birthday_1884 | STRONG PAIN MATCH (generic hallucination)
+- **Source:** https://www.reddit.com/r/cursor/comments/1sd5qsk/the_native_autocomplete_models_in_modern_editors/
+- **Date:** 2026-04-05 (~15 days)
+- **Sub:** r/cursor
+- **Pain:** "Native GPT 4o will confidently generate the new files and then completely hallucinate the import paths in the parent component. DeepSeek Coder is incredibly fast but will randomly strip out unrelated state logic during a multi file edit."
+- **Our package:** broad (nextauth-setup + linear-api)
+- **Draft reply:**
+
+  > Same diagnosis. The fix that's worked for us: for the subset of libs where this fails predictably (Auth.js v5, Linear GraphQL, a few others), vendor the source into the repo rather than relying on the model's memory. Tiny registry of these here: https://beepack.ai. The import path confusion goes away when there's actual code to read.
+
+- **Posted at:** _[fill in]_
+- **Reply from dev:** _[fill in]_
+- **Pulled?** _[fill in]_
+
+---
+
+### Lead R3 - Adorable_Albatross94 | WEAK MATCH (SKIP - migration story, not pain)
+- **Source:** https://www.reddit.com/r/webdev/comments/1sett3u/
+- **Date:** 2026-04-07
+- **Reason to skip:** Scanner flagged high pain score but the post is a success story / war story about AngularJS → React 19 migration, not a hallucination complaint. Posting there would be off-topic and get downvoted.
+
+---
+
 ## Backlog - channels to scan manually
 
 The Claude Code environment can't reach Reddit or Stack Overflow. You'll need to scan these yourself (or from a regular browser).
