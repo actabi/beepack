@@ -2,7 +2,7 @@
 
 A bundle is a named collection of packages that install together. Instead of pulling multiple related packages one at a time, a bundle installs all of them with a single command and a single entry in your project manifest.
 
-> **Note (2026-04-20):** Beepack pivoted to a narrow French/regulatory + LLM-hallucination-zone focus. The current catalog is 5 packages. Bundles remain a supported feature but are thin until the catalog grows (gated by real-user validation).
+> **Note (2026-04-20):** Beepack pivoted to a narrow LLM-hallucination-zone focus (breaking-change zones, domain heuristics, regulatory compliance). The current catalog is 5 packages. Bundles remain a supported feature but are thin until the catalog grows (gated by real-user validation).
 
 ---
 
@@ -13,44 +13,42 @@ Bundles are defined by package authors in `HIVE.yaml`. When you install a bundle
 Bundles are useful for:
 
 - Bootstrapping a new project with a known-good set of niche utilities
-- Sharing a curated stack within a team building on the French market
-- Letting AI assistants pull everything they need for a regional use case in one step
+- Sharing a curated stack within a team dealing with the same breaking-change waves
+- Letting AI assistants pull everything they need for a migration in one step
 
 ---
 
 ## Installing a Bundle
 
 ```bash
-beepack pull --bundle fr-business-starter
+beepack pull --bundle scraping-starter
 ```
 
 This resolves the bundle, prints the package list, and pulls each one:
 
 ```
-Resolving bundle: fr-business-starter
-  siret-utils              v1.0.0
+Resolving bundle: scraping-starter
   cdn-url-cleaner          v1.0.0
   cms-detector             v1.0.0
 
-Pulling 3 packages into ./packages/
-OK siret-utils
+Pulling 2 packages into ./packages/
 OK cdn-url-cleaner
 OK cms-detector
 
-Done. 3 packages pulled.
+Done. 2 packages pulled.
 ```
 
 **Options:**
 
 ```bash
 # Pull into a custom directory
-beepack pull --bundle fr-business-starter --dir ./src/integrations
+beepack pull --bundle scraping-starter --dir ./src/integrations
 
 # Preview what a bundle includes without pulling
-beepack info --bundle fr-business-starter
+beepack info --bundle scraping-starter
 
 # Pull a specific version of a bundle
-beepack pull --bundle fr-business-starter --version 1.0.0
+beepack pull --bundle scraping-starter --version 1.0.0
 ```
 
 ---
@@ -60,15 +58,14 @@ beepack pull --bundle fr-business-starter --version 1.0.0
 Add a `bundle` field to your `HIVE.yaml`. The bundle is published alongside your package - any package can act as a bundle entry point.
 
 ```yaml
-name: fr-business-starter
+name: scraping-starter
 version: 1.0.0
-displayName: French Business Data Starter
+displayName: Web Scraping Starter
 description: |
-  Niche integrations for onboarding French SMB suppliers: SIRET validation,
-  CDN image cleanup for supplier logos, and tech-stack detection.
+  Niche integrations for web scraping pipelines: CDN image URL cleanup
+  across Wix/Shopify/WordPress, and CMS/framework detection from any URL.
 
 bundle:
-  - siret-utils
   - cdn-url-cleaner
   - cms-detector
 ```
@@ -81,9 +78,9 @@ bundle:
 
 ```yaml
 bundle:
-  - siret-utils@1.0.0
   - cdn-url-cleaner@1.0.0
-  - cms-detector
+  - cms-detector@1.0.0
+  - nextauth-setup
 ```
 
 - A bundle package can itself contain source files - it's common to include a `README.md` or a lightweight `index.js` that re-exports or wires things together.
@@ -94,13 +91,13 @@ bundle:
 ## Searching for Bundles
 
 ```bash
-beepack search --type bundle "french"
+beepack search --type bundle "scraping"
 ```
 
 Or via MCP:
 
 ```
-search_packages(query: "french business starter", type: "bundle")
+search_packages(query: "web scraping starter", type: "bundle")
 ```
 
 ---

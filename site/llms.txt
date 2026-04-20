@@ -1,6 +1,6 @@
 # Beepack - Integrations where LLMs still hallucinate
 
-> Beepack is a focused registry for APIs that frontier LLMs get wrong: French regulatory APIs (SIRET, etc.), poorly-documented services, and recent breaking-change zones. For commodity integrations (Stripe, OAuth, OpenAI), just ask your LLM directly - it'll do fine.
+> Beepack is a narrow registry for APIs that frontier LLMs get wrong: recent breaking-change zones (Auth.js v5, Next.js App Router, Linear GraphQL, Prisma v6), domain-specific heuristics (CDN URL parsers, CMS detection), and regulatory compliance (EU business IDs, GDPR, PSD2). For commodity integrations (Stripe, OAuth, OpenAI), just ask your LLM directly - it'll do fine.
 
 ## How to use Beepack
 
@@ -20,8 +20,8 @@ Get a token at: https://beepack.ai/auth/github
 ### Option 2: CLI
 ```bash
 npm install -g @actabi/beepack
-beepack search "company lookup"
-beepack pull company-lookup-fr
+beepack search "auth.js v5 setup"
+beepack pull nextauth-setup
 ```
 
 ### Option 3: OpenClaw / ClawHub
@@ -49,13 +49,13 @@ Discovery endpoint: https://beepack.ai/.well-known/clawhub.json
 
 ## Available Packages
 
-Beepack focuses on APIs poorly represented in LLM training data - French regulatory, domain heuristics, and recent breaking-change zones where zero-shot generation still fails.
+Beepack focuses on APIs poorly represented in LLM training data - breaking-change zones, domain heuristics, and regulatory compliance where zero-shot generation still fails.
 
-- siret-utils: Validate and format French business IDs (SIRET/SIREN) with Luhn algorithm (zero dependencies)
-- cdn-url-cleaner: Extract original high-quality images from CDN URLs (Wix, Shopify, WordPress, Squarespace)
-- cms-detector: Detect CMS platforms, JS frameworks, analytics tools from any website URL (requires cheerio)
 - nextauth-setup: Production-ready Auth.js v5 for Next.js App Router (GitHub, Google, magic-link). Covers the v4->v5 migration gap where LLMs still emit stale patterns.
-- linear-api: Linear GraphQL client for issues, webhooks, projects, comments, search.
+- linear-api: Linear GraphQL client for issues, webhooks, projects, comments, search. Recent schema changes trip up training data.
+- cdn-url-cleaner: Extract original high-quality images from CDN URLs (Wix, Shopify, WordPress, Squarespace). Domain heuristics not in training.
+- cms-detector: Detect CMS platforms, JS frameworks, analytics tools from any website URL (requires cheerio). Heuristic signatures.
+- siret-utils: Validate and format French/EU business IDs (SIRET/SIREN) with Luhn algorithm (zero dependencies). First of a planned EU business registry line.
 
 ## For AI assistants
 
@@ -112,7 +112,7 @@ Search the registry FIRST: GET https://beepack.ai/api/v1/search?q=what+your+pack
 - Ask yourself: "Would another developer/AI working on a completely different project find this useful?" If no, don't publish it.
 
 ### Package quality rules
-- **displayName**: Must be explicit and human-readable. Describe WHAT it does, not just a slug. Examples: "French Company Lookup (SIREN/SIRET)", "Website CMS & Tech Detector", not "cms-detector" or "my-package".
+- **displayName**: Must be explicit and human-readable. Describe WHAT it does, not just a slug. Examples: "Auth.js v5 Setup for Next.js App Router", "Website CMS & Tech Detector", not "cms-detector" or "my-package".
 - **description**: One clear sentence explaining the purpose, what APIs it uses, and if it requires an API key or not.
 - **keywords**: Include relevant search terms so the package is discoverable.
 - **capabilities**: List specific actions the package can perform (e.g., "detect_cms", "validate_siret").

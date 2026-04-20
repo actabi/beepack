@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beepack - Integrations where LLMs still hallucinate</title>
-    <meta name="description" content="A focused registry for APIs poorly represented in LLM training data: French regulatory (SIRET/SIREN), domain heuristics, recent breaking-change zones. For commodity integrations, just ask your LLM.">
-    <meta name="keywords" content="french api integrations, SIRET validator, llm hallucination, AI coding niche packages, french regulatory API, vibe coder france">
+    <meta name="description" content="A narrow registry for APIs poorly represented in LLM training data: recent breaking-change zones (Auth.js v5, Next.js App Router), domain heuristics, regulatory compliance. For commodity integrations, just ask your LLM.">
+    <meta name="keywords" content="llm hallucination, breaking change migration, nextauth v5, auth.js migration, cdn url parser, niche api registry, ai coding registry, shadcn for backend">
     <link rel="canonical" href="https://beepack.ai/">
     <meta property="og:title" content="Beepack - Integrations where LLMs still hallucinate">
-    <meta property="og:description" content="Focused registry for APIs poorly represented in LLM training data. French regulatory, domain heuristics, breaking-change zones.">
+    <meta property="og:description" content="Narrow registry for APIs LLMs still get wrong: breaking-change zones, domain heuristics, regulatory compliance.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beepack.ai/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Beepack - Integrations where LLMs still hallucinate">
-    <meta name="twitter:description" content="Focused registry for APIs poorly represented in LLM training data. French regulatory, domain heuristics, breaking-change zones.">
+    <meta name="twitter:description" content="Narrow registry for APIs LLMs still get wrong: breaking-change zones, domain heuristics, regulatory compliance.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -59,9 +59,9 @@
         <div class="container">
             <h1>Integrations where LLMs still hallucinate.</h1>
             <p class="hero-subtitle">
-                A focused registry for APIs poorly represented in LLM training data:<br>
-                <strong>French regulatory, domain heuristics, recent breaking-change zones.</strong><br>
-                <span style="font-size:0.9em;opacity:0.75;">For Stripe, OAuth, OpenAI - just ask your LLM directly. That's not what we're for.</span>
+                A narrow registry for the 10% of APIs frontier LLMs still get wrong:<br>
+                <strong>breaking-change zones, domain heuristics, regulatory compliance.</strong><br>
+                <span style="font-size:0.9em;opacity:0.75;">For Stripe, OpenAI, standard OAuth - just ask Claude directly. That's not what we're for.</span>
             </p>
 
             <div class="hero-actions">
@@ -82,14 +82,14 @@
                     <span class="stat-label">packages</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-icon">🇫🇷</span>
-                    <span class="stat-value">niche</span>
-                    <span class="stat-label">français / régulatoire</span>
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-value">narrow</span>
+                    <span class="stat-label">by design</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-icon">🎯</span>
-                    <span class="stat-value">focus</span>
-                    <span class="stat-label">là où les LLMs hallucinent</span>
+                    <span class="stat-icon">🧬</span>
+                    <span class="stat-value">own</span>
+                    <span class="stat-label">the source you pull</span>
                 </div>
             </div>
         </div>
@@ -111,14 +111,14 @@
         <div class="container">
             <div class="feature-grid">
                 <div class="feature-card">
-                    <div class="feature-icon feature-icon-yellow">🇫🇷</div>
-                    <h3>French &amp; regulatory first</h3>
-                    <p>SIRET/SIREN validation, INSEE portal quirks, and the niches where English-trained LLMs confidently invent endpoints.</p>
+                    <div class="feature-icon feature-icon-yellow">🔄</div>
+                    <h3>Breaking-change zones</h3>
+                    <p>Auth.js v4→v5, Next.js App Router quirks, Linear GraphQL churn. APIs where training data is stale and LLMs still emit old patterns.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon feature-icon-green">🎯</div>
                     <h3>Narrow on purpose</h3>
-                    <p>5 packages, not 43. Each one covers a place where frontier LLMs reliably get it wrong. No generic npm wrappers.</p>
+                    <p>5 packages, not 100. Each one covers a place where frontier LLMs reliably get it wrong. No generic npm wrappers.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon feature-icon-blue">🧬</div>
@@ -139,16 +139,16 @@
                     <div class="step-number">1</div>
                     <h3>Pick a niche integration</h3>
                     <p>A package exists because frontier LLMs still hallucinate this API.</p>
-                    <pre><code>beepack pull siret-utils</code></pre>
+                    <pre><code>beepack pull nextauth-setup</code></pre>
                     <p>Or ask your AI:</p>
-                    <pre><code>"validate a French SIRET number"</code></pre>
+                    <pre><code>"set up Auth.js v5 for App Router"</code></pre>
                 </div>
 
                 <div class="step">
                     <div class="step-number">2</div>
                     <h3>Own the source</h3>
                     <p>The code lands in your repo. Modify, extend, ship - no runtime dependency.</p>
-                    <pre><code>// your-project/lib/siret-utils/
+                    <pre><code>// your-project/lib/nextauth-setup/
 ├── index.js
 ├── README.md
 └── HIVE.yaml</code></pre>
@@ -158,8 +158,8 @@
                     <div class="step-number">3</div>
                     <h3>Suggest the next one</h3>
                     <p>Hit an API where Claude or GPT got it wrong? That's the signal we build for.</p>
-                    <pre><code>urssaf, pappers, franceconnect,
-chorus-pro, dsn, yousign...</code></pre>
+                    <pre><code>next.js-15-migration, tailwind-v4,
+expo-sdk-51, prisma-v6, svelte-5...</code></pre>
                 </div>
             </div>
         </div>
@@ -169,38 +169,38 @@ chorus-pro, dsn, yousign...</code></pre>
     <section id="packages" class="packages-section">
         <div class="container">
             <h2>All Packages</h2>
-            <p class="section-subtitle">5 packages ciblant les APIs mal représentées dans le training des LLMs. Là où Claude hallucine encore.</p>
+            <p class="section-subtitle">5 packages covering APIs poorly represented in LLM training data. Breaking-change zones, domain heuristics, regulatory compliance.</p>
 
             <div class="packages-grid">
                 <div class="package-card">
-                    <div class="package-icon">🏢</div>
-                    <h4><a href="package.html?slug=siret-utils">SIRET Utils</a></h4>
-                    <p>Validate and format French business IDs (SIRET/SIREN) with the Luhn algorithm.</p>
-                    <a href="package.html?slug=siret-utils" class="btn btn-sm">View</a>
-                </div>
-                <div class="package-card">
-                    <div class="package-icon">🧹</div>
-                    <h4><a href="package.html?slug=cdn-url-cleaner">CDN URL Cleaner</a></h4>
-                    <p>Extract original high-quality images from CDN-transformed URLs (Wix, Shopify, WordPress).</p>
-                    <a href="package.html?slug=cdn-url-cleaner" class="btn btn-sm">View</a>
-                </div>
-                <div class="package-card">
-                    <div class="package-icon">🌐</div>
-                    <h4><a href="package.html?slug=cms-detector">CMS Detector</a></h4>
-                    <p>Detect CMS platforms, JS frameworks, analytics tools, and server technology from any URL.</p>
-                    <a href="package.html?slug=cms-detector" class="btn btn-sm">View</a>
-                </div>
-                <div class="package-card">
                     <div class="package-icon">🔒</div>
                     <h4><a href="package.html?slug=nextauth-setup">Auth.js v5 (NextAuth) Setup</a></h4>
-                    <p>Production-ready Auth.js v5 for Next.js App Router with GitHub, Google, and magic-link providers.</p>
+                    <p>Production-ready Auth.js v5 for Next.js App Router. LLMs still emit v4 patterns a year after v5 shipped.</p>
                     <a href="package.html?slug=nextauth-setup" class="btn btn-sm">View</a>
                 </div>
                 <div class="package-card">
                     <div class="package-icon">📋</div>
                     <h4><a href="package.html?slug=linear-api">Linear API Client</a></h4>
-                    <p>Issue creation, webhook ingestion, project queries, comments, and search via Linear GraphQL API.</p>
+                    <p>Issues, webhooks, projects, comments, search via Linear GraphQL. Recent schema changes trip up LLMs.</p>
                     <a href="package.html?slug=linear-api" class="btn btn-sm">View</a>
+                </div>
+                <div class="package-card">
+                    <div class="package-icon">🧹</div>
+                    <h4><a href="package.html?slug=cdn-url-cleaner">CDN URL Cleaner</a></h4>
+                    <p>Extract original images behind Wix, Shopify, WordPress, Squarespace transformed URLs. Domain heuristics not in training.</p>
+                    <a href="package.html?slug=cdn-url-cleaner" class="btn btn-sm">View</a>
+                </div>
+                <div class="package-card">
+                    <div class="package-icon">🌐</div>
+                    <h4><a href="package.html?slug=cms-detector">CMS Detector</a></h4>
+                    <p>Detect CMS, JS framework, analytics, and server tech from any URL via heuristic signatures.</p>
+                    <a href="package.html?slug=cms-detector" class="btn btn-sm">View</a>
+                </div>
+                <div class="package-card">
+                    <div class="package-icon">🏢</div>
+                    <h4><a href="package.html?slug=siret-utils">SIRET/SIREN Validator (EU)</a></h4>
+                    <p>Luhn checksum for French business IDs. First regulatory package - UK Companies House, DE Handelsregister, NL KvK on the roadmap.</p>
+                    <a href="package.html?slug=siret-utils" class="btn btn-sm">View</a>
                 </div>
             </div>
         </div>

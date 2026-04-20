@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>French &amp; Niche API Integration Library - Beepack</title>
-    <meta name="description" content="A focused library of API integrations where frontier LLMs still hallucinate: French regulatory (SIRET/SIREN), domain heuristics, and SDK breaking-change zones. Copy-paste, not npm install.">
-    <meta name="keywords" content="french api integrations, SIRET library, siren validator, french regulatory api, INSEE api, niche api integrations, llm hallucination code">
+    <title>Niche API Integration Library - Beepack</title>
+    <meta name="description" content="A focused library of API integrations where frontier LLMs still hallucinate: breaking-change zones (Auth.js v5, Next.js, Linear), domain heuristics, regulatory compliance. Copy-paste, not npm install.">
+    <meta name="keywords" content="niche api integrations, auth.js v5 migration, breaking change api, llm hallucination code, shadcn for backend, ai coding registry">
     <link rel="canonical" href="https://beepack.ai/use-cases/api-integration-library.html">
-    <meta property="og:title" content="French &amp; Niche API Integration Library - Beepack">
-    <meta property="og:description" content="Focused integrations for APIs LLMs still get wrong. French regulatory, domain heuristics, breaking-change zones.">
+    <meta property="og:title" content="Niche API Integration Library - Beepack">
+    <meta property="og:description" content="Focused integrations for APIs LLMs still get wrong. Breaking-change zones, domain heuristics, regulatory compliance.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://beepack.ai/use-cases/api-integration-library.html">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="French &amp; Niche API Integration Library - Beepack">
-    <meta name="twitter:description" content="Focused integrations for APIs LLMs still get wrong. French regulatory, domain heuristics, breaking-change zones.">
+    <meta name="twitter:title" content="Niche API Integration Library - Beepack">
+    <meta name="twitter:description" content="Focused integrations for APIs LLMs still get wrong. Breaking-change zones, domain heuristics, regulatory compliance.">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -71,7 +71,7 @@
         <div class="container">
             <span class="badge">Focused API Integration Library</span>
             <h1>The integrations your LLM still can't write from scratch</h1>
-            <p>A narrow library for APIs poorly represented in LLM training data. French regulatory (SIRET/SIREN, INSEE), CDN heuristics, and breaking-change zones like Auth.js v4→v5. For Stripe, OAuth, or OpenAI - just ask your LLM directly.</p>
+            <p>A narrow library for APIs poorly represented in LLM training data. Breaking-change zones (Auth.js v4→v5, Next.js App Router, Linear GraphQL), domain heuristics (CDN URL parsers, CMS detection), and regulatory compliance. For Stripe, OAuth, or OpenAI - just ask your LLM directly.</p>
             <div class="hero-actions">
                 <a href="/#packages" class="btn btn-primary btn-lg">See the 5 packages</a>
                 <a href="/docs/getting-started.html" class="btn btn-outline btn-lg">Suggest a niche API</a>
@@ -85,10 +85,16 @@
             <p class="section-lead">Each package exists because a frontier LLM reliably hallucinates this API. We do not duplicate what Claude or GPT already generate well.</p>
             <div class="integration-grid">
                 <div class="integration-card">
-                    <div class="icon">🏢</div>
-                    <h3>SIRET / SIREN validation</h3>
-                    <p>Luhn checksum for 14-digit SIRET and 9-digit SIREN, with proper formatting. French-only, zero deps.</p>
-                    <code>beepack pull siret-utils</code>
+                    <div class="icon">🔒</div>
+                    <h3>Auth.js v5 (NextAuth) setup</h3>
+                    <p>Production config for the v5 rewrite LLMs still emit v4 patterns for. GitHub, Google, magic-link, App Router.</p>
+                    <code>beepack pull nextauth-setup</code>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">📋</div>
+                    <h3>Linear API client</h3>
+                    <p>GraphQL issue CRUD, webhooks, projects, comments. Recent schema changes LLMs get wrong.</p>
+                    <code>beepack pull linear-api</code>
                 </div>
                 <div class="integration-card">
                     <div class="icon">🧹</div>
@@ -103,22 +109,16 @@
                     <code>beepack pull cms-detector</code>
                 </div>
                 <div class="integration-card">
-                    <div class="icon">🔒</div>
-                    <h3>Auth.js v5 (NextAuth) setup</h3>
-                    <p>Production config for the v5 rewrite LLMs still emit v4 patterns for. GitHub, Google, magic-link, App Router.</p>
-                    <code>beepack pull nextauth-setup</code>
-                </div>
-                <div class="integration-card">
-                    <div class="icon">📋</div>
-                    <h3>Linear API client</h3>
-                    <p>GraphQL issue CRUD, webhooks, projects, comments. Recent schema changes LLMs get wrong.</p>
-                    <code>beepack pull linear-api</code>
+                    <div class="icon">🏢</div>
+                    <h3>SIRET/SIREN validator (EU)</h3>
+                    <p>Luhn checksum for French business IDs. First of a planned EU business registry line (UK, DE, NL coming).</p>
+                    <code>beepack pull siret-utils</code>
                 </div>
                 <div class="integration-card" style="border-style:dashed;opacity:0.8;">
-                    <div class="icon">🇫🇷</div>
+                    <div class="icon">🔄</div>
                     <h3>Coming next (post-validation)</h3>
-                    <p>URSSAF, Pappers, FranceConnect, Chorus Pro, DSN, YouSign, Qonto, Pennylane.</p>
-                    <code>beepack suggest urssaf-api</code>
+                    <p>Next.js 15 App Router migration, Tailwind v4, Expo SDK 51, Prisma v6, Svelte 5. Breaking-change APIs where training is stale.</p>
+                    <code>beepack suggest next-migration</code>
                 </div>
             </div>
         </div>
@@ -133,13 +133,13 @@
                     <div class="step-num">1</div>
                     <h3>Search</h3>
                     <p>Describe what you need in natural language</p>
-                    <pre><code>beepack search "siret validator"</code></pre>
+                    <pre><code>beepack search "auth.js v5"</code></pre>
                 </div>
                 <div class="step-card">
                     <div class="step-num">2</div>
                     <h3>Pull</h3>
                     <p>Source code copied into your project</p>
-                    <pre><code>beepack pull siret-utils</code></pre>
+                    <pre><code>beepack pull nextauth-setup</code></pre>
                 </div>
                 <div class="step-card">
                     <div class="step-num">3</div>
@@ -176,14 +176,14 @@
                         <td class="no">✗ We don't cover this</td>
                     </tr>
                     <tr>
-                        <td>SIRET Luhn validation</td>
-                        <td class="no">✗ Often wrong digit weights</td>
-                        <td class="yes">✓ Tested Luhn impl</td>
-                    </tr>
-                    <tr>
                         <td>Auth.js v5 (v4→v5 migration)</td>
                         <td class="no">✗ Still emits v4 patterns</td>
                         <td class="yes">✓ v5-native</td>
+                    </tr>
+                    <tr>
+                        <td>Next.js 14/15 App Router quirks</td>
+                        <td class="no">✗ Mixes Pages / App patterns</td>
+                        <td class="yes">✓ On the niche roadmap</td>
                     </tr>
                     <tr>
                         <td>Wix / Shopify CDN URL parsing</td>
@@ -191,9 +191,9 @@
                         <td class="yes">✓ Domain heuristics</td>
                     </tr>
                     <tr>
-                        <td>French regulatory (URSSAF, Pappers)</td>
-                        <td class="no">✗ Invents endpoints</td>
-                        <td class="yes">✓ On the niche roadmap</td>
+                        <td>EU business ID validation (SIRET/SIREN)</td>
+                        <td class="no">✗ Often wrong Luhn weights</td>
+                        <td class="yes">✓ Tested, EU registry line planned</td>
                     </tr>
                 </tbody>
             </table>
@@ -205,9 +205,9 @@
             <h2>Who this is for</h2>
             <div class="who-grid">
                 <div class="who-card">
-                    <div class="emoji">🇫🇷</div>
-                    <h3>French solo devs &amp; indie hackers</h3>
-                    <p>You're building for the French market - SIRET, TVA, URSSAF, DSN. LLMs don't know these well. We do.</p>
+                    <div class="emoji">🔄</div>
+                    <h3>Devs wrangling SDK migrations</h3>
+                    <p>Auth.js v4→v5, Next.js 14→15, Prisma v5→v6. Training data lags; our packages catch up.</p>
                 </div>
                 <div class="who-card">
                     <div class="emoji">🤖</div>

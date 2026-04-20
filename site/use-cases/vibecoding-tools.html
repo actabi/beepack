@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>When Your AI Hallucinates an API - Beepack for Vibe Coders</title>
-    <meta name="description" content="Frontier LLMs generate Stripe and OAuth just fine. They hallucinate French regulatory APIs, CDN heuristics, and recent SDK breaking changes. Beepack covers that narrow gap via MCP.">
-    <meta name="keywords" content="llm hallucination api, ai coding tool gaps, claude hallucinates, vibe coder fail modes, MCP niche api, french api ai coding">
+    <meta name="description" content="Frontier LLMs generate Stripe and OAuth just fine. They hallucinate recent SDK breaking changes (Auth.js v5, Next.js App Router), domain heuristics, and regulatory compliance APIs. Beepack covers that narrow gap via MCP.">
+    <meta name="keywords" content="llm hallucination api, ai coding tool gaps, claude hallucinates, vibe coder fail modes, MCP niche api, nextauth v5 migration, breaking change sdk">
     <link rel="canonical" href="https://beepack.ai/use-cases/vibecoding-tools.html">
     <meta property="og:title" content="When Your AI Hallucinates an API - Beepack for Vibe Coders">
     <meta property="og:description" content="For the 10% of APIs where frontier LLMs still fail. MCP-native registry for the niches.">
@@ -83,7 +83,7 @@
         <div class="container">
             <span class="badge">For Vibe Coders</span>
             <h1>When your AI invents an API endpoint that doesn't exist</h1>
-            <p>Frontier LLMs ship Stripe and OAuth with 90%+ success. They hallucinate French regulatory APIs, confuse INSEE v1 and v3, emit Auth.js v4 patterns a year after v5 shipped. Beepack is a narrow MCP-native registry for that gap - nothing more.</p>
+            <p>Frontier LLMs ship Stripe and OAuth with 90%+ success. They still emit Auth.js v4 patterns a year after v5 shipped, mix App Router and Pages patterns in Next.js, hallucinate Linear GraphQL fields removed last quarter. Beepack is a narrow MCP-native registry for that gap - nothing more.</p>
             <div class="hero-actions">
                 <a href="/docs/mcp-integration.html" class="btn btn-primary btn-lg">Add Beepack to Your AI</a>
                 <a href="/#packages" class="btn btn-outline btn-lg">See what we cover</a>
@@ -99,10 +99,10 @@
                 <div class="problem-box">
                     <h3>Where LLMs reliably fail today</h3>
                     <ul>
-                        <li>French regulatory APIs - SIRET Luhn, URSSAF, Pappers, INSEE portal migration</li>
-                        <li>Recent breaking changes - Auth.js v4→v5, Linear GraphQL churn</li>
-                        <li>Domain-specific heuristics - CDN URL parsing across Wix / Shopify / WP</li>
-                        <li>Undocumented or poorly-documented vendors</li>
+                        <li>Recent breaking changes - Auth.js v4→v5, Next.js 14→15 App Router, Linear GraphQL churn, Prisma v5→v6</li>
+                        <li>Domain-specific heuristics - CDN URL parsing across Wix / Shopify / WP / Squarespace</li>
+                        <li>Regulatory compliance - EU business IDs (SIRET/SIREN, UK Companies House planned), GDPR, PSD2</li>
+                        <li>Undocumented or poorly-documented vendors with recent API churn</li>
                         <li>Anything where the training data is stale or thin</li>
                     </ul>
                 </div>
@@ -117,7 +117,7 @@
                     </ul>
                 </div>
             </div>
-            <p style="text-align:center;margin-top:32px;color:var(--text-muted);font-size:0.95rem;"><strong>Rule of thumb:</strong> if the API has an official SDK that shipped before 2024, your LLM probably does it well. If it's French, regulatory, or had a major breaking change recently - that's where we help.</p>
+            <p style="text-align:center;margin-top:32px;color:var(--text-muted);font-size:0.95rem;"><strong>Rule of thumb:</strong> if the API has an official SDK that shipped before 2024 and hasn't had breaking changes since, your LLM probably does it well. If it had a major breaking change recently, relies on domain heuristics, or covers regulatory territory - that's where we help.</p>
         </div>
     </section>
 
@@ -130,7 +130,7 @@
                     <ol class="mcp-steps">
                         <li>Get your token at <strong>beepack.ai/auth/github</strong></li>
                         <li>Add the MCP config to Cursor / Claude / Copilot</li>
-                        <li>Ask: "validate a French SIRET" or "set up Auth.js v5 App Router"</li>
+                        <li>Ask: "set up Auth.js v5 App Router" or "clean this Wix CDN URL"</li>
                         <li>Source code lands in your project - you own it.</li>
                     </ol>
                 </div>
@@ -198,12 +198,12 @@
                 <div class="workflow-step">
                     <div class="num">1</div>
                     <h3>Ask your AI normally</h3>
-                    <p>"Validate a French SIRET and call URSSAF for contribution status."</p>
+                    <p>"Migrate my NextAuth v4 config to Auth.js v5 App Router with Prisma adapter."</p>
                 </div>
                 <div class="workflow-step">
                     <div class="num">2</div>
                     <h3>AI queries Beepack via MCP</h3>
-                    <p>Finds <code>siret-utils</code>. For URSSAF, suggests submitting a request (post-validation priority).</p>
+                    <p>Finds <code>nextauth-setup</code>. For unrelated parts of the migration, suggests the AI writes them directly.</p>
                 </div>
                 <div class="workflow-step">
                     <div class="num">3</div>

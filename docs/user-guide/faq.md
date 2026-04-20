@@ -8,7 +8,7 @@ Common questions about Beepack.
 
 ### What is Beepack?
 
-Beepack is a narrow registry of source code for APIs where frontier LLMs still hallucinate - French regulatory (SIRET/SIREN), CDN/domain heuristics, and breaking-change zones like Auth.js v4→v5. For commodity integrations (Stripe, OAuth, OpenAI), just ask your LLM directly - it does fine. That's deliberately out of scope.
+Beepack is a narrow registry of source code for APIs where frontier LLMs still hallucinate - recent breaking-change zones (Auth.js v5, Next.js App Router, Linear GraphQL, Prisma v6), domain heuristics (CDN URL parsers, CMS detection), and regulatory compliance (EU business IDs). For commodity integrations (Stripe, OAuth, OpenAI), just ask your LLM directly - it does fine. That's deliberately out of scope.
 
 ### Is Beepack a package manager like npm?
 
@@ -20,7 +20,7 @@ Yes. Browsing and pulling packages is free and anonymous. Publishing requires a 
 
 ### What kinds of packages are on Beepack?
 
-Only the niches where frontier LLMs reliably fail today: French/regulatory APIs (siret-utils, roadmap: urssaf, pappers, franceconnect), domain heuristics (cdn-url-cleaner, cms-detector), and breaking-change zones (nextauth-setup for Auth.js v5, linear-api for recent GraphQL changes). If a frontier LLM zero-shots an API well, we don't duplicate that - we'd just be adding bloat.
+Only the niches where frontier LLMs reliably fail today: breaking-change zones (nextauth-setup for Auth.js v5, linear-api for recent GraphQL changes; roadmap: nextjs-15-migration, tailwind-v4-migration, prisma-v6-migration), domain heuristics (cdn-url-cleaner, cms-detector), and regulatory compliance (siret-utils for EU business IDs; roadmap: UK Companies House, DE Handelsregister). If a frontier LLM zero-shots an API well, we don't duplicate that - we'd just be adding bloat.
 
 ---
 

@@ -1,6 +1,6 @@
 # Beepack User Guide
 
-**Beepack** is a narrow registry of source code for APIs where frontier LLMs still hallucinate: French regulatory (SIRET/SIREN), CDN/domain heuristics, and breaking-change zones like Auth.js v4→v5. For commodity integrations - Stripe, OAuth, OpenAI - just ask your LLM directly.
+**Beepack** is a narrow registry of source code for APIs where frontier LLMs still hallucinate: breaking-change zones (Auth.js v5, Next.js App Router, Linear GraphQL, Prisma v6), domain heuristics (CDN URL parsers, CMS detection), and regulatory compliance (EU business IDs). For commodity integrations - Stripe, OAuth, OpenAI - just ask your LLM directly.
 
 > "For the 10% where the LLM still gets it wrong."
 
@@ -34,9 +34,9 @@ Beepack is a narrow registry sharing **source code** (not compiled libraries) fo
 
 ### Who is it for?
 
-- **French indie hackers and solo devs** building on SIRET/TVA/URSSAF/FranceConnect territory
+- **Full-stack devs wrangling SDK migrations** (Auth.js v4→v5, Next.js 14→15, Prisma v5→v6, Tailwind v3→v4) where training data lags
 - **AI assistants** (Claude, Copilot, Cursor) that need a reliable source for the niches they hallucinate
-- **Teams** dealing with recent SDK breaking changes (Auth.js v5, Linear GraphQL churn)
+- **Indie hackers** who just got burned by a hallucinated API endpoint in production
 
 ---
 
@@ -50,10 +50,10 @@ npm install -g @actabi/beepack
 beepack login
 
 # Search for a package in our niche
-beepack search "french siret validator"
+beepack search "auth.js v5 app router setup"
 
 # Pull the code into your project
-beepack pull siret-utils
+beepack pull nextauth-setup
 ```
 
-The source code lands in `./packages/siret-utils/`. Read it, adapt it, ship it.
+The source code lands in `./packages/nextauth-setup/`. Read it, adapt it, ship it.
