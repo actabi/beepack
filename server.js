@@ -16,6 +16,13 @@ import { storePackageFiles, getPackageFilesMetadata, getFile, createPackageArchi
 import { setupRemoteMCP } from './mcp-remote.js';
 import { setupClawHubCompat } from './clawhub-compat.js';
 import { runStaticScan, runLLMEvaluation, runVirusTotalScan, buildModerationSnapshot, AUTO_HIDE_THRESHOLD, MAX_REPORTS_PER_USER } from './security-engine.js';
+import { scanSkill } from './scan-engine.js';
+import { fetchSkill } from './skill-fetcher.js';
+import { initScanStore, saveScan, getScan, scanStats } from './scan-store.js';
+import { createSqliteCache } from './validators/cache.js';
+import { loadTopList } from './validators/typosquat.js';
+import { parseUrlhausFile } from './validators/urls.js';
+import { createHash } from 'crypto';
 
 // Initialize storage
 initStorage();
@@ -262,6 +269,24 @@ console.log('📦 Database initialized');
 // ============== AUTH ROUTES ==============
 setupAuthRoutes(app, db);
 
+// ============== SCAN STORE + TOP-LISTS ==============
+initScanStore(db);
+
+const SCAN_NPM_TOP = loadTopList(join(__dirname, 'data', 'npm-top.txt'));
+const SCAN_PIP_TOP = loadTopList(join(__dirname, 'data', 'pypi-top.txt'));
+const SCAN_URLHAUS_PATH = join(__dirname, 'data', 'urlhaus.csv');
+let SCAN_URLHAUS_URLS = new Set();
+let SCAN_URLHAUS_HOSTS = new Set();
+if (existsSync(SCAN_URLHAUS_PATH)) {
+  try {
+    const parsed = parseUrlhausFile(readFileSync(SCAN_URLHAUS_PATH, 'utf-8'));
+    SCAN_URLHAUS_URLS = parsed.urls;
+    SCAN_URLHAUS_HOSTS = parsed.hosts;
+  } catch {}
+}
+const SCAN_CACHE = createSqliteCache(db);
+const SCAN_IP_SALT = process.env.SCAN_IP_SALT || 'beepack-scan-local-salt';
+
 // ============== REMOTE MCP SERVER ==============
 setupRemoteMCP(app, PORT, db);
 
@@ -269,6 +294,102 @@ setupRemoteMCP(app, PORT, db);
 setupClawHubCompat(app, db);
 
 // ============== API ROUTES ==============
+
+// Pretty URL for scan page
+app.get('/scan', (req, res) => res.sendFile(join(__dirname, 'site', 'scan.html')));
+
+// ============== SKILL SAFETY SCANNER ==============
+
+// Rate limiter dedicated to scans: 30/min per IP (generous for MVP, tighten later)
+const scanLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'SCAN_RATE_LIMIT', message: 'Too many scans. Try again in a minute.' } },
+});
+
+const scanUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024, files: 20 }, // 2MB per file, 20 files
+});
+
+function hashIp(ip) {
+  if (!ip) return null;
+  return createHash('sha256').update(SCAN_IP_SALT + ':' + ip).digest('hex').slice(0, 16);
+}
+
+async function runScanAndPersist({ markdown, scripts, source }, ipHash) {
+  const result = await scanSkill(
+    { markdown, scripts, source },
+    {
+      cache: SCAN_CACHE,
+      npmTop: SCAN_NPM_TOP,
+      pipTop: SCAN_PIP_TOP,
+      blocklist: SCAN_URLHAUS_URLS,
+      blockedHosts: SCAN_URLHAUS_HOSTS,
+    }
+  );
+  try {
+    saveScan(db, result, { ipHash });
+  } catch (err) {
+    console.error('[scan] persist failed:', err.message);
+  }
+  return result;
+}
+
+// POST /api/v1/scan - scan a skill by URL or file upload
+app.post('/api/v1/scan', scanLimiter, scanUpload.array('files', 20), async (req, res) => {
+  const ipHash = hashIp(req.ip || req.connection?.remoteAddress);
+  try {
+    // Mode 1: URL in body
+    if (req.body && req.body.url) {
+      const payload = await fetchSkill(String(req.body.url));
+      const result = await runScanAndPersist(payload, ipHash);
+      return res.json(result);
+    }
+
+    // Mode 2: raw markdown pasted in body
+    if (req.body && req.body.markdown) {
+      const payload = {
+        markdown: String(req.body.markdown),
+        scripts: Array.isArray(req.body.scripts) ? req.body.scripts.filter(s => s && s.name && typeof s.content === 'string') : [],
+        source: req.body.source || 'paste',
+      };
+      const result = await runScanAndPersist(payload, ipHash);
+      return res.json(result);
+    }
+
+    // Mode 3: multipart file upload
+    if (req.files && req.files.length) {
+      const mdFile = req.files.find(f => /\.md$/i.test(f.originalname)) || req.files[0];
+      const markdown = mdFile.buffer.toString('utf-8');
+      const scripts = req.files
+        .filter(f => f !== mdFile)
+        .map(f => ({ name: f.originalname, content: f.buffer.toString('utf-8') }));
+      const result = await runScanAndPersist({ markdown, scripts, source: mdFile.originalname }, ipHash);
+      return res.json(result);
+    }
+
+    return res.status(400).json({ error: { code: 'INVALID_INPUT', message: 'Provide url, markdown, or file upload' } });
+  } catch (err) {
+    console.error('[scan] error:', err.message);
+    return res.status(400).json({ error: { code: 'SCAN_FAILED', message: err.message } });
+  }
+});
+
+// GET /api/v1/scan/:id - retrieve a persisted scan
+app.get('/api/v1/scan/:id', (req, res) => {
+  const scan = getScan(db, req.params.id);
+  if (!scan) return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Scan not found' } });
+  res.json(scan);
+});
+
+// GET /api/v1/scan-stats - aggregate scan stats (for landing + analytics)
+app.get('/api/v1/scan-stats', (req, res) => {
+  const hours = parseInt(req.query.hours) || 24;
+  res.json(scanStats(db, { sinceMs: Date.now() - hours * 60 * 60 * 1000 }));
+});
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beepack Scan - Skill Safety Scanner</title>
+    <meta name="description" content="Paste a Claude Code skill URL or drop a SKILL.md and get an instant RED/YELLOW/GREEN safety verdict. Catches hallucinated npx commands, typosquats, and malicious URLs.">
+    <meta name="keywords" content="claude skill security, agent skill scanner, anti hallucination, ai supply chain attack, npx typosquat, skill safety">
+    <link rel="canonical" href="https://beepack.ai/scan">
+    <meta property="og:title" content="Beepack Scan - Is this skill safe?">
+    <meta property="og:description" content="RED/YELLOW/GREEN verdict for any Claude Code skill. Catches hallucinated packages and typosquats in seconds.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://beepack.ai/scan">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .scan-page { padding: 80px 0 60px; min-height: 60vh; }
+        .scan-hero { text-align: center; margin-bottom: 40px; }
+        .scan-hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+        .scan-hero p { font-size: 1.15rem; color: #4a5568; max-width: 640px; margin: 0 auto; }
+        .scan-form { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .scan-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .scan-tab { padding: 10px 18px; border: 1px solid #e2e8f0; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 500; color: #4a5568; }
+        .scan-tab.active { background: #1a202c; color: #fff; border-color: #1a202c; }
+        .scan-input, .scan-textarea { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 15px; font-family: inherit; }
+        .scan-textarea { min-height: 220px; font-family: 'Menlo', 'Consolas', monospace; font-size: 13px; }
+        .scan-drop { border: 2px dashed #cbd5e0; border-radius: 10px; padding: 40px 20px; text-align: center; color: #718096; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+        .scan-drop.dragover { border-color: #f5b800; background: #fffbe6; }
+        .scan-submit { margin-top: 16px; width: 100%; padding: 14px; font-size: 16px; font-weight: 600; background: #f5b800; color: #1a202c; border: none; border-radius: 8px; cursor: pointer; }
+        .scan-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .scan-loading { text-align: center; padding: 32px; color: #4a5568; }
+        .scan-spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #f5b800; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .verdict-card { max-width: 720px; margin: 32px auto 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .verdict-header { padding: 24px 28px; color: #fff; }
+        .verdict-red { background: linear-gradient(135deg, #e53e3e, #c53030); }
+        .verdict-yellow { background: linear-gradient(135deg, #ed8936, #c05621); }
+        .verdict-green { background: linear-gradient(135deg, #38a169, #2f855a); }
+        .verdict-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.25); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .verdict-title { font-size: 1.6rem; margin: 8px 0 4px; }
+        .verdict-summary { opacity: 0.95; font-size: 1.05rem; }
+        .verdict-body { background: #fff; padding: 20px 28px; }
+        .verdict-stats { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 0 20px; border-bottom: 1px solid #edf2f7; margin-bottom: 16px; font-size: 13px; color: #4a5568; }
+        .verdict-stats span strong { color: #1a202c; }
+        .finding { padding: 12px 14px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid; }
+        .finding-block { background: #fff5f5; border-color: #e53e3e; }
+        .finding-warn { background: #fffaf0; border-color: #ed8936; }
+        .finding-severity { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-right: 8px; }
+        .finding-block .finding-severity { background: #e53e3e; color: #fff; }
+        .finding-warn .finding-severity { background: #ed8936; color: #fff; }
+        .finding-type { font-size: 11px; color: #718096; font-family: 'Menlo', monospace; }
+        .finding-msg { margin-top: 4px; color: #2d3748; }
+        .finding-locs { margin-top: 6px; font-size: 12px; color: #718096; }
+
+        .scan-share { margin-top: 20px; padding: 12px 16px; background: #f7fafc; border-radius: 8px; font-size: 13px; color: #4a5568; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .scan-share input { flex: 1; min-width: 260px; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 4px; font-family: 'Menlo', monospace; font-size: 12px; }
+        .scan-share button { padding: 6px 14px; border: none; background: #1a202c; color: #fff; border-radius: 4px; cursor: pointer; font-size: 12px; }
+
+        .scan-error { max-width: 720px; margin: 20px auto 0; padding: 16px; background: #fff5f5; border-left: 4px solid #e53e3e; border-radius: 6px; color: #742a2a; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="/explore.html">Explore</a>
+                <a href="/docs/">Docs</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="scan-page">
+        <div class="container">
+            <div class="scan-hero">
+                <h1>Is this Claude Code skill safe to install?</h1>
+                <p>Paste a GitHub URL, drop a <code>SKILL.md</code>, or paste the markdown directly. We check every <code>npx</code>, <code>pip install</code>, URL, and import against the real registries. Verdict in under 10 seconds.</p>
+            </div>
+
+            <form class="scan-form" id="scanForm">
+                <div class="scan-tabs" role="tablist">
+                    <button type="button" class="scan-tab active" data-mode="url">Paste URL</button>
+                    <button type="button" class="scan-tab" data-mode="file">Upload file</button>
+                    <button type="button" class="scan-tab" data-mode="paste">Paste markdown</button>
+                </div>
+
+                <div id="mode-url">
+                    <input type="url" class="scan-input" id="urlInput" placeholder="https://github.com/&lt;owner&gt;/&lt;repo&gt; or raw SKILL.md URL">
+                </div>
+                <div id="mode-file" style="display:none;">
+                    <div class="scan-drop" id="fileDrop">
+                        <strong>Drop your SKILL.md here</strong><br>
+                        <small>or click to choose a file (plus any .sh / .py / .js scripts)</small>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".md,.sh,.py,.js,.ts,.mjs,.yaml,.yml,.json" style="display:none;">
+                    <div id="fileList" style="margin-top:10px;font-size:13px;color:#4a5568;"></div>
+                </div>
+                <div id="mode-paste" style="display:none;">
+                    <textarea class="scan-textarea" id="markdownInput" placeholder="# My skill&#10;&#10;Run: ```bash&#10;npx @scope/my-tool&#10;```"></textarea>
+                </div>
+
+                <button type="submit" class="scan-submit" id="scanButton">Scan for safety</button>
+            </form>
+
+            <div id="scanResult"></div>
+        </div>
+    </main>
+
+    <script>
+    (function () {
+        const form = document.getElementById('scanForm');
+        const tabs = document.querySelectorAll('.scan-tab');
+        const modes = { url: document.getElementById('mode-url'), file: document.getElementById('mode-file'), paste: document.getElementById('mode-paste') };
+        const urlInput = document.getElementById('urlInput');
+        const fileInput = document.getElementById('fileInput');
+        const fileDrop = document.getElementById('fileDrop');
+        const fileList = document.getElementById('fileList');
+        const mdInput = document.getElementById('markdownInput');
+        const button = document.getElementById('scanButton');
+        const resultEl = document.getElementById('scanResult');
+        let currentMode = 'url';
+        let uploadedFiles = [];
+
+        tabs.forEach(t => t.addEventListener('click', () => {
+            tabs.forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            currentMode = t.dataset.mode;
+            Object.entries(modes).forEach(([k, el]) => { el.style.display = k === currentMode ? '' : 'none'; });
+        }));
+
+        fileDrop.addEventListener('click', () => fileInput.click());
+        fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+        fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+        fileDrop.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileDrop.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+        function handleFiles(files) {
+            uploadedFiles = Array.from(files);
+            fileList.innerHTML = uploadedFiles.length
+                ? 'Selected: ' + uploadedFiles.map(f => `<code>${escapeHtml(f.name)}</code>`).join(', ')
+                : '';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            resultEl.innerHTML = '<div class="scan-loading"><span class="scan-spinner"></span><p>Scanning...</p></div>';
+            button.disabled = true;
+
+            try {
+                let response;
+                if (currentMode === 'url') {
+                    const url = urlInput.value.trim();
+                    if (!url) throw new Error('Paste a URL first');
+                    response = await fetch('/api/v1/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+                } else if (currentMode === 'paste') {
+                    const markdown = mdInput.value;
+                    if (!markdown.trim()) throw new Error('Paste some markdown first');
+                    response = await fetch('/api/v1/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ markdown, source: 'paste' }) });
+                } else {
+                    if (!uploadedFiles.length) throw new Error('Choose at least one file');
+                    const fd = new FormData();
+                    uploadedFiles.forEach(f => fd.append('files', f));
+                    response = await fetch('/api/v1/scan', { method: 'POST', body: fd });
+                }
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error?.message || 'Scan failed');
+                renderResult(data);
+            } catch (err) {
+                resultEl.innerHTML = `<div class="scan-error">${escapeHtml(err.message)}</div>`;
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        function renderResult(data) {
+            const verdict = data.verdict;
+            const shareUrl = `${window.location.origin}/scan.html?id=${encodeURIComponent(data.scanId)}`;
+
+            const findings = (data.findings || []).map(f => {
+                const cls = f.severity === 'block' ? 'finding finding-block' : 'finding finding-warn';
+                const sev = f.severity === 'block' ? 'BLOCK' : 'WARN';
+                const locs = Array.isArray(f.locations) && f.locations.length
+                    ? `<div class="finding-locs">Found at: ${f.locations.map(l => `${escapeHtml(l.source)}:${l.line}`).join(', ')}</div>`
+                    : '';
+                return `
+                    <div class="${cls}">
+                        <span class="finding-severity">${sev}</span>
+                        <span class="finding-type">${escapeHtml(f.type)}</span>
+                        <div class="finding-msg">${escapeHtml(f.message || '')}</div>
+                        ${locs}
+                    </div>
+                `;
+            }).join('');
+
+            resultEl.innerHTML = `
+                <div class="verdict-card">
+                    <div class="verdict-header verdict-${verdict}">
+                        <span class="verdict-badge">${verdict}</span>
+                        <div class="verdict-title">${verdict === 'red' ? 'Do not install as-is' : verdict === 'yellow' ? 'Review before installing' : 'Looks safe'}</div>
+                        <div class="verdict-summary">${escapeHtml(data.summary || '')}</div>
+                    </div>
+                    <div class="verdict-body">
+                        <div class="verdict-stats">
+                            <span><strong>${data.stats.npmPackages}</strong> npm refs</span>
+                            <span><strong>${data.stats.pipPackages}</strong> pip refs</span>
+                            <span><strong>${data.stats.urls}</strong> URLs</span>
+                            <span><strong>${data.stats.shellCommands}</strong> shell commands</span>
+                        </div>
+                        ${findings || '<p style="color:#4a5568;">No issues detected.</p>'}
+                        <div class="scan-share">
+                            <span>Share this scan:</span>
+                            <input type="text" readonly value="${shareUrl}" id="shareUrl">
+                            <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('shareUrl').value); this.textContent='Copied'">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // Prefill URL from landing page
+        const params = new URLSearchParams(window.location.search);
+        const prefill = params.get('prefill');
+        if (prefill) {
+            urlInput.value = prefill;
+        }
+        // Preload a demo markdown from sessionStorage
+        if (params.get('demo')) {
+            const demoMd = sessionStorage.getItem('scan_demo_markdown');
+            if (demoMd) {
+                // Switch to paste mode
+                tabs.forEach(x => x.classList.remove('active'));
+                const pasteTab = Array.from(tabs).find(t => t.dataset.mode === 'paste');
+                pasteTab.classList.add('active');
+                currentMode = 'paste';
+                Object.entries(modes).forEach(([k, el]) => { el.style.display = k === currentMode ? '' : 'none'; });
+                mdInput.value = demoMd;
+                sessionStorage.removeItem('scan_demo_markdown');
+            }
+        }
+        // Auto-load shared scan if ?id=... in URL
+        const sharedId = params.get('id');
+        if (sharedId) {
+            resultEl.innerHTML = '<div class="scan-loading"><span class="scan-spinner"></span><p>Loading scan...</p></div>';
+            fetch(`/api/v1/scan/${encodeURIComponent(sharedId)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error.message || 'Not found');
+                    renderResult(data);
+                })
+                .catch(err => { resultEl.innerHTML = `<div class="scan-error">${escapeHtml(err.message)}</div>`; });
+        }
+    })();
+    </script>
+</body>
+</html>

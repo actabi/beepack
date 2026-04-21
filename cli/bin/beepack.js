@@ -13,6 +13,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { search, list, info, install, init, publish, login, whoami, like, dislike } from '../src/commands.js';
+import { scan } from '../src/scan.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -35,6 +36,14 @@ program
   .description('CLI for Beepack - The API registry for vibe-coders')
   .version(pkg.version)
   .addHelpText('before', logo);
+
+// Scan command (skill safety scanner)
+program
+  .command('scan <url-or-path>')
+  .description('Scan a Claude Code skill for hallucinated packages, typosquats, and risky URLs')
+  .option('--json', 'Output machine-readable JSON')
+  .option('--strict', 'Treat YELLOW as failure (exit 2)')
+  .action(scan);
 
 // Search command
 program
