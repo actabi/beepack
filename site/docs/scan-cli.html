@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan via CLI - Beepack Scan</title>
+    <meta name="description" content="Use beepack scan <url-or-path> from the terminal. Exit codes, JSON output, strict mode, pre-install hooks.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="./" class="active">Docs</a>
+                <a href="https://github.com/actabi/beepack" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>Getting started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="scan-web.html">Scan via web UI</a></li>
+                    <li><a href="scan-cli.html" class="active">Scan via CLI</a></li>
+                    <li><a href="scan-api.html">Scan via HTTP API</a></li>
+                </ul>
+                <h4>Reference</h4>
+                <ul>
+                    <li><a href="verdicts.html">Verdicts and findings</a></li>
+                    <li><a href="self-host.html">Self-hosting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>Scan via CLI</h1>
+            <p class="lead">Put the scanner in a pre-install hook, a CI pipeline, or a git hook.</p>
+
+            <h2>Install</h2>
+            <pre><code>npm install -g @actabi/beepack
+# or run without install
+npx @actabi/beepack scan &lt;url-or-path&gt;</code></pre>
+            <p>The CLI points at <code>https://beepack.ai/api/v1</code> by default. Override with <code>BEEPACK_API</code> to hit a self-hosted instance.</p>
+
+            <h2>Usage</h2>
+            <pre><code>beepack scan &lt;url-or-path&gt; [--json] [--strict]</code></pre>
+
+            <h3>Arguments</h3>
+            <ul>
+                <li><code>&lt;url-or-path&gt;</code>: a URL (GitHub repo, blob, gist, raw) <strong>or</strong> a local path. If you pass a directory, the CLI looks for <code>SKILL.md</code> at the root and picks up same-directory scripts (<code>.sh</code>, <code>.py</code>, <code>.js</code>, <code>.ts</code>). If you pass a single file, only that file is scanned.</li>
+            </ul>
+
+            <h3>Flags</h3>
+            <ul>
+                <li><code>--json</code>: emit the raw scan JSON instead of the human-readable summary. Useful for piping into <code>jq</code> or storing in CI artifacts.</li>
+                <li><code>--strict</code>: treat <strong>YELLOW</strong> as a failure. Exit code becomes 2 instead of 1.</li>
+            </ul>
+
+            <h2>Exit codes</h2>
+            <table class="docs-table">
+                <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+                <tbody>
+                    <tr><td><code>0</code></td><td>GREEN: scan succeeded, no issues.</td></tr>
+                    <tr><td><code>1</code></td><td>YELLOW: warnings. Becomes <code>2</code> under <code>--strict</code>.</td></tr>
+                    <tr><td><code>2</code></td><td>RED: at least one blocking issue.</td></tr>
+                    <tr><td><code>3</code></td><td>Network or fetch error. The scan did not complete.</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Examples</h2>
+
+            <h3>Scan a GitHub repo</h3>
+            <pre><code>beepack scan https://github.com/anthropics/skills</code></pre>
+
+            <h3>Scan a local folder before running an AI-generated installer</h3>
+            <pre><code>beepack scan ./my-skill/ &amp;&amp; ./my-skill/install.sh</code></pre>
+            <p>Because <code>beepack scan</code> exits non-zero on RED, the <code>&amp;&amp;</code> short-circuits if the skill is unsafe.</p>
+
+            <h3>Fail CI on any warning</h3>
+            <pre><code>beepack scan ./skill --strict</code></pre>
+
+            <h3>Pipe into jq</h3>
+            <pre><code>beepack scan https://github.com/owner/repo --json | jq '.findings[] | select(.severity=="block")'</code></pre>
+
+            <h2>Pre-install hook template</h2>
+            <p>Drop this into <code>~/.bashrc</code> or <code>~/.zshrc</code> if you want every <code>npx</code> to be scanned when the source is a GitHub URL:</p>
+            <pre><code>safe_install() {
+  local url="$1"
+  beepack scan "$url" &gt;/dev/null 2&gt;&amp;1
+  local rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "refusing to run: beepack scan returned $rc for $url"
+    return $rc
+  fi
+  shift
+  "$@"
+}
+
+# Usage:
+# safe_install https://github.com/owner/repo bash install.sh</code></pre>
+
+            <h2>Point at a self-hosted instance</h2>
+            <pre><code>BEEPACK_API=https://scan.my-company.com/api/v1 beepack scan &lt;url&gt;</code></pre>
+            <p>Self-hosting guide: <a href="self-host.html">Self-hosting</a>.</p>
+        </main>
+    </div>
+</body>
+</html>

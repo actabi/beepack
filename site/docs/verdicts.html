@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdicts and findings - Beepack Scan</title>
+    <meta name="description" content="Full rule reference for RED, YELLOW, GREEN verdicts and every finding type the scanner emits.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="./" class="active">Docs</a>
+                <a href="https://github.com/actabi/beepack" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>Getting started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="scan-web.html">Scan via web UI</a></li>
+                    <li><a href="scan-cli.html">Scan via CLI</a></li>
+                    <li><a href="scan-api.html">Scan via HTTP API</a></li>
+                </ul>
+                <h4>Reference</h4>
+                <ul>
+                    <li><a href="verdicts.html" class="active">Verdicts and findings</a></li>
+                    <li><a href="self-host.html">Self-hosting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>Verdicts and findings</h1>
+            <p class="lead">Every rule the scanner applies, what triggers it, and how to read the output.</p>
+
+            <h2>Verdict logic</h2>
+            <p>The verdict is computed from the findings list, in order:</p>
+            <ol>
+                <li><strong>RED</strong> if any finding has <code>severity: "block"</code>.</li>
+                <li><strong>YELLOW</strong> else if any finding has <code>severity: "warn"</code>.</li>
+                <li><strong>GREEN</strong> otherwise.</li>
+            </ol>
+            <p>The aggregator does not weight findings. One <code>block</code> is enough to flip the verdict to RED; a dozen <code>warn</code> findings stay YELLOW.</p>
+
+            <h2>Finding types</h2>
+
+            <h3><code>package_does_not_exist</code> <span class="badge badge-red">BLOCK</span></h3>
+            <p>An <code>npm</code> (or <code>pypi</code>, when enabled) package referenced in the skill returns <strong>HTTP 404</strong> from the registry. Classic hallucination: the LLM invented a plausible-looking name, the package has no real owner, and a typosquatter can claim it.</p>
+            <p>Example triggers: <code>npx @anthropic/skill-runner-plus</code>, <code>pip install reqeusts-utils</code>.</p>
+
+            <h3><code>possible_typosquat</code> (distance 1) <span class="badge badge-red">BLOCK</span></h3>
+            <p>Levenshtein distance of 1 from a package in the top 5,000 npm or top 1,000 PyPI list, AND the candidate itself is not in the top list. Distance 1 means a single insertion, deletion, or substitution, which is the signature of deliberate squatting.</p>
+            <p>Example triggers: <code>expresss</code> (vs <code>express</code>), <code>reqeusts</code> (vs <code>requests</code>), <code>stripe-cli</code> (vs <code>stripe</code> when <code>-cli</code> is flagged separately).</p>
+
+            <h3><code>possible_typosquat</code> (distance 2) <span class="badge badge-yellow">WARN</span></h3>
+            <p>Same rule, distance 2. Still suspicious but more prone to false positives, so it warns instead of blocks. Confidence field in the finding is <code>0.75</code> for distance 2.</p>
+
+            <h3><code>possible_typosquat</code> (suspicious suffix) <span class="badge badge-yellow">WARN</span></h3>
+            <p>Candidate has a known trailing suffix (<code>-js</code>, <code>.js</code>, <code>-cli</code>, <code>-py</code>, <code>-python</code>, <code>-pkg</code>, <code>-core</code>, <code>-lib</code>) <strong>and</strong> the stem without the suffix is in the top list. These are legitimately used (e.g. <code>stripe-js</code> as a real mirror), so we warn rather than block.</p>
+
+            <h3><code>urlhaus_match</code> <span class="badge badge-red">BLOCK</span></h3>
+            <p>A URL in the skill (or inside a <code>curl</code>/<code>wget</code> command) matches an entry on the <a href="https://urlhaus.abuse.ch/" target="_blank" rel="noopener">URLhaus</a> blocklist (abuse.ch). We check both full-URL matches and host-only matches. The blocklist is refreshed daily and contains ~25,000 known-bad URLs.</p>
+
+            <h3><code>pastebin_or_tunnel</code> <span class="badge badge-yellow">WARN</span></h3>
+            <p>URL uses a pastebin service (<code>pastebin.com</code>, <code>hastebin.com</code>, <code>paste.ee</code>, <code>transfer.sh</code>, <code>catbox.moe</code>, etc.) or a tunneling service (<code>ngrok.io</code>, <code>trycloudflare.com</code>, <code>loca.lt</code>, <code>serveo.net</code>). Legitimate use exists, but these hosts are disproportionately used for one-shot payload delivery and data exfiltration, so we warn.</p>
+
+            <h3><code>young_domain</code> <span class="badge badge-yellow">WARN</span></h3>
+            <p>The URL's registrable domain was registered under <strong>30 days ago</strong>, per RDAP (<code>rdap.org</code>). Young domains are used by a disproportionate share of phishing and malware campaigns. Legitimate products do ship on fresh domains, so it warns.</p>
+
+            <h3><code>nothing_to_scan</code> <span class="badge badge-yellow">WARN</span></h3>
+            <p>The skill has no detectable shell commands, URLs, or package references. This can mean two things: the skill is trivial (just prose), or the parser missed something. We flag it so you don't assume GREEN means "checked thoroughly" when in fact there was nothing to check.</p>
+
+            <h3><code>invalid_url</code> <span class="badge badge-yellow">WARN</span></h3>
+            <p>The skill contains a URL-like string that failed to parse. Rare, but flagged because malformed URLs sometimes indicate obfuscation.</p>
+
+            <h2>Reading a finding</h2>
+            <pre><code>{
+  "severity": "block",
+  "type": "possible_typosquat",
+  "ecosystem": "npm",
+  "package": "expresss",
+  "likelyTarget": "express",
+  "distance": 1,
+  "confidence": 0.95,
+  "message": "\"expresss\" looks like \"express\" (distance 1, levenshtein)",
+  "locations": [
+    { "source": "SKILL.md", "line": 12, "reason": "npm install" }
+  ]
+}</code></pre>
+            <ul>
+                <li><code>severity</code>: <code>block</code> or <code>warn</code>.</li>
+                <li><code>type</code>: the finding type (see sections above).</li>
+                <li><code>message</code>: one-line human summary.</li>
+                <li><code>locations</code>: array of <code>{source, line, reason}</code> pointing at every place the issue appears.</li>
+            </ul>
+
+            <h2>False positives</h2>
+            <p>The ruleset leans conservative. If you believe a finding is wrong:</p>
+            <ul>
+                <li>Open an issue at <a href="https://github.com/actabi/beepack/issues" target="_blank" rel="noopener">github.com/actabi/beepack/issues</a> with the scan ID and a one-line explanation.</li>
+                <li>Likely targets for tuning: <code>possible_typosquat</code> distance-2 false positives, pastebin hosts used by legitimate tooling.</li>
+            </ul>
+
+            <h2>What we deliberately do not check</h2>
+            <p>See the <a href="./">introduction</a> for the full non-goals list. Short version: we validate references against public data sources. We do not perform LLM-based code review, and we do not attempt semantic understanding of what the skill does. That is by design: the scanner's value is being deterministic and cheap to run.</p>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-hosting - Beepack Scan</title>
+    <meta name="description" content="Run Beepack Scan on your own infrastructure. Node + SQLite, no external dependencies at runtime.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="./" class="active">Docs</a>
+                <a href="https://github.com/actabi/beepack" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>Getting started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="scan-web.html">Scan via web UI</a></li>
+                    <li><a href="scan-cli.html">Scan via CLI</a></li>
+                    <li><a href="scan-api.html">Scan via HTTP API</a></li>
+                </ul>
+                <h4>Reference</h4>
+                <ul>
+                    <li><a href="verdicts.html">Verdicts and findings</a></li>
+                    <li><a href="self-host.html" class="active">Self-hosting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>Self-hosting</h1>
+            <p class="lead">Run the scanner on your own machine or VPS. Node 20 plus SQLite, nothing else. MIT licensed.</p>
+
+            <h2>Requirements</h2>
+            <ul>
+                <li>Node.js 20 or newer (uses <code>fetch</code>, <code>AbortController</code>, <code>test</code> runner).</li>
+                <li>SQLite via <code>better-sqlite3</code> (installed by npm).</li>
+                <li>Outbound HTTPS to <code>registry.npmjs.org</code>, <code>api.npmjs.org</code>, <code>rdap.org</code>, <code>urlhaus.abuse.ch</code>, <code>data.jsdelivr.com</code>, <code>hugovk.github.io</code>, and <code>api.github.com</code> (for URL-based scan inputs).</li>
+            </ul>
+
+            <h2>Clone and run</h2>
+            <pre><code>git clone https://github.com/actabi/beepack.git
+cd beepack
+npm install
+node server.js</code></pre>
+            <p>Default port is <code>3011</code>. Override with <code>PORT=8080 node server.js</code>.</p>
+
+            <h2>Populate the offline data</h2>
+            <p>The typosquat detector and URLhaus check both rely on local data files. The scanner boots fine without them, but typosquat detection silently becomes a no-op and URLhaus matching is disabled. Populate them once, then refresh on a cron.</p>
+            <pre><code># Weekly (or on deploy)
+node scripts/fetch-top-packages.js
+# Daily (or on deploy)
+node scripts/fetch-urlhaus.js</code></pre>
+            <p>Files land at <code>data/npm-top.txt</code>, <code>data/pypi-top.txt</code>, <code>data/urlhaus.csv</code>. The scanner picks them up on server restart.</p>
+
+            <h3>Tune list sizes</h3>
+            <pre><code>NPM_TOP_N=10000 node scripts/fetch-top-packages.js --npm-only
+PYPI_TOP_N=2000 node scripts/fetch-top-packages.js --pypi-only</code></pre>
+            <p>Higher N means better typosquat coverage but more false positives and larger files. The public instance runs with 5000 npm and 1000 pypi.</p>
+
+            <h2>Cron template (Linux)</h2>
+            <pre><code># crontab -e
+0 3 * * 0 cd /opt/beepack &amp;&amp; node scripts/fetch-top-packages.js &amp;&amp; systemctl restart beepack
+15 3 * * * cd /opt/beepack &amp;&amp; node scripts/fetch-urlhaus.js  &amp;&amp; systemctl restart beepack</code></pre>
+
+            <h2>Environment variables</h2>
+            <table class="docs-table">
+                <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+                <tbody>
+                    <tr><td><code>PORT</code></td><td><code>3011</code></td><td>HTTP listen port.</td></tr>
+                    <tr><td><code>STORAGE_DIR</code></td><td><code>./storage</code></td><td>Legacy package file storage; not used by scanner paths.</td></tr>
+                    <tr><td><code>SCAN_IP_SALT</code></td><td><code>beepack-scan-local-salt</code></td><td>Salt used when hashing client IPs for dedup counting. Set a private value in prod.</td></tr>
+                    <tr><td><code>NPM_TOP_N</code></td><td><code>10000</code></td><td>Override the default top-N for npm list fetch.</td></tr>
+                    <tr><td><code>PYPI_TOP_N</code></td><td><code>1000</code></td><td>Override the default top-N for PyPI list fetch.</td></tr>
+                    <tr><td><code>SCAN_REPORT_TO</code></td><td><code>gdelaroque@erama.co</code></td><td>Recipient for the daily report script, if you pipe it to sendmail.</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Daily digest</h2>
+            <pre><code>node scripts/scan-daily-report.js --save --mail</code></pre>
+            <p>Prints a plaintext digest (total scans, verdict mix, top sources), optionally saves it to <code>data/reports/YYYY-MM-DD.json</code>, and optionally pipes it to <code>sendmail -t</code>. Wire into cron for an 08:00 UTC email.</p>
+
+            <h2>Point the CLI at your instance</h2>
+            <pre><code>BEEPACK_API=https://scan.internal.example.com/api/v1 beepack scan &lt;url&gt;</code></pre>
+            <p>No authentication is required on the public instance. If you add auth to your fork, the CLI does not yet support bearer tokens; contributions welcome.</p>
+
+            <h2>Hardening checklist</h2>
+            <ul>
+                <li>Set a unique <code>SCAN_IP_SALT</code> in prod. The default salt leaks in source.</li>
+                <li>Put the server behind Caddy or nginx with HTTPS. The binary speaks plain HTTP.</li>
+                <li>Adjust the rate limit in <code>server.js</code> (<code>scanLimiter</code>) if you expect higher volumes. Default is 30 scans per minute per IP.</li>
+                <li>Back up <code>data/beepack.db</code> periodically. Scan history lives there; loss is not catastrophic but ID links break.</li>
+                <li>Keep the data fetchers on cron. Stale <code>urlhaus.csv</code> and top-lists are the fastest path to false negatives.</li>
+            </ul>
+
+            <h2>Where the code lives</h2>
+            <ul>
+                <li><code>skill-parser.js</code>: deterministic extractor (shell commands, URLs, packages, imports).</li>
+                <li><code>validators/npm.js</code>: npm registry calls, cached.</li>
+                <li><code>validators/typosquat.js</code>: Levenshtein + suffix rules.</li>
+                <li><code>validators/urls.js</code>: URLhaus, RDAP, pastebin/tunnel lists.</li>
+                <li><code>verdict-aggregator.js</code>: pure aggregation logic.</li>
+                <li><code>scan-engine.js</code>: orchestration.</li>
+                <li><code>scan-store.js</code>: SQLite persistence.</li>
+                <li><code>server.js</code>: HTTP surface (<code>POST /api/v1/scan</code> et al.).</li>
+                <li><code>cli/src/scan.js</code>: CLI.</li>
+                <li><code>site/scan.html</code>, <code>site/index.html</code>: UI.</li>
+            </ul>
+            <p>Tests: <code>node --test tests/</code>. The scanner suite is 77 tests across 8 files, all under 1s total.</p>
+        </main>
+    </div>
+</body>
+</html>

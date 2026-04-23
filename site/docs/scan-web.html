@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan via web UI - Beepack Scan</title>
+    <meta name="description" content="How to scan a Claude Code skill from the browser at beepack.ai/scan. Paste URL, drop file, or paste markdown.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="./" class="active">Docs</a>
+                <a href="https://github.com/actabi/beepack" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>Getting started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="scan-web.html" class="active">Scan via web UI</a></li>
+                    <li><a href="scan-cli.html">Scan via CLI</a></li>
+                    <li><a href="scan-api.html">Scan via HTTP API</a></li>
+                </ul>
+                <h4>Reference</h4>
+                <ul>
+                    <li><a href="verdicts.html">Verdicts and findings</a></li>
+                    <li><a href="self-host.html">Self-hosting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>Scan via web UI</h1>
+            <p class="lead">The fastest way to scan a skill. No account, no setup, under 10 seconds.</p>
+
+            <p>Go to <a href="/scan">beepack.ai/scan</a>. You have three input modes.</p>
+
+            <h2>Mode 1: paste a URL</h2>
+            <p>Accepts any of these shapes:</p>
+            <ul>
+                <li><strong>GitHub repo</strong>: <code>https://github.com/owner/repo</code>. The scanner fetches <code>SKILL.md</code> from the default branch and any <code>.sh</code>, <code>.py</code>, <code>.js</code>, or <code>.ts</code> files in the same folder.</li>
+                <li><strong>GitHub folder</strong>: <code>https://github.com/owner/repo/tree/branch/path</code>. Same behavior, scoped to the folder.</li>
+                <li><strong>GitHub blob</strong>: <code>https://github.com/owner/repo/blob/branch/path/SKILL.md</code>. Scans that file plus sibling scripts.</li>
+                <li><strong>Raw GitHub</strong>: <code>https://raw.githubusercontent.com/owner/repo/branch/path/SKILL.md</code>. Scans only the markdown.</li>
+                <li><strong>Gist</strong>: <code>https://gist.github.com/user/id</code>. Picks the first markdown file in the gist.</li>
+            </ul>
+
+            <h2>Mode 2: drop files</h2>
+            <p>Drop a <code>SKILL.md</code> onto the file zone, or click to select. You can include multiple files; the scanner treats the first <code>.md</code> as the skill and the rest as referenced scripts.</p>
+            <p>Size caps: 2 MB per file, 20 files max.</p>
+
+            <h2>Mode 3: paste markdown</h2>
+            <p>Paste raw SKILL.md content directly. Useful for quick checks of markdown you're drafting or reading inline in a chat.</p>
+
+            <h2>Reading the result</h2>
+            <p>The verdict card appears within 10 seconds for most skills. Three colors:</p>
+            <ul>
+                <li><strong>RED</strong>: at least one blocking issue (hallucinated package, strong typosquat, URLhaus match). Do not install as-is.</li>
+                <li><strong>YELLOW</strong>: no blockers but warnings worth a human look (young domain, pastebin URL, weaker typosquat).</li>
+                <li><strong>GREEN</strong>: every reference resolved to a real, known-good target.</li>
+            </ul>
+            <p>Each finding shows severity, type, a short message, and the exact <code>source:line</code> location. See <a href="verdicts.html">Verdicts and findings</a> for the full rule list.</p>
+
+            <h2>Sharing a scan</h2>
+            <p>Every scan gets a permanent URL: <code>beepack.ai/scan?id=&lt;scan-id&gt;</code>. Copy it from the "Share this scan" field under the result card. Scan results are public and immutable.</p>
+
+            <h2>Privacy</h2>
+            <p>We store the scan result (verdict, findings, stats, source URL or filename) in SQLite on our server. We do not store uploaded file contents beyond the parse step. Your IP is hashed with a salted SHA-256 for duplicate-visitor counting; the raw IP is never persisted.</p>
+            <p>If you need a fully offline flow, see <a href="self-host.html">Self-hosting</a>.</p>
+        </main>
+    </div>
+</body>
+</html>

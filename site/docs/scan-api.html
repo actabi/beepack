@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan API - Beepack Scan</title>
+    <meta name="description" content="HTTP API reference for the Beepack skill safety scanner. POST /api/v1/scan, GET /api/v1/scan/:id, GET /api/v1/scan-stats.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/docs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="../" class="logo">
+                <img src="../img/logo.png" alt="Beepack" class="logo-img" style="height:36px;vertical-align:middle;">
+                <span class="logo-text">Beepack</span>
+            </a>
+            <nav class="nav">
+                <a href="/scan">Scan</a>
+                <a href="./" class="active">Docs</a>
+                <a href="https://github.com/actabi/beepack" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <h4>Getting started</h4>
+                <ul>
+                    <li><a href="./">Introduction</a></li>
+                    <li><a href="scan-web.html">Scan via web UI</a></li>
+                    <li><a href="scan-cli.html">Scan via CLI</a></li>
+                    <li><a href="scan-api.html" class="active">Scan via HTTP API</a></li>
+                </ul>
+                <h4>Reference</h4>
+                <ul>
+                    <li><a href="verdicts.html">Verdicts and findings</a></li>
+                    <li><a href="self-host.html">Self-hosting</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <h1>Scan HTTP API</h1>
+            <p class="lead">Three endpoints. No auth required on the public instance. JSON in, JSON out.</p>
+
+            <p>Base URL: <code>https://beepack.ai/api/v1</code></p>
+
+            <h2>POST /api/v1/scan</h2>
+            <p>Run a scan. Accepts three input modes in the body. Use one.</p>
+
+            <h3>Mode A: URL</h3>
+            <pre><code>POST /api/v1/scan
+Content-Type: application/json
+
+{ "url": "https://github.com/owner/repo" }</code></pre>
+            <p>The server fetches the skill from the given URL (same resolution rules as the web UI: GitHub repo, blob, tree, gist, raw).</p>
+
+            <h3>Mode B: pasted markdown</h3>
+            <pre><code>POST /api/v1/scan
+Content-Type: application/json
+
+{
+  "markdown": "# My skill\n\n```bash\nnpx @my/tool\n```",
+  "source": "inline-demo",
+  "scripts": [
+    { "name": "install.sh", "content": "pip install requests" }
+  ]
+}</code></pre>
+            <p><code>scripts</code> is optional. Each entry must have <code>name</code> and <code>content</code> (strings).</p>
+
+            <h3>Mode C: multipart file upload</h3>
+            <pre><code>POST /api/v1/scan
+Content-Type: multipart/form-data
+
+files: SKILL.md
+files: install.sh</code></pre>
+            <p>The first <code>.md</code> file is treated as the skill, others as supporting scripts. Size caps: 2 MB per file, 20 files.</p>
+
+            <h3>Response</h3>
+            <pre><code>{
+  "scanId": "f04b19b7-fc7e-4c87-9abb-36640211c6bd",
+  "scannedAt": "2026-04-21T13:50:27.783Z",
+  "source": "https://github.com/owner/repo",
+  "verdict": "red",
+  "summary": "1 critical: npm package \"@fake/xyz\" does not exist on the registry",
+  "findings": [
+    {
+      "severity": "block",
+      "type": "package_does_not_exist",
+      "ecosystem": "npm",
+      "package": "@fake/xyz",
+      "message": "npm package \"@fake/xyz\" does not exist on the registry",
+      "locations": [{ "source": "SKILL.md", "line": 5, "reason": "npx" }]
+    }
+  ],
+  "stats": {
+    "shellCommands": 3, "urls": 2, "npmPackages": 4,
+    "pipPackages": 0, "imports": 1
+  }
+}</code></pre>
+            <p><code>verdict</code> is <code>red</code>, <code>yellow</code>, or <code>green</code>. See <a href="verdicts.html">Verdicts and findings</a> for the full rule set and the list of possible <code>type</code> values.</p>
+
+            <h3>Errors</h3>
+            <pre><code>400 { "error": { "code": "INVALID_INPUT", "message": "..." } }
+400 { "error": { "code": "SCAN_FAILED",  "message": "..." } }
+429 { "error": { "code": "SCAN_RATE_LIMIT", "message": "Too many scans..." } }</code></pre>
+
+            <h3>Rate limits</h3>
+            <p>30 scans per minute per IP on the public instance. Contact us if you need headroom.</p>
+
+            <h2>GET /api/v1/scan/:id</h2>
+            <p>Retrieve a previously-run scan by ID. Returns the same shape as <code>POST /api/v1/scan</code>.</p>
+            <pre><code>curl https://beepack.ai/api/v1/scan/f04b19b7-fc7e-4c87-9abb-36640211c6bd</code></pre>
+            <p>Returns <code>404</code> if the ID is unknown.</p>
+
+            <h2>GET /api/v1/scan-stats</h2>
+            <p>Aggregate stats over a time window. Useful for embedding counters on your own dashboard.</p>
+            <pre><code>GET /api/v1/scan-stats?hours=24
+
+{
+  "total": 128,
+  "uniqueIps": 42,
+  "byVerdict": { "green": 70, "yellow": 40, "red": 18 },
+  "topSources": [
+    { "source": "https://github.com/x/y", "n": 7 }
+  ]
+}</code></pre>
+            <p>Query parameter <code>hours</code> defaults to <code>24</code>. Sources equal to <code>"paste"</code> are excluded from <code>topSources</code>.</p>
+
+            <h2>Example: GitHub Action</h2>
+            <p>Fail the build on RED or YELLOW verdicts for any PR touching a skill file.</p>
+            <pre><code>name: scan-skills
+on: pull_request
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: scan
+        run: |
+          for f in $(git diff --name-only origin/main | grep -E 'SKILL\.md$'); do
+            curl -sS -X POST https://beepack.ai/api/v1/scan \
+              -H 'Content-Type: application/json' \
+              -d "$(jq -Rn --arg md "$(cat $f)" '{markdown:$md,source:"'$f'"}')" \
+            | tee scan-$f.json
+            verdict=$(jq -r .verdict scan-$f.json)
+            [ "$verdict" = "green" ] || exit 1
+          done</code></pre>
+            <p>A managed GitHub Action is on the V2 roadmap; this inline version works today.</p>
+        </main>
+    </div>
+</body>
+</html>
